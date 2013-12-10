@@ -1,0 +1,136 @@
+﻿<Window x:Class="Decompiler.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="BSP Decompiler v4 by 005" Icon="main.png" Height="517" Width="798">
+    <Window.TaskbarItemInfo>
+        <TaskbarItemInfo x:Name="taskBarItemInfo1" />
+    </Window.TaskbarItemInfo>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Menu IsMainMenu="True">
+            <MenuItem Header="_File">
+                <MenuItem Header="Open _map..." Click="FileOpen_Click" />
+                <MenuItem Header="Open _as...">
+                    <MenuItem Header="_Auto" Tag="0" Click="OpenAs_Click" IsChecked="True" x:Name="miOpenAsAuto" />
+                    <Separator />
+                    <MenuItem Header="Quake/GoldSrc" Tag="29" Click="OpenAs_Click" />
+                    <MenuItem Header="007: Nightfire" Tag="42" Click="OpenAs_Click" />
+                    <MenuItem Header="Quake 2" Tag="1347633775" Click="OpenAs_Click" />
+                    <MenuItem Header="SiN" Tag="1347633747" Click="OpenAs_Click" />
+                    <MenuItem Header="Soldier of Fortune" Tag="1347633782" Click="OpenAs_Click" />
+                    <MenuItem Header="Daikatana" Tag="1347633778" Click="OpenAs_Click" />
+                    <Separator />
+                    <MenuItem Header="Quake 3/Return to Castle Wolfenstein/Star Trek Elite Force" Tag="1347633783" Click="OpenAs_Click" />
+                    <MenuItem Header="Medal of Honor: Allied Assault/Spearhead/Breakthrough" Tag="892416069" Click="OpenAs_Click" />
+                    <MenuItem Header="Star Trek Elite Force 2" Tag="556942937" Click="OpenAs_Click" />
+                    <MenuItem Header="Star Trek Elite Force 2 Demo" Tag="1263223129" Click="OpenAs_Click" />
+                    <Separator />
+                    <MenuItem Header="Call of Duty" Tag="1347633796" Click="OpenAs_Click" />
+                    <MenuItem Header="Call of Duty 2" Tag="1347633741" Click="OpenAs_Click" />
+                    <MenuItem Header="Call of Duty 4" Tag="1347633759" Click="OpenAs_Click" />
+                    <Separator />
+                    <MenuItem Header="Source Engine v17" Tag="1347633767" Click="OpenAs_Click" />
+                    <MenuItem Header="Source Engine v18" Tag="1347633768" Click="OpenAs_Click" />
+                    <MenuItem Header="Source Engine v19" Tag="1347633769" Click="OpenAs_Click" />
+                    <MenuItem Header="Source Engine v20" Tag="1347633770" Click="OpenAs_Click" />
+                    <MenuItem Header="Source Engine v21" Tag="1347633771" Click="OpenAs_Click" />
+                    <MenuItem Header="Source Engine v22" Tag="1347633772" Click="OpenAs_Click" />
+                    <MenuItem Header="Source Engine v23" Tag="1347633773" Click="OpenAs_Click" />
+                    <MenuItem Header="Dark Messiah of Might and Magic" Tag="1347895914" Click="OpenAs_Click" />
+                    <MenuItem Header="Vindictus" Tag="346131372" Click="OpenAs_Click" />
+                    <MenuItem Header="Tactical Intervention" Tag="1268885814" Click="OpenAs_Click" />
+                </MenuItem>
+                <Separator />
+                <MenuItem Header="Output _format...">
+                    <MenuItem Header="_Auto" IsCheckable="True" IsChecked="True" Click="OutputAuto_Click" x:Name="miSaveAsAuto" />
+                    <Separator />
+                    <MenuItem Header="_Hammer VMF" IsCheckable="True" Click="OutputVMF_Click" x:Name="miSaveAsVMF" />
+                    <MenuItem Header="_Gearcraft MAP" IsCheckable="True" Click="OutputGC_Click" x:Name="miSaveAsGC" />
+                    <MenuItem Header="_MOHRadiant MAP" IsCheckable="True" Click="OutputMOH_Click" x:Name="miSaveAsMOH" />
+                    <MenuItem Header="_GTKRadiant MAP" IsCheckable="True" Click="OutputGTK_Click" x:Name="miSaveAsGTK" />
+                    <MenuItem Header="_DOOMEdit MAP" IsCheckable="True" Click="OutputDE_Click" x:Name="miSaveAsDE" />
+                </MenuItem>
+                <Separator />
+                <MenuItem Header="E_xit" Click="Quit_Click" />
+            </MenuItem>
+            <MenuItem Header="_Options">
+                <MenuItem Header="Set plane point coefficient..." Click="Ppts_Click" ToolTip="If not calculating brush corners, this is used in calculating points on planes. Might tweak invalid solids into working." />
+                <MenuItem Header="Planar decompilation only" Click="Planar_Click" x:Name="miPlanar" ToolTip="Don't use vertices to aid decompilation. May result in longer decompilations, but may solve problems." IsCheckable="True" />
+                <MenuItem Header="Skip plane flip" Click="PlaneFlip_Click" x:Name="miSkipFlip" ToolTip="Don't make sure brush planes are facing the right direction. Speeds up decompilation in some cases, but may cause problems." IsCheckable="True" IsChecked="True" />
+                <MenuItem Header="Calculate brush corners" Click="BrushCorns_Click" x:Name="miCalcCorners" ToolTip="Calculate every brush's corners. May solve problems arising from decompilation of faces with no vertex information." IsCheckable="True" />
+                <MenuItem Header="Editor-style decimals" Click="ESD_Click" x:Name="miESD" ToolTip="Rounds all decimals to the same precision as each map editor uses for its map format. Might make editors happier." IsCheckable="True" IsChecked="True" />
+                <Separator />
+                <MenuItem Header="Extract internal PAK file" Click="Pak_Click" x:Name="miPak" ToolTip="Source engine maps contain an internal PAK file containing map-specific files. Extraction takes a little while and creates another file." IsCheckable="True" />
+                <Separator />
+                <MenuItem Header="Set number of threads..." Click="NumThreads_Click" ToolTip="The job system is multithreaded and multiple maps can be decompiled simultaneously, especially on multiprocessor CPUs." />
+                <MenuItem Header="Set output folder..." Click="OutFolder_Click" ToolTip="Set where to save output mapfiles. Click cancel to use the folder where the map came from." />
+            </MenuItem>
+            <MenuItem Header="_Debug">
+                <MenuItem Header="Dump all brushes to world" Click="ToWorld_Click" x:Name="miToWorld" ToolTip="Send all brushes to world entity, rather than to their entities." IsCheckable="True" />
+                <MenuItem Header="No origin brushes" Click="NoOrigin_Click" x:Name="miNoOrigin" ToolTip="Do not generate origin brushes for map formats that use them for brushbased entities with 'origin' attributes." IsCheckable="True" />
+                <MenuItem Header="Ignore detail flags" Click="IgnoreDetail_Click" x:Name="miIgnoreDetail" ToolTip="Disregard detail flags on brushes. All detail brushes will be world geometry, and will block VIS." IsCheckable="True" />
+                <MenuItem Header="Ignore water flags" Click="IgnoreWater_Click" x:Name="miIgnoreWater" ToolTip="Disregard water flags on brushes. Does not affect map formats which use func_water, but won't extract water from formats which don't." IsCheckable="True" />
+                <MenuItem Header="Ignore face flags" Click="IgnoreFaceFlag_Click" x:Name="miIgnoreFaceFlags" ToolTip="Disregard face flags (NODRAW, NOIMPACTS, etc.)" IsCheckable="True" />
+                <MenuItem Header="Don't correct entities" Click="DontCorrectEntity_Click" x:Name="miNoEntityCorrect" ToolTip="Don't correct entities depending on the output format. This will keep all entities as-is, rather than renaming them for the output format." IsCheckable="True" />
+                <MenuItem Header="Don't correct textures" Click="DontCorrectTexture_Click" x:Name="miNoTextureCorrect" ToolTip="Don't correct texture names depending on the output format. This will keep all original texture names, instead of those used by the proper editor." IsCheckable="True" />
+                <MenuItem Header="Set multimanager stack size..." Click="SetMMSS_Click" ToolTip="When converting to Source entity I/O, how many multi managers should be recursed through before giving up." />
+                <MenuItem Header="Set error tolerance..." Click="SetEpsilon_Click" ToolTip="Allows customization of error tolerance of double precision calculations." />
+                <MenuItem Header="Set origin brush size..." Click="SetOriginSize_Click" ToolTip="Origin brushes are generated on the fly. This allows customization of their size." />
+                <Separator />
+                <MenuItem Header="Special requests">
+                    <MenuItem Header="Replace flag 512 with special/null" Click="SpecialNull_Click" x:Name="miSpecialNull" IsCheckable="True" />
+                    <MenuItem Header="When an exception occurs while populating a structure, dump its associated lump" Click="DumpLump_Click" x:Name="miDumpLump" IsCheckable="True" />
+                    <MenuItem Header="Don't cull extra planes in Doom or CoD maps" Click="DontCull_Click" x:Name="miDontCull" IsCheckable="True" IsChecked="True" />
+                </MenuItem>
+                <!--<MenuItem Header="Log verbosity">
+                    <MenuItem Header="Status only" Click="Verbosity_Click" x:Name="miVerbosityStatusOnly" IsChecked="True" />
+                    <MenuItem Header="Show warnings" Click="Verbosity_Click" />
+                    <MenuItem Header="Output map statistics" Click="Verbosity_Click" />
+                    <MenuItem Header="Show entities" Click="Verbosity_Click" />
+                    <MenuItem Header="Show brush correction method calls"  Click="Verbosity_Click" />
+                    <MenuItem Header="Show all brush creation method calls" Click="Verbosity_Click" />
+                </MenuItem>-->
+                <MenuItem Header="Save log..." Click="SaveLog_Click" ToolTip="Save all text in output log to a file." />
+                <MenuItem Header="Clear log" Click="ClearLog_Click" />
+            </MenuItem>
+        </Menu>
+        <TextBox x:Name="txtConsole" Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" IsReadOnly="True" TextWrapping="NoWrap" />
+        <GridSplitter Grid.Row="2" ResizeDirection="Rows" ResizeBehavior="PreviousAndNext" Background="LightGray" Height="5" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />
+        <ListView Grid.Row="3" x:Name="jobListView">
+            <ListView.View>
+                <GridView x:Name="jobGridView">
+                    <GridViewColumn Header="#" DisplayMemberBinding="{Binding Path=Id}" />
+                    <GridViewColumn Header="Map name" DisplayMemberBinding="{Binding Path=Name}" />
+                    <GridViewColumn Header="Progress" Width="240" x:Name="ProgressColumn">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <Border Width="{Binding ElementName=ProgressColumn, Path=Width}" Height="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=GridViewRowPresenter}, Path=ActualHeight}" BorderThickness="0, 0, 1, 0">
+                                    <Grid Margin="0">
+                                        <ProgressBar Margin="5, 0, 15, 0" Value="{Binding Path=ProgressValue}" Width="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=GridViewRowPresenter}, Path=Width}" Maximum="1.0" Minimum="0.0" HorizontalAlignment="Stretch" />
+                                        <TextBlock Text="{Binding Path=ProgressToolTip}" Background="Transparent" TextAlignment="Center" Foreground="Black" />
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <!-- TODO
+                    <GridViewColumn Width="100">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button Content="Abort" Tag="{Binding Path=Id}" />
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>-->
+                </GridView>
+            </ListView.View>
+        </ListView>
+    </Grid>
+</Window>
