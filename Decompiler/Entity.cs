@@ -73,8 +73,6 @@ public class Entity:LumpObject {
 			attributes.Remove(attribute);
 			if(attributes.ContainsKey(to)) { attributes.Remove(to); DecompilerThread.OnMessage(this, "WARNING: Attribute "+to+" already existed in entity, overwritten!"); }
 			attributes.Add(to, val);
-		} else {
-			DecompilerThread.OnMessage(this, "WARNING: Attribute "+attribute+" doesn't exist in entity, can't rename!");
 		}
 	}
 	
@@ -205,165 +203,165 @@ public class Entity:LumpObject {
 	{
 		if (attributeIs("classname", "func_door") || attributeIs("classname", "func_door_rotating") || attributeIs("classname", "trigger_hurt") || attributeIs("classname", "func_brush") || attributeIs("classname", "light") || attributeIs("classname", "light_spot"))
 		{
-			return "Toggle,";
+			return "Toggle";
 		}
 		if (attributeIs("classname", "ambient_generic"))
 		{
-			return "ToggleSound,";
+			return "ToggleSound";
 		}
 		if (attributeIs("classname", "env_message"))
 		{
-			return "ShowMessage,";
+			return "ShowMessage";
 		}
 		if (attributeIs("classname", "trigger_changelevel"))
 		{
-			return "ChangeLevel,";
+			return "ChangeLevel";
 		}
 		if (attributeIs("classname", "env_global"))
 		{
 			if (attributeIs("triggermode", "1"))
 			{
-				return "TurnOn,";
+				return "TurnOn";
 			}
 			else
 			{
 				if (attributeIs("triggermode", "3"))
 				{
-					return "Toggle,";
+					return "Toggle";
 				}
 				else
 				{
-					return "TurnOff,";
+					return "TurnOff";
 				}
 			}
 		}
 		if (attributeIs("classname", "func_breakable"))
 		{
-			return "Break,";
+			return "Break";
 		}
 		if (attributeIs("classname", "func_button"))
 		{
-			return "Press,";
+			return "Press";
 		}
 		if (attributeIs("classname", "env_shake"))
 		{
-			return "StartShake,";
+			return "StartShake";
 		}
 		if (attributeIs("classname", "env_fade"))
 		{
-			return "Fade,";
+			return "Fade";
 		}
 		if (attributeIs("classname", "env_sprite"))
 		{
-			return "ToggleSprite,";
+			return "ToggleSprite";
 		}
 		if (attributeIs("classname", "logic_relay"))
 		{
-			return "Trigger,";
+			return "Trigger";
 		}
 		if (attributeIs("classname", "math_counter"))
 		{
 			return "Add,1";
 		}
-		return "Toggle,";
+		return "Toggle";
 	}
 	
 	public virtual string onEnable()
 	{
 		if (attributeIs("classname", "trigger_hurt") || attributeIs("classname", "func_brush") || attributeIs("classname", "logic_relay") || attributeIs("classname", "math_counter"))
 		{
-			return "Enable,";
+			return "Enable";
 		}
 		if (attributeIs("classname", "func_door") || attributeIs("classname", "func_door_rotating"))
 		{
-			return "Open,";
+			return "Open";
 		}
 		if (attributeIs("classname", "ambient_generic"))
 		{
-			return "PlaySound,";
+			return "PlaySound";
 		}
 		if (attributeIs("classname", "env_message"))
 		{
-			return "ShowMessage,";
+			return "ShowMessage";
 		}
 		if (attributeIs("classname", "trigger_changelevel"))
 		{
-			return "ChangeLevel,";
+			return "ChangeLevel";
 		}
 		if (attributeIs("classname", "light") || attributeIs("classname", "light_spot"))
 		{
-			return "TurnOn,";
+			return "TurnOn";
 		}
 		if (attributeIs("classname", "func_breakable"))
 		{
-			return "Break,";
+			return "Break";
 		}
 		if (attributeIs("classname", "env_shake"))
 		{
-			return "StartShake,";
+			return "StartShake";
 		}
 		if (attributeIs("classname", "env_fade"))
 		{
-			return "Fade,";
+			return "Fade";
 		}
 		if (attributeIs("classname", "env_sprite"))
 		{
-			return "ShowSprite,";
+			return "ShowSprite";
 		}
 		if (attributeIs("classname", "func_button"))
 		{
-			return "PressIn,";
+			return "PressIn";
 		}
-		return "Enable,";
+		return "Enable";
 	}
 	
 	public virtual string onDisable()
 	{
 		if (attributeIs("classname", "trigger_hurt") || attributeIs("classname", "func_brush") || attributeIs("classname", "logic_relay") || attributeIs("classname", "math_counter"))
 		{
-			return "Disable,";
+			return "Disable";
 		}
 		if (attributeIs("classname", "func_door") || attributeIs("classname", "func_door_rotating"))
 		{
-			return "Close,";
+			return "Close";
 		}
 		if (attributeIs("classname", "ambient_generic"))
 		{
-			return "StopSound,";
+			return "StopSound";
 		}
 		if (attributeIs("classname", "env_message"))
 		{
-			return "ShowMessage,";
+			return "ShowMessage";
 		}
 		if (attributeIs("classname", "trigger_changelevel"))
 		{
-			return "ChangeLevel,";
+			return "ChangeLevel";
 		}
 		if (attributeIs("classname", "light") || attributeIs("classname", "light_spot"))
 		{
-			return "TurnOff,";
+			return "TurnOff";
 		}
 		if (attributeIs("classname", "func_breakable"))
 		{
-			return "Break,";
+			return "Break";
 		}
 		if (attributeIs("classname", "env_shake"))
 		{
-			return "StopShake,";
+			return "StopShake";
 		}
 		if (attributeIs("classname", "env_fade"))
 		{
-			return "Fade,";
+			return "Fade";
 		}
 		if (attributeIs("classname", "env_sprite"))
 		{
-			return "HideSprite,";
+			return "HideSprite";
 		}
 		if (attributeIs("classname", "func_button"))
 		{
-			return "PressOut,";
+			return "PressOut";
 		}
-		return "Disable,";
+		return "Disable";
 	}
 	
 	// Try to determine which "Output" normally causes this entity to "fire" its target.
@@ -393,7 +391,7 @@ public class Entity:LumpObject {
 		{
 			return "OnHitMax";
 		}
-		return "None";
+		return "OnTrigger";
 	}
 	
 	public static Entity cloneNoBrushes(Entity copy) {

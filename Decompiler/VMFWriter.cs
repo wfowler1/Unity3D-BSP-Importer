@@ -1177,7 +1177,7 @@ public class VMFWriter {
 	// no "Fire" input. I try to figure out which ones are best based on their classnames
 	// but it's not 100% foolproof, and I have to add a case for every specific class.
 	public virtual Entity parseEntityIO(Entity inEnt) {
-		if (!inEnt.fireAction().Equals("None")) {
+		if (!(inEnt["target"]=="")) {
 			double delay = 0.0;
 			try {
 				delay = Double.Parse(inEnt["delay"]);

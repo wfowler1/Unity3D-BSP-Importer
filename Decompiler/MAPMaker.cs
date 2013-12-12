@@ -166,7 +166,7 @@ public class MAPMaker {
 				}
 				else
 				{
-					VMFMaker = new VMFWriter(from, Settings.outputFolder + "\\" + mapname, version);
+					VMFMaker = new VMFWriter(from, Settings.outputFolder + mapname, version);
 				}
 				VMFMaker.write();
 			}
