@@ -276,21 +276,28 @@ public class VMFWriter {
 		for (int j = 0; j < inEnt.Brushes.Count; j++)
 		{
 			// For each brush in the entity
-			if (inEnt.Brushes[j].Detail && inEnt.attributeIs("classname", "worldspawn"))
+			bool containsNonClipSide = false;
+			for (int k=0; k<inEnt.Brushes[j].NumSides; k++) {
+				if (!inEnt.Brushes[j][k].Texture.ToLower().Contains("clip")) {
+					containsNonClipSide = true;
+					break;
+				}
+			}
+			if (inEnt.Brushes[j].Detail && inEnt.attributeIs("classname", "worldspawn") && containsNonClipSide)
 			{
 				inEnt.Brushes[j].Detail = false; // Otherwise it will add an infinite number of func_details to the array
 				Entity newDetailEntity = new Entity("func_detail");
 				for (int k = 0; k < inEnt.Brushes[j].NumSides; k++)
 				{
 					MAPBrushSide currentSide = inEnt.Brushes[j][k];
-					if (currentSide.Texture.ToUpper().Equals("special/TRIGGER".ToUpper()))
+					if (currentSide.Texture.Equals("special/TRIGGER", StringComparison.InvariantCultureIgnoreCase))
 					{
 						currentSide.Texture = "TOOLS/TOOLSHINT"; // Hint is the only thing that still works that doesn't collide with the player
 					}
 				}
 				newDetailEntity.Brushes.Add(inEnt.Brushes[j]);
 				data.Add(newDetailEntity);
-				brushes[j] = new byte[0]; // No inEnt here! The brush will be output in its entity instead.
+				brushes[j] = new byte[0]; // No data here! The brush will be output in its entity instead.
 			}
 			else
 			{
@@ -1293,21 +1300,21 @@ public class VMFWriter {
 					{
 						if (targets.Length > 1)
 						{
-							for(int k = 0; k < targets.Length; k++) {
-								string outputAction = targets[k].onFire();
+							//for(int k = 0; k < targets.Length; k++) {
+								string outputAction = targets[j].onFire();
 								if (inEnt.attributeIs("triggerstate", "0"))
 								{
-									outputAction = targets[k].onDisable();
+									outputAction = targets[j].onDisable();
 								}
 								else
 								{
 									if (inEnt.attributeIs("triggerstate", "1"))
 									{
-										outputAction = targets[k].onEnable();
+										outputAction = targets[j].onEnable();
 									}
 								}
 								dummy.Connections.Add(new Tuple<string, string, string, string, double, int, string, Tuple<string>>("condition", target+j, outputAction, "", delay, -1, "", new Tuple<string>("")));
-							}
+							//}
 						}
 						else if(targets.Length == 1) {
 							string outputAction = targets[0].onFire();
