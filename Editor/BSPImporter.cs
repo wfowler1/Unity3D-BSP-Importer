@@ -142,13 +142,14 @@ public class BSPImporter : EditorWindow {
 									texmatrix[2,1] = tAxis[2];
 									texmatrix[2,2] = STNormal[2];
 									Matrix4x4 texmatinverse = texmatrix.inverse;
+									Vector2 originShifts = new Vector2(Vector3.Dot(entity.Origin, texinfo.SAxis.normalized) * texinfo.SAxis.magnitude, Vector3.Dot(entity.Origin, texinfo.TAxis.normalized) * texinfo.TAxis.magnitude);
 									for(int l=0;l<vertices.Length;l++) {
 										vertices[l] = SwapYZ(bspObject.Vertices[face.FirstVertex + l].Vector * 0.0254f) + origin;
 										Vector3 textureCoord = texmatinverse.MultiplyPoint3x4(vertices[l]);
 										if(textureDict[bspObject.Textures[face.Texture].Name] != null) {
-											uvs[l] = new Vector2((sAxis.sqrMagnitude*textureCoord[0]+texinfo.SShift)/textureDict[bspObject.Textures[face.Texture].Name].width, -(tAxis.sqrMagnitude*textureCoord[1]+texinfo.TShift)/textureDict[bspObject.Textures[face.Texture].Name].height);
+											uvs[l] = new Vector2((sAxis.sqrMagnitude*textureCoord[0]+texinfo.SShift-originShifts[0])/textureDict[bspObject.Textures[face.Texture].Name].width, -(tAxis.sqrMagnitude*textureCoord[1]+texinfo.TShift-originShifts[1])/textureDict[bspObject.Textures[face.Texture].Name].height);
 										} else {
-											uvs[l] = new Vector2((sAxis.sqrMagnitude*textureCoord[0]+texinfo.SShift)/64, -(tAxis.sqrMagnitude*textureCoord[1]+texinfo.TShift)/64);
+											uvs[l] = new Vector2((sAxis.sqrMagnitude*textureCoord[0]+texinfo.SShift-originShifts[0])/64, -(tAxis.sqrMagnitude*textureCoord[1]+texinfo.TShift-originShifts[1])/64);
 										}
 									}
 									mesh.vertices = vertices;
