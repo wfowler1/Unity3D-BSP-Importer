@@ -684,7 +684,7 @@ public class BSPReader {
 							}
 							Debug.Log("Map: " + name);
 							DoomMap currentMap = new DoomMap(BSPFile.FullName, name, version);
-							int[] headerInfo = getLumpInfo(i);
+							//int[] headerInfo = getLumpInfo(i);
 							
 							currentMap.Things = DThing.createLump(readLumpNum(i+1), version);
 							currentMap.Linedefs = DLinedef.createLump(readLumpNum(i+2), version);

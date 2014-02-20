@@ -118,24 +118,15 @@ public class Entity:LumpObject {
 	}
 	
 	// +toString()
-	// Returns the entity as an ASCII entity structure. The output of this method
-	// reads as a complete entity that could be put into a map with no problems,
-	// and that will be the primary use case for this method. Be sure to add the
-	// newlines and curly braces around the entity if using this method to create
-	// a new entities lump file, unless curly braces are part of the attributes
-	// array.
-	[Obsolete]
+	// Returns a string representation of this entity.
+	// Pretty much the entity exactly as it was loaded.
 	public override string ToString() {
-		string output = "entity {\n";
+		string output = "{\n";
 		foreach (string st in attributes.Keys) {
 			output += "\""+st+"\" \""+attributes[st]+"\"\n";
 		}
-		if(connections.Count>0) {
-			output += "connections {\n";
-			foreach (string connection in connections) {
-				output += connection;
-			}
-			output += "}\n";
+		foreach (string connection in connections) {
+			output += connection;
 		}
 		return output+"}";
 	}
