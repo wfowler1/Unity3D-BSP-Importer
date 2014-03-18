@@ -44,6 +44,7 @@
                     <MenuItem Header="Source Engine v21" Tag="1347633771" Click="OpenAs_Click" />
                     <MenuItem Header="Source Engine v22" Tag="1347633772" Click="OpenAs_Click" />
                     <MenuItem Header="Source Engine v23" Tag="1347633773" Click="OpenAs_Click" />
+                    <MenuItem Header="Source Engine v27" Tag="1347633777" Click="OpenAs_Click" />
                     <MenuItem Header="Dark Messiah of Might and Magic" Tag="1347895914" Click="OpenAs_Click" />
                     <MenuItem Header="Vindictus" Tag="346131372" Click="OpenAs_Click" />
                     <MenuItem Header="Tactical Intervention" Tag="1268885814" Click="OpenAs_Click" />
