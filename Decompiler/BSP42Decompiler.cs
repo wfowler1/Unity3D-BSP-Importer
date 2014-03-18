@@ -49,8 +49,7 @@ public class BSP42Decompiler {
 	//   k: Current brush, referenced in a list by the current leaf.
 	//	l: Current side of the current brush.
 	//	 m: When attempting vertex decompilation, the current vertex.
-	public virtual Entities decompile()
-	{
+	public virtual Entities decompile() {
 		DecompilerThread.OnMessage(this, "Decompiling...");
 		// In the decompiler, it is not necessary to copy all entities to a new object, since
 		// no writing is ever done back to the BSP file.
@@ -59,21 +58,18 @@ public class BSP42Decompiler {
 		int onePercent = (int)((BSPObject.Brushes.Count + BSPObject.Entities.Count)/100);
 		// I need to go through each entity and see if it's brush-based.
 		// Worldspawn is brush-based as well as any entity with model *#.
-		for (int i = 0; i < BSPObject.Entities.Count; i++)
-		{
+		for (int i = 0; i < BSPObject.Entities.Count; i++) {
 			// For each entity
 			//DecompilerThread.OnMessage(this, "Entity " + i + ": " + mapFile[i]["classname"]);
 			// getModelNumber() returns 0 for worldspawn, the *# for brush based entities, and -1 for everything else
 			int currentModel = mapFile[i].ModelNumber;
-			if (currentModel > - 1)
-			{
+			if (currentModel > - 1) {
 				// If this is still -1 then it's strictly a point-based entity. Move on to the next one.
 				int firstLeaf = BSPObject.Models[currentModel].FirstLeaf;
 				int numLeaves = BSPObject.Models[currentModel].NumLeaves;
 				bool[] brushesUsed = new bool[BSPObject.Brushes.Count]; // Keep a list of brushes already in the model, since sometimes the leaves lump references one brush several times
 				numBrshs = 0;
-				for (int j = 0; j < numLeaves; j++)
-				{
+				for (int j = 0; j < numLeaves; j++) {
 					// For each leaf in the bunch
 					Leaf currentLeaf = BSPObject.Leaves[j + firstLeaf];
 					int firstBrushIndex = currentLeaf.FirstMarkBrush;
@@ -175,38 +171,26 @@ public class BSP42Decompiler {
 						currentPlane = new Plane((double) 1, (double) 0, (double) 0, (double) 0);
 					}
 				}
-				Vector3D[] triangle = new Vector3D[0];
+				Vector3D[] triangle = new Vector3D[0]; // Three points define a plane. All I have to do is find three points on that plane.
 				bool pointsWorked = false;
-				if (numVertices != 0 && !Settings.planarDecomp)
-				{
+				if (numVertices != 0 && !Settings.planarDecomp) {
 					// If the face actually references a set of vertices
-					triangle = new Vector3D[3]; // Three points define a plane. All I have to do is find three points on that plane.
-					triangle[0] = new Vector3D(BSPObject.Vertices[firstVertex].Vector); // Grab and store the first one
-					int m = 1;
-					for (m = 1; m < numVertices; m++)
-					{
-						// For each point after the first one
-						triangle[1] = new Vector3D(BSPObject.Vertices[firstVertex + m].Vector);
-						if (triangle[0]!=triangle[1])
-						{
-							// Make sure the point isn't the same as the first one
-							break; // If it isn't the same, this point is good
-						}
-					}
-					for (m = m + 1; m < numVertices; m++)
-					{
-						// For each point after the previous one used
-						triangle[2] = new Vector3D(BSPObject.Vertices[firstVertex + m].Vector);
-						if (triangle[2]!=triangle[0] && triangle[2]!=triangle[1])
-						{
-							// Make sure no point is equal to the third one
-							// Make sure all three points are non collinear
-							Vector3D cr = (triangle[0]-triangle[1])^(triangle[0]-triangle[2]);
-							if (cr.magnitude() > Settings.precision)
-							{
-								// vector length is never negative.
-								pointsWorked = true;
-								break;
+					triangle = new Vector3D[3];
+					double currentHighest = 0.0;
+					// Find the combination of three vertices which gives the greatest area
+					for(int p1 = 0; p1 < numVertices-2; p1++) {
+						for(int p2 = p1+1; p2 < numVertices-1; p2++) {
+							for(int p3 = p2+1; p3 < numVertices; p3++) {
+								double currentArea = Vector3D.SqrTriangleArea(BSPObject.Vertices[firstVertex + p1].Vector, BSPObject.Vertices[firstVertex + p2].Vector, BSPObject.Vertices[firstVertex + p3].Vector);
+								if(currentArea > Settings.precision * Settings.precision * 4.0) { // Three collinear points will generate an area of 0 or almost 0
+									pointsWorked = true;
+									if(currentArea > currentHighest) {
+										currentHighest = currentArea;
+										triangle[0] = BSPObject.Vertices[firstVertex + p1].Vector;
+										triangle[1] = BSPObject.Vertices[firstVertex + p2].Vector;
+										triangle[2] = BSPObject.Vertices[firstVertex + p3].Vector;
+									}
+								}
 							}
 						}
 					}

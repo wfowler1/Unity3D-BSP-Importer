@@ -260,7 +260,11 @@ public class Vector3D:IEquatable<Vector3D> {
 	/// Returns:	Distance from the vertex to the origin.
 	public virtual double magnitude()
 	{
-		return System.Math.Sqrt(System.Math.Pow(point[0], 2) + System.Math.Pow(point[1], 2) + System.Math.Pow(point[2], 2));
+		return System.Math.Sqrt(sqrMagnitude());
+	}
+	// Returns: Square of distance from point to origin. Useful for comparing lengths of two vectors without costly square root calculation.
+	public double sqrMagnitude() {
+		return System.Math.Pow(point[0], 2) + System.Math.Pow(point[1], 2) + System.Math.Pow(point[2], 2);
 	}
 	
 	/// Returns:	Distance from this point to another one.
@@ -287,6 +291,18 @@ public class Vector3D:IEquatable<Vector3D> {
 	public virtual Vector3D normalized()
 	{
 		return this / magnitude();
+	}
+
+	// Returns: The area of the triangle defined by three points, using Heron's formula
+	public static double TriangleArea(Vector3D p1, Vector3D p2, Vector3D p3) {
+		return Math.Sqrt(SqrTriangleArea(p1,p2,p3))/4.0;
+	}
+
+	public static double SqrTriangleArea(Vector3D p1, Vector3D p2, Vector3D p3) {
+		double a = p1.distance(p2);
+		double b = p1.distance(p3);
+		double c = p2.distance(p3);
+		return 4.0*a*a*b*b - Math.Pow((a*a) + (b*b) - (c*c), 2);
 	}
 	
 	// ACCESSORS/MUTATORS
