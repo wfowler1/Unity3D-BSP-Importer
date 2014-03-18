@@ -1,6 +1,15 @@
 using System;
 
 public static class Settings {
+	public enum MidpointRounding {
+		Up=0,
+		Down=1,
+		AwayFromZero=2,
+		TowardZero=3,
+		ToEven=4,
+		ToOdd=5,
+	}
+
 	public static int numThreads = Environment.ProcessorCount;
 	public static double planePointCoef = 32;
 	public static bool skipPlaneFlip = true;
@@ -31,4 +40,5 @@ public static class Settings {
 	public static bool toDoomEdit = false;
 	public static bool toMoH = false;
 	public static int MMStackSize = 8;
+	public static MidpointRounding roundingMode = MidpointRounding.Up;
 }

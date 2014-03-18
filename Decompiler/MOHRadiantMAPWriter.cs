@@ -421,19 +421,19 @@ public class MOHRadiantMAPWriter{
 				textureT = TexInfo.textureAxisFromPlane(inputData.Plane)[1];
 			}
 			if (Settings.roundNums) {
-				temp = "( " + System.Math.Round(triangle[0].X, 6, MidpointRounding.AwayFromZero) + 
-					     " " + System.Math.Round(triangle[0].Y, 6, MidpointRounding.AwayFromZero) + 
-				        " " + System.Math.Round(triangle[0].Z, 6, MidpointRounding.AwayFromZero) + " ) " + 
-						  "( " + System.Math.Round(triangle[1].X, 6, MidpointRounding.AwayFromZero) + 
-						  " " + System.Math.Round(triangle[1].Y, 6, MidpointRounding.AwayFromZero) + 
-						  " " + System.Math.Round(triangle[1].Z, 6, MidpointRounding.AwayFromZero) + " ) " + 
-						  "( " + System.Math.Round(triangle[2].X, 6, MidpointRounding.AwayFromZero) + 
-						  " " + System.Math.Round(triangle[2].Y, 6, MidpointRounding.AwayFromZero) + 
-						  " " + System.Math.Round(triangle[2].Z, 6, MidpointRounding.AwayFromZero) + " ) " + 
-						  texture + " " + System.Math.Floor(textureShiftS) + " " + System.Math.Floor(textureShiftT) + " " + 
-						  System.Math.Round(texRot, 4, MidpointRounding.AwayFromZero) + " " + 
-						  System.Math.Round(texScaleX, 4, MidpointRounding.AwayFromZero) + " " + 
-						  System.Math.Round(texScaleY, 4, MidpointRounding.AwayFromZero) + " " + flags + " 0 0 ";
+				temp = "( " + MAPMaker.Round(triangle[0].X, 6) + 
+				       " " + MAPMaker.Round(triangle[0].Y, 6) + 
+				       " " + MAPMaker.Round(triangle[0].Z, 6) + " ) " + 
+				       "( " + MAPMaker.Round(triangle[1].X, 6) + 
+				       " " + MAPMaker.Round(triangle[1].Y, 6) + 
+				       " " + MAPMaker.Round(triangle[1].Z, 6) + " ) " + 
+				       "( " + MAPMaker.Round(triangle[2].X, 6) + 
+				       " " + MAPMaker.Round(triangle[2].Y, 6) + 
+				       " " + MAPMaker.Round(triangle[2].Z, 6) + " ) " + 
+				       texture + " " + System.Math.Floor(textureShiftS) + " " + System.Math.Floor(textureShiftT) + " " + 
+				       MAPMaker.FormattedRound(texRot, 2, "######0.00") + " " + 
+				       MAPMaker.Round(texScaleX, 6) + " " + 
+				       MAPMaker.Round(texScaleY, 6) + " " + flags + " 0 0 ";
 			} else {
 				temp = "( " + triangle[0].X + " " + triangle[0].Y + " " + triangle[0].Z + " ) " + "( " + triangle[1].X + " " + triangle[1].Y + " " + triangle[1].Z + " ) " + "( " + triangle[2].X + " " + triangle[2].Y + " " + triangle[2].Z + " ) " + texture + " " + textureShiftS + " " + textureShiftT + " " + texRot + " " + texScaleX + " " + texScaleY + " " + flags + " 0 0 ";
 			}

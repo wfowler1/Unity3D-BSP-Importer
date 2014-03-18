@@ -84,6 +84,14 @@
                 <MenuItem Header="Set multimanager stack size..." Click="SetMMSS_Click" ToolTip="When converting to Source entity I/O, how many multi managers should be recursed through before giving up." />
                 <MenuItem Header="Set error tolerance..." Click="SetEpsilon_Click" ToolTip="Allows customization of error tolerance of double precision calculations." />
                 <MenuItem Header="Set origin brush size..." Click="SetOriginSize_Click" ToolTip="Origin brushes are generated on the fly. This allows customization of their size." />
+                <MenuItem Header="Set rounding mode">
+                    <MenuItem Header="Up (standard)" Click="RoundingMode_Click" x:Name="miRoundUp" Tag="0" ToolTip="Always round up from the midpoint. 0.5 = 1, -0.5 = 0, 1.5 = 2" IsChecked="True" />
+                    <MenuItem Header="Down" Click="RoundingMode_Click" x:Name="miRoundDown" Tag="1" ToolTip="Always round down from the midpoint. 0.5 = 0, -0.5 = -1, 1.5 = 1" />
+                    <MenuItem Header="Away from zero" Click="RoundingMode_Click" x:Name="miRoundAwayFromZero" Tag="2" ToolTip="Always round away from zero from the midpoint. 0.5 = 1, -0.5 = -1, 1.5 = 2" />
+                    <MenuItem Header="Toward zero" Click="RoundingMode_Click" x:Name="miRoundTowardZero" Tag="3" ToolTip="Always round toward zero from the midpoint. 0.5 = 0, -0.5 = 0, 1.5 = 1" />
+                    <MenuItem Header="To even" Click="RoundingMode_Click" x:Name="miRoundToEven" Tag="4" ToolTip="Always round to the even number from the midpoint. 0.5 = 0, -0.5 = 0, 1.5 = 2" />
+                    <MenuItem Header="To odd" Click="RoundingMode_Click" x:Name="miRoundToOdd" Tag="5" ToolTip="Always round to the odd number from the midpoint. 0.5 = 1, -0.5 = -1, 1.5 = 1" />
+                </MenuItem>
                 <Separator />
                 <MenuItem Header="Special requests">
                     <MenuItem Header="Replace flag 512 with special/null" Click="SpecialNull_Click" x:Name="miSpecialNull" IsCheckable="True" />

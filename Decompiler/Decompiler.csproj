@@ -47,6 +47,8 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>0</WarningLevel>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject>Decompiler.App</StartupObject>
@@ -56,6 +58,9 @@
   </PropertyGroup>
   <PropertyGroup />
   <PropertyGroup />
+  <PropertyGroup>
+    <RunPostBuildEvent>Always</RunPostBuildEvent>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="System" />
@@ -116,6 +121,7 @@
     <Compile Include="NumList.cs" />
     <Compile Include="Plane.cs" />
     <Compile Include="QuakeDecompiler.cs" />
+    <Compile Include="Revision.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="SourceBSPDecompiler.cs" />
     <Compile Include="SourceCubemap.cs" />
@@ -196,6 +202,22 @@
     <Resource Include="icon.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>cd..
+cd..
+svnversion &gt;&gt; version.txt
+set /p revision= &lt; version.txt
+del /Q version.txt
+type nul&gt; Revision.cs
+echo public static class Revision {&gt;&gt; Revision.cs
+echo public static string versionString = "%25revision%25";&gt;&gt; Revision.cs
+echo }&gt;&gt; Revision.cs</PreBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PostBuildEvent>cd..
+cd..
+del /Q Revision.cs</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

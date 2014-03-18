@@ -270,6 +270,42 @@ public class MAPMaker {
 		}
 	}
 
+	public static double Round(double val) { return Round(val, 0); }
+
+	public static double Round(double val, int places) {
+		switch(Settings.roundingMode) {
+			case Settings.MidpointRounding.Up:
+				goto default;
+				break;
+			case Settings.MidpointRounding.Down:
+				return Math.Ceiling((val * Math.Pow(10, places)) - 0.5) / Math.Pow(10, places);
+				break;
+			case Settings.MidpointRounding.AwayFromZero:
+				return Math.Round(val, places, MidpointRounding.AwayFromZero);
+				break;
+			case Settings.MidpointRounding.TowardZero:
+				if(val < 0.0) {
+					goto case Settings.MidpointRounding.Up;
+				} else {
+					goto case Settings.MidpointRounding.Down;
+				}
+				break;
+			case Settings.MidpointRounding.ToEven:
+				return Math.Round(val, places, MidpointRounding.ToEven);
+				break;
+			case Settings.MidpointRounding.ToOdd:
+				return Math.Round(val + 1.0, places, MidpointRounding.ToEven) - 1.0;
+				break;
+			default:
+				return Math.Floor((val * Math.Pow(10, places)) + 0.5) / Math.Pow(10, places);
+				break;
+		}
+	}
+
+	public static string FormattedRound(double val, int places, string format) {
+		return Round(val, places).ToString(format);
+	}
+
 	/// <summary>
 	/// Performs a basic deep copy.
 	/// 

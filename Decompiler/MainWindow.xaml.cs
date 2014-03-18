@@ -38,6 +38,11 @@ namespace Decompiler {
 			DecompilerThread.done += new ThreadFinishedHandler(threadFinished);
 			jobListView.ItemsSource = jobs;
 			taskBarItemInfo1.ProgressState = TaskbarItemProgressState.Normal;
+			if(Revision.versionString == "Unversioned directory") {
+				this.Title = "Decompiler v4 by 005";
+			} else {
+				this.Title = "Decompiler r"+Revision.versionString+" by 005";
+			}
 		}
 
 		// METHODS
@@ -102,6 +107,20 @@ namespace Decompiler {
 			if (_OpenAsChecked != null) {
 				_OpenAsChecked.IsChecked = true;
 				Settings.openAs = (mapType)Int32.Parse(_OpenAsChecked.Tag.ToString());
+			}
+		}
+
+		private MenuItem _RoundingModeChecked = null;
+		private void RoundingMode_Click(object sender, RoutedEventArgs e) {
+			if (_RoundingModeChecked != null) {
+				_RoundingModeChecked.IsChecked = false;
+			} else {
+				miRoundUp.IsChecked = false;
+			}
+			_RoundingModeChecked = e.Source as MenuItem;
+			if (_RoundingModeChecked != null) {
+				_RoundingModeChecked.IsChecked = true;
+				Settings.roundingMode = (Settings.MidpointRounding)Int32.Parse(_RoundingModeChecked.Tag.ToString());
 			}
 		}
 

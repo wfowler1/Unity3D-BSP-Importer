@@ -290,7 +290,7 @@ public class DoomEditMapWriter {
 			}
 			if (Settings.roundNums)
 			{
-				return "( " + Math.Round(plane.A) + " " + Math.Round(plane.B) + " " + Math.Round(plane.C) + " " + Math.Round(plane.Dist) + " ) " + "( ( 1 0 " + Math.Round(textureShiftS) + " ) ( 0 1 " + Math.Round(textureShiftT) + " ) ) " + "\"" + texture + "\" 0 0 0";
+				return "( " + MAPMaker.Round(plane.A, 10) + " " + MAPMaker.Round(plane.B, 10) + " " + MAPMaker.Round(plane.C, 10) + " " + MAPMaker.Round(plane.Dist, 10) + " ) " + "( ( 1 0 " + MAPMaker.Round(textureShiftS, 10) + " ) ( 0 1 " + MAPMaker.Round(textureShiftT, 10) + " ) ) " + "\"" + texture + "\" 0 0 0";
 			}
 			else
 			{

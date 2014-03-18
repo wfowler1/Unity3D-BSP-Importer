@@ -13,6 +13,7 @@ Global
 		{DC474135-140F-47A6-88CA-0F7106651980}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DC474135-140F-47A6-88CA-0F7106651980}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DC474135-140F-47A6-88CA-0F7106651980}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DC474135-140F-47A6-88CA-0F7106651980}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

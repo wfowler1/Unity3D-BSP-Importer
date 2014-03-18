@@ -752,13 +752,13 @@ public class MAP510Writer {
 			}
 			if (Settings.roundNums)
 			{
-				return "( " + Math.Round(triangle[0].X, 6, MidpointRounding.AwayFromZero) + " " + Math.Round(triangle[0].Y, 6, MidpointRounding.AwayFromZero) + " " + Math.Round(triangle[0].Z, 6, MidpointRounding.AwayFromZero) + " ) " + 
-					   "( " + Math.Round(triangle[1].X, 6, MidpointRounding.AwayFromZero) + " " + Math.Round(triangle[1].Y, 6, MidpointRounding.AwayFromZero) + " " + Math.Round(triangle[1].Z, 6, MidpointRounding.AwayFromZero) + " ) " + 
-					   "( " + Math.Round(triangle[2].X, 6, MidpointRounding.AwayFromZero) + " " + Math.Round(triangle[2].Y, 6, MidpointRounding.AwayFromZero) + " " + Math.Round(triangle[2].Z, 6, MidpointRounding.AwayFromZero) + " ) " + 
-					   texture + 
-					   " [ " + Math.Round(textureS.X, 6, MidpointRounding.AwayFromZero) + " " + Math.Round(textureS.Y, 6, MidpointRounding.AwayFromZero) + " " + Math.Round(textureS.Z, 6, MidpointRounding.AwayFromZero) + " " + Math.Round(textureShiftS, MidpointRounding.AwayFromZero) + " ]" + 
-					   " [ " + Math.Round(textureT.X, 6, MidpointRounding.AwayFromZero) + " " + Math.Round(textureT.Y, 6, MidpointRounding.AwayFromZero) + " " + Math.Round(textureT.Z, 6, MidpointRounding.AwayFromZero) + " " + Math.Round(textureShiftT, MidpointRounding.AwayFromZero) + " ] " + 
-					   Math.Round(texRot, 4, MidpointRounding.AwayFromZero) + " " + Math.Round(texScaleX, 4, MidpointRounding.AwayFromZero) + " " + Math.Round(texScaleY, 4, MidpointRounding.AwayFromZero) + " " + flags + " " + material + " [ " + Math.Round(lgtScale, 4, MidpointRounding.AwayFromZero) + " " + Math.Round(lgtRot, 4, MidpointRounding.AwayFromZero) + " ]";
+				return "( " + MAPMaker.FormattedRound(triangle[0].X, 6, "######0.000000") + " " + MAPMaker.FormattedRound(triangle[0].Y, 6, "######0.000000") + " " + MAPMaker.FormattedRound(triangle[0].Z, 6, "######0.000000") + " ) " + 
+				       "( " + MAPMaker.FormattedRound(triangle[1].X, 6, "######0.000000") + " " + MAPMaker.FormattedRound(triangle[1].Y, 6, "######0.000000") + " " + MAPMaker.FormattedRound(triangle[1].Z, 6, "######0.000000") + " ) " + 
+				       "( " + MAPMaker.FormattedRound(triangle[2].X, 6, "######0.000000") + " " + MAPMaker.FormattedRound(triangle[2].Y, 6, "######0.000000") + " " + MAPMaker.FormattedRound(triangle[2].Z, 6, "######0.000000") + " ) " + 
+				       texture + 
+				       " [ " + MAPMaker.FormattedRound(textureS.X, 6, "######0.000000") + " " + MAPMaker.FormattedRound(textureS.Y, 6, "######0.000000") + " " + MAPMaker.FormattedRound(textureS.Z, 6, "######0.000000") + " " + MAPMaker.Round(textureShiftS) + " ]" + 
+				       " [ " + MAPMaker.FormattedRound(textureT.X, 6, "######0.000000") + " " + MAPMaker.FormattedRound(textureT.Y, 6, "######0.000000") + " " + MAPMaker.FormattedRound(textureT.Z, 6, "######0.000000") + " " + MAPMaker.Round(textureShiftT) + " ] " + 
+				       MAPMaker.FormattedRound(texRot, 4, "######0.####") + " " + MAPMaker.FormattedRound(texScaleX, 4, "######0.####") + " " + MAPMaker.FormattedRound(texScaleY, 4, "######0.####") + " " + flags + " " + material + " [ " + MAPMaker.FormattedRound(lgtScale, 4, "######0.####") + " " + MAPMaker.FormattedRound(lgtRot, 4, "######0.####") + " ]";
 			}
 			else
 			{

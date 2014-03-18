@@ -568,17 +568,17 @@ public class VMFWriter {
 			output += ("			\"id\" \"" + (nextID++) + "\"" + (char) 0x0D + (char) 0x0A);
 			output += ("			\"material\" \"" + texture + "\"" + (char) 0x0D + (char) 0x0A);
 			if (Settings.roundNums) {
-				output += ("			\"plane\" \"(" + Math.Round(triangle[0].X, 6, MidpointRounding.AwayFromZero) + " " + Math.Round(triangle[0].Y, 6, MidpointRounding.AwayFromZero) + " " + Math.Round(triangle[0].Z, 6, MidpointRounding.AwayFromZero) + ") ");
-				output += ("(" + Math.Round(triangle[1].X, 6, MidpointRounding.AwayFromZero) + " " + Math.Round(triangle[1].Y, 6, MidpointRounding.AwayFromZero) + " " + Math.Round(triangle[1].Z, 6, MidpointRounding.AwayFromZero) + ") ");
-				output += ("(" + Math.Round(triangle[2].X, 6, MidpointRounding.AwayFromZero) + " " + Math.Round(triangle[2].Y, 6, MidpointRounding.AwayFromZero) + " " + Math.Round(triangle[2].Z, 6, MidpointRounding.AwayFromZero) + ")\"" + (char) 0x0D + (char) 0x0A);
-				output += ("			\"uaxis\" \"[" + Math.Round(textureS.X, 6, MidpointRounding.AwayFromZero) + " " + Math.Round(textureS.Y, 6, MidpointRounding.AwayFromZero) + " " + Math.Round(textureS.Z, 6, MidpointRounding.AwayFromZero) + " " + Math.Floor(textureShiftS+0.5) + "] " + Math.Round(texScaleX, 4, MidpointRounding.AwayFromZero) + "\"" + (char) 0x0D + (char) 0x0A);
-				output += ("			\"vaxis\" \"[" + Math.Round(textureT.X, 6, MidpointRounding.AwayFromZero) + " " + Math.Round(textureT.Y, 6, MidpointRounding.AwayFromZero) + " " + Math.Round(textureT.Z, 6, MidpointRounding.AwayFromZero) + " " + Math.Floor(textureShiftT+0.5) + "] " + Math.Round(texScaleY, 4, MidpointRounding.AwayFromZero) + "\"" + (char) 0x0D + (char) 0x0A);
-				output += ("			\"rotation\" \"" + Math.Round(texRot, 4, MidpointRounding.AwayFromZero) + "\"" + (char) 0x0D + (char) 0x0A);
-				output += ("			\"lightmapscale\" \"" + Math.Round(lgtScale, 4, MidpointRounding.AwayFromZero) + "\"" + (char) 0x0D + (char) 0x0A);
+				output += ("			\"plane\" \"(" + MAPMaker.Round(triangle[0].X, 6) + " " + MAPMaker.Round(triangle[0].Y, 6) + " " + MAPMaker.Round(triangle[0].Z, 6) + ") ");
+				output += ("("                      + MAPMaker.Round(triangle[1].X, 6) + " " + MAPMaker.Round(triangle[1].Y, 6) + " " + MAPMaker.Round(triangle[1].Z, 6) + ") ");
+				output += ("("                      + MAPMaker.Round(triangle[2].X, 6) + " " + MAPMaker.Round(triangle[2].Y, 6) + " " + MAPMaker.Round(triangle[2].Z, 6) + ")\"" + (char) 0x0D + (char) 0x0A);
+				output += ("			\"uaxis\" \"[" + MAPMaker.Round(textureS.X, 6) + " " + MAPMaker.Round(textureS.Y, 6) + " " + MAPMaker.Round(textureS.Z, 6) + " " + MAPMaker.Round(textureShiftS) + "] " + MAPMaker.Round(texScaleX, 4) + "\"" + (char) 0x0D + (char) 0x0A);
+				output += ("			\"vaxis\" \"[" + MAPMaker.Round(textureT.X, 6) + " " + MAPMaker.Round(textureT.Y, 6) + " " + MAPMaker.Round(textureT.Z, 6) + " " + MAPMaker.Round(textureShiftT) + "] " + MAPMaker.Round(texScaleY, 4) + "\"" + (char) 0x0D + (char) 0x0A);
+				output += ("			\"rotation\" \"" + MAPMaker.Round(texRot, 4) + "\"" + (char) 0x0D + (char) 0x0A);
+				output += ("			\"lightmapscale\" \"" + MAPMaker.Round(lgtScale, 4) + "\"" + (char) 0x0D + (char) 0x0A);
 			} else {
 				output += ("			\"plane\" \"(" + triangle[0].X + " " + triangle[0].Y + " " + triangle[0].Z + ") ");
-				output += ("(" + triangle[1].X + " " + triangle[1].Y + " " + triangle[1].Z + ") ");
-				output += ("(" + triangle[2].X + " " + triangle[2].Y + " " + triangle[2].Z + ")\"" + (char) 0x0D + (char) 0x0A);
+				output += ("("                      + triangle[1].X + " " + triangle[1].Y + " " + triangle[1].Z + ") ");
+				output += ("("                      + triangle[2].X + " " + triangle[2].Y + " " + triangle[2].Z + ")\"" + (char) 0x0D + (char) 0x0A);
 				output += ("			\"uaxis\" \"[" + textureS.X + " " + textureS.Y + " " + textureS.Z + " " + textureShiftS + "] " + texScaleX + "\"" + (char) 0x0D + (char) 0x0A);
 				output += ("			\"vaxis\" \"[" + textureT.X + " " + textureT.Y + " " + textureT.Z + " " + textureShiftT + "] " + texScaleY + "\"" + (char) 0x0D + (char) 0x0A);
 				output += ("			\"rotation\" \"" + texRot + "\"" + (char) 0x0D + (char) 0x0A);
@@ -615,7 +615,7 @@ public class VMFWriter {
 			alphas += ("					\"row" + i + "\" \"");
 			for (int j = 0; j < System.Math.Pow(2, inDisplacement.Power) + 1; j++)
 			{
-				normals += Math.Round(inDisplacement.getNormal(i, j).X, 6, MidpointRounding.AwayFromZero) + " " + Math.Round(inDisplacement.getNormal(i, j).Y, 6, MidpointRounding.AwayFromZero) + " " + Math.Round(inDisplacement.getNormal(i, j).Z, 6, MidpointRounding.AwayFromZero);
+				normals += Math.Round(inDisplacement.getNormal(i, j).X, 6) + " " + Math.Round(inDisplacement.getNormal(i, j).Y, 6) + " " + Math.Round(inDisplacement.getNormal(i, j).Z, 6);
 				distances += inDisplacement.getDist(i, j);
 				alphas += inDisplacement.getAlpha(i, j);
 				if (j < System.Math.Pow(2, inDisplacement.Power))
