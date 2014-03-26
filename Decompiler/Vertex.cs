@@ -13,6 +13,16 @@ public class Vertex:LumpObject {
 	private float[] texCoord = new float[] { System.Single.NaN, System.Single.NaN };
 	
 	// CONSTRUCTORS
+	public Vertex(Vector3D vertex):base(new byte[0]) {
+		this.vertex = vertex;
+	}
+
+	public Vertex(Vector3D vertex, float texCoordU, float texCoordV):base(new byte[0]) {
+		this.vertex = vertex;
+		this.texCoord[0] = texCoordU;
+		this.texCoord[1] = texCoordV;
+	}
+
 	public Vertex(LumpObject data, mapType type):base(data.Data) {
 		new Vertex(data.Data, type);
 	}
@@ -108,6 +118,10 @@ public class Vertex:LumpObject {
 			offset+=structLength;
 		}
 		return lump;
+	}
+
+	public virtual string ToString() {
+		return "( "+vertex.X+" "+vertex.Y+" "+vertex.Z+" "+texCoord[0]+" "+texCoord[1]+" )";
 	}
 	
 	// ACCESSORS/MUTATORS

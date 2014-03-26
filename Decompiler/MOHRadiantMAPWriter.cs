@@ -127,7 +127,7 @@ public class MOHRadiantMAPWriter{
 		}
 		string temp = "";
 		if(!inputData["classname"].Equals("worldspawn", StringComparison.InvariantCultureIgnoreCase)) {
-			temp += "// Entity "+num+(char)0x0D+(char)0x0A;
+			temp += "// entity "+num+(char)0x0D+(char)0x0A;
 		}
 		temp += "{";
 		int len = temp.Length+5;
@@ -199,12 +199,15 @@ public class MOHRadiantMAPWriter{
 	}
 	
 	private byte[] brushToByteArray(MAPBrush inData, int num) {
+		if (inData.Patch != null) {
+			return patchToByteArray(inData.Patch, num);
+		}
 		if (inData.NumSides < 4) {
 			// Can't create a brush with less than 4 sides
 			DecompilerThread.OnMessage(this, "WARNING: Tried to create brush from " + inData.NumSides + " sides!");
 			return new byte[0];
 		}
-		string brush = "// Brush " + num + (char) 0x0D + (char) 0x0A + "{" + (char) 0x0D + (char) 0x0A;
+		string brush = "// brush " + num + (char) 0x0D + (char) 0x0A + "{" + (char) 0x0D + (char) 0x0A;
 		for (int i = 0; i < inData.NumSides; i++) {
 			brush += (brushSideToString(inData[i], (inData.Detail || inData[0].Displacement != null)) + (char) 0x0D + (char) 0x0A);
 		}
@@ -239,6 +242,17 @@ public class MOHRadiantMAPWriter{
 			double lgtRot = inputData.LgtRot;
 			string temp = "";
 			// Correct textures here
+			try
+			{
+				if (texture.Substring(0, (9) - (0)).ToUpper().Equals("textures/".ToUpper()))
+				{
+					texture = texture.Substring(9);
+				}
+			}
+			catch (System.ArgumentOutOfRangeException)
+			{
+				;
+			}
 			if (BSPVersion == mapType.TYPE_NIGHTFIRE || BSPVersion == mapType.TYPE_DOOM || BSPVersion == mapType.TYPE_HEXEN)
 			{
 				if (texture.ToUpper().Equals("special/nodraw".ToUpper()) || texture.ToUpper().Equals("special/null".ToUpper()))
@@ -447,6 +461,15 @@ public class MOHRadiantMAPWriter{
 			DecompilerThread.OnMessage(this, "WARNING: Side with bad data! Not exported!");
 			return "";
 		}
+	}
+
+	public byte[] patchToByteArray(MAPPatch inData, int num) {
+		string patch = "// Brush " + num + (char) 0x0D + (char) 0x0A + inData.ToString() + (char) 0x0D + (char) 0x0A;
+		byte[] patchbytes = new byte[patch.Length];
+		for (int i = 0; i < patch.Length; i++) {
+			patchbytes[i] = (byte) patch[i];
+		}
+		return patchbytes;
 	}
 	
 	// TODO: Polish these up.

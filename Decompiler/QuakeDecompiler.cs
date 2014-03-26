@@ -49,6 +49,9 @@ public class QuakeDecompiler
 		mapFile = BSPObject.Entities;
 		int numTotalItems = 0;
 		int onePercent = (int)((BSPObject.Entities.Count)/100);
+		if(onePercent < 1) {
+			onePercent = 1;
+		}
 		// I need to go through each entity and see if it's brush-based.
 		// Worldspawn is brush-based as well as any entity with model *#.
 		for (int i = 0; i < BSPObject.Entities.Count; i++)

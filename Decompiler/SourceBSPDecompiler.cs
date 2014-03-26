@@ -46,6 +46,9 @@ public class SourceBSPDecompiler {
 		//int numAreaPortals=0;
 		int numTotalItems = 0;
 		int onePercent = (int)((BSPObject.Brushes.Count + BSPObject.Entities.Count)/100);
+		if(onePercent < 1) {
+			onePercent = 1;
+		}
 		int originalNumEntities = BSPObject.Entities.Count; // Need to keep track of this in this algorithm, since I create more entities on the fly
 		for (int i = 0; i < originalNumEntities; i++) {
 			// For each entity

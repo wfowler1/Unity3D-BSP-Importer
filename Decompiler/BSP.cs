@@ -5,7 +5,7 @@ using System.Collections.Generic;
 // will be left as null. Then it will be fed into a universal decompile method
 // which should be able to perform its job based on what data is stored.
 
-public enum mapType {
+public enum mapType : int {
 	TYPE_UNDEFINED = 0,
 	// Bunch of different versions. Can be used to differentiate maps or strucures.
 	TYPE_QUAKE = 29,

@@ -56,6 +56,9 @@ public class BSP42Decompiler {
 		mapFile = BSPObject.Entities;
 		int numTotalItems = 0;
 		int onePercent = (int)((BSPObject.Brushes.Count + BSPObject.Entities.Count)/100);
+		if(onePercent < 1) {
+			onePercent = 1;
+		}
 		// I need to go through each entity and see if it's brush-based.
 		// Worldspawn is brush-based as well as any entity with model *#.
 		for (int i = 0; i < BSPObject.Entities.Count; i++) {
@@ -138,15 +141,15 @@ public class BSP42Decompiler {
 			BrushSide currentSide = BSPObject.BrushSides[firstSide + l];
 			Face currentFace = BSPObject.Faces[currentSide.Face]; // To find those three points, I can use vertices referenced by faces.
 			string texture = BSPObject.Textures[currentFace.Texture].Name;
-			if ((currentFace.Flags[1] & ((sbyte) 1 << 0)) == 0)
+			if ((currentFace.Flags & 0x00000100) == 0)
 			{
 				// Surfaceflags 512 + 256 + 32 are set only by the compiler, on faces that need to be thrown out.
 				if (!texture.ToUpper().Equals("special/clip".ToUpper()) && !texture.ToUpper().Equals("special/playerclip".ToUpper()) && !texture.ToUpper().Equals("special/enemyclip".ToUpper()))
 				{
-					if (Settings.replaceWithNull && ((currentFace.Flags[1] & ((byte) 1 << 1)) != 0) && !texture.ToUpper().Equals("special/trigger".ToUpper()))
+					if (Settings.replaceWithNull && ((currentFace.Flags & 0x00000200) != 0) && !texture.ToUpper().Equals("special/trigger".ToUpper()))
 					{
 						texture = "special/null";
-						currentFace.Flags = new byte[4];
+						currentFace.Flags = 0;
 					}
 				}
 				int firstVertex = currentFace.FirstVertex;
@@ -215,14 +218,10 @@ public class BSP42Decompiler {
 				double originShiftV = (textureV[0] * origin[X] + textureV[1] * origin[Y] + textureV[2] * origin[Z]) / texScaleV;
 				double textureUhiftV = (double) currentTexInfo.TShift - originShiftV;
 				float texRot = 0; // In compiled maps this is calculated into the U and V axes, so set it to 0 until I can figure out a good way to determine a better value.
-				int flags = DataReader.readInt(currentFace.Flags[0], currentFace.Flags[1], currentFace.Flags[2], currentFace.Flags[3]); // This is actually a set of flags. Whatever.
 				string material;
-				try
-				{
+				try {
 					material = BSPObject.Materials[currentFace.Material].Name;
-				}
-				catch (System.IndexOutOfRangeException)
-				{
+				} catch (System.IndexOutOfRangeException) {
 					// In case the BSP has some strange error making it reference nonexistant materials
 					DecompilerThread.OnMessage(this, "WARNING: Map referenced nonexistant material #" + currentFace.Material + ", using wld_lightmap instead!");
 					material = "wld_lightmap";
@@ -236,15 +235,15 @@ public class BSP42Decompiler {
 				}
 				if (Settings.noFaceFlags)
 				{
-					flags = 0;
+					currentFace.Flags = 0;
 				}
 				if (pointsWorked)
 				{
-					newList[brushSides.Length] = new MAPBrushSide(currentPlane, triangle, texture, textureU, textureUhiftU, textureV, textureUhiftV, texRot, texScaleU, texScaleV, flags, material, lgtScale, lgtRot);
+					newList[brushSides.Length] = new MAPBrushSide(currentPlane, triangle, texture, textureU, textureUhiftU, textureV, textureUhiftV, texRot, texScaleU, texScaleV, currentFace.Flags, material, lgtScale, lgtRot);
 				}
 				else
 				{
-					newList[brushSides.Length] = new MAPBrushSide(currentPlane, texture, textureU, textureUhiftU, textureV, textureUhiftV, texRot, texScaleU, texScaleV, flags, material, lgtScale, lgtRot);
+					newList[brushSides.Length] = new MAPBrushSide(currentPlane, texture, textureU, textureUhiftU, textureV, textureUhiftV, texRot, texScaleU, texScaleV, currentFace.Flags, material, lgtScale, lgtRot);
 				}
 				brushSides = newList;
 				numRealFaces++;

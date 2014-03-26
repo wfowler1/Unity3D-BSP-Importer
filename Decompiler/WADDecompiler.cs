@@ -248,6 +248,9 @@ public class WADDecompiler
 		bool[] outsideBrushAlreadyCreated = new bool[doomMap.Linedefs.Count];
 		
 		int onePercent = (int)((doomMap.SubSectors.Count)/100);
+		if(onePercent < 1) {
+			onePercent = 1;
+		}
 		for (int i = 0; i < doomMap.SubSectors.Count; i++)
 		{
 			//DecompilerThread.OnMessage(this, "Creating brushes for subsector " + i);

@@ -58,7 +58,7 @@ public class BSPReader {
 		if (!File.Exists(BSPFile.FullName)) {
 			DecompilerThread.OnMessage(this, "Unable to open BSP file; file "+BSPFile.FullName+" not found.");
 		} else {
-			this.stream = new FileStream(BSPFile.FullName, FileMode.Open);
+			this.stream = new FileStream(BSPFile.FullName, FileMode.Open, FileAccess.Read);
 			this.br = new BinaryReader(this.stream);
 		}
 	}
@@ -409,6 +409,14 @@ public class BSPReader {
 									theLump = readLumpNum(i);
 									BSPObject.Planes = Plane.createLump(theLump, version);
 									break;
+								case 5:
+									theLump = readLumpNum(i);
+									BSPObject.Faces = Face.createLump(theLump, version);
+									break;
+								case 6:
+									theLump = readLumpNum(i);
+									BSPObject.Vertices = Vertex.createLump(theLump, version);
+									break;
 								case 12:
 									theLump = readLumpNum(i);
 									BSPObject.BrushSides = BrushSide.createLump(theLump, version);
@@ -445,6 +453,14 @@ public class BSPReader {
 								case 1:
 									theLump = readLumpNum(i);
 									BSPObject.Planes = Plane.createLump(theLump, version);
+									break;
+								case 3:
+									theLump = readLumpNum(i);
+									BSPObject.Faces = Face.createLump(theLump, version);
+									break;
+								case 4:
+									theLump = readLumpNum(i);
+									BSPObject.Vertices = Vertex.createLump(theLump, version);
 									break;
 								case 11:
 									theLump = readLumpNum(i);

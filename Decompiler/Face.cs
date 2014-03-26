@@ -6,6 +6,14 @@ using System;
 public class Face:LumpObject {
 	
 	// INITIAL DATA DECLARATION AND DEFINITION OF CONSTANTS
+
+	public enum faceType : int {
+		UNDEFINED = 0,
+		POLYGON = 1,
+		PATCH = 2,
+		MESH = 3,
+		BILLBOARD = 4
+	}
 	
 	// Faces is one of the more different lumps between versions. Some of these fields
 	// are only used by one format. However, there are some commonalities which make
@@ -22,7 +30,9 @@ public class Face:LumpObject {
 	private int textureScale = - 1;
 	private int displacement = - 1;
 	private int original = - 1;
-	private byte[] flags;
+	private int flags;
+	private int[] patchSize = new int[2];
+	private faceType facetype = faceType.UNDEFINED;
 	
 	// CONSTRUCTORS
 	
@@ -32,28 +42,41 @@ public class Face:LumpObject {
 	
 	public Face(byte[] data, mapType type):base(data) {
 		switch (type) {
-			case mapType.TYPE_QUAKE: 
-			case mapType.TYPE_QUAKE2: 
-			case mapType.TYPE_DAIKATANA: 
-			case mapType.TYPE_SIN: 
-			case mapType.TYPE_SOF: 
+			case mapType.TYPE_QUAKE:
+			case mapType.TYPE_QUAKE2:
+			case mapType.TYPE_DAIKATANA:
+			case mapType.TYPE_SIN:
+			case mapType.TYPE_SOF:
 				plane = DataReader.readUShort(data[0], data[1]);
 				side = DataReader.readUShort(data[2], data[3]);
 				firstEdge = DataReader.readInt(data[4], data[5], data[6], data[7]);
 				numEdges = DataReader.readUShort(data[8], data[9]);
 				texture = DataReader.readUShort(data[10], data[11]);
 				break;
-			case mapType.TYPE_QUAKE3: 
-			case mapType.TYPE_RAVEN: 
-			case mapType.TYPE_STEF2: 
-			case mapType.TYPE_STEF2DEMO: 
-			case mapType.TYPE_MOHAA: 
+			case mapType.TYPE_RAVEN:
 				texture = DataReader.readInt(data[0], data[1], data[2], data[3]);
-				flags = new byte[]{data[8], data[9], data[10], data[11]};
+				facetype = (faceType)DataReader.readInt(data[8], data[9], data[10], data[11]);
 				firstVertex = DataReader.readInt(data[12], data[13], data[14], data[15]);
 				numVertices = DataReader.readInt(data[16], data[17], data[18], data[19]);
+				patchSize[0] = DataReader.readInt(data[140], data[141], data[142], data[143]);
+				patchSize[1] = DataReader.readInt(data[144], data[145], data[146], data[147]);
 				break;
-			case mapType.TYPE_SOURCE17: 
+			case mapType.TYPE_STEF2:
+			case mapType.TYPE_STEF2DEMO:
+			case mapType.TYPE_QUAKE3:
+			case mapType.TYPE_MOHAA:
+			//case mapType.TYPE_FAKK:
+			//case mapType.TYPE_COD:
+			//case mapType.TYPE_COD2:
+			//case mapType.TYPE_COD4:
+				texture = DataReader.readInt(data[0], data[1], data[2], data[3]);
+				facetype = (faceType)DataReader.readInt(data[8], data[9], data[10], data[11]);
+				firstVertex = DataReader.readInt(data[12], data[13], data[14], data[15]);
+				numVertices = DataReader.readInt(data[16], data[17], data[18], data[19]);
+				patchSize[0] = DataReader.readInt(data[96], data[97], data[98], data[99]);
+				patchSize[1] = DataReader.readInt(data[100], data[101], data[102], data[103]);
+				break;
+			case mapType.TYPE_SOURCE17:
 				plane = DataReader.readUShort(data[32], data[33]);
 				side = (int) data[34];
 				firstEdge = DataReader.readInt(data[36], data[37], data[38], data[39]);
@@ -62,15 +85,15 @@ public class Face:LumpObject {
 				displacement = DataReader.readShort(data[44], data[45]);
 				original = DataReader.readInt(data[96], data[97], data[98], data[99]);
 				break;
-			case mapType.TYPE_SOURCE18: 
-			case mapType.TYPE_SOURCE19: 
-			case mapType.TYPE_SOURCE20: 
-			case mapType.TYPE_SOURCE21: 
-			case mapType.TYPE_SOURCE22: 
-			case mapType.TYPE_SOURCE23: 
-			case mapType.TYPE_SOURCE27: 
-			case mapType.TYPE_TACTICALINTERVENTION: 
-			case mapType.TYPE_DMOMAM: 
+			case mapType.TYPE_SOURCE18:
+			case mapType.TYPE_SOURCE19:
+			case mapType.TYPE_SOURCE20:
+			case mapType.TYPE_SOURCE21:
+			case mapType.TYPE_SOURCE22:
+			case mapType.TYPE_SOURCE23:
+			case mapType.TYPE_SOURCE27:
+			case mapType.TYPE_TACTICALINTERVENTION:
+			case mapType.TYPE_DMOMAM:
 				plane = DataReader.readUShort(data[0], data[1]);
 				side = (int) data[2];
 				firstEdge = DataReader.readInt(data[4], data[5], data[6], data[7]);
@@ -79,7 +102,7 @@ public class Face:LumpObject {
 				displacement = DataReader.readShort(data[12], data[13]);
 				original = DataReader.readInt(data[44], data[45], data[46], data[47]);
 				break;
-			case mapType.TYPE_VINDICTUS: 
+			case mapType.TYPE_VINDICTUS:
 				plane = DataReader.readInt(data[0], data[1], data[2], data[3]);
 				side = (int) data[4];
 				firstEdge = DataReader.readInt(data[8], data[9], data[10], data[11]);
@@ -88,11 +111,11 @@ public class Face:LumpObject {
 				displacement = DataReader.readInt(data[20], data[21], data[22], data[23]);
 				original = DataReader.readInt(data[56], data[57], data[58], data[59]);
 				break;
-			case mapType.TYPE_NIGHTFIRE: 
+			case mapType.TYPE_NIGHTFIRE:
 				plane = DataReader.readInt(data[0], data[1], data[2], data[3]);
 				firstVertex = DataReader.readInt(data[4], data[5], data[6], data[7]);
 				numVertices = DataReader.readInt(data[8], data[9], data[10], data[11]);
-				flags = new byte[]{data[20], data[21], data[22], data[23]};
+				flags = DataReader.readInt(data[20], data[21], data[22], data[23]);
 				texture = DataReader.readInt(data[24], data[25], data[26], data[27]);
 				material = DataReader.readInt(data[28], data[29], data[30], data[31]);
 				textureScale = DataReader.readInt(data[32], data[33], data[34], data[35]);
@@ -164,77 +187,59 @@ public class Face:LumpObject {
 	
 	// ACCESSORS/MUTATORS
 	virtual public int Plane {
-		get {
-			return plane;
-		}
+		get { return plane; }
 	}
 
 	virtual public int Side {
-		get {
-			return side;
-		}
+		get { return side; }
 	}
 
 	virtual public int FirstEdge {
-		get {
-			return firstEdge;
-		}
+		get { return firstEdge; }
 	}
 
 	virtual public int NumEdges {
-		get {
-			return numEdges;
-		}
+		get { return numEdges; }
 	}
 
 	virtual public int Texture {
-		get {
-			return texture;
-		}
+		get { return texture; }
 	}
 
 	virtual public int FirstVertex {
-		get {
-			return firstVertex;
-		}
+		get { return firstVertex; }
 	}
 
 	virtual public int NumVertices {
-		get {
-			return numVertices;
-		}
+		get { return numVertices; }
 	}
 
 	virtual public int Material {
-		get {
-			return material;
-		}
+		get { return material; }
 	}
 
 	virtual public int TextureScale {
-		get {
-			return textureScale;
-		}
+		get { return textureScale; }
 	}
 
 	virtual public int Displacement {
-		get {
-			return displacement;
-		}
+		get { return displacement; }
 	}
 
 	virtual public int Original {
-		get {
-			return original;
-		}
+		get { return original; }
 	}
 
-	virtual public byte[] Flags {
-		get {
-			return flags;
-		}
-		set {
-			flags = value;
-		}
+	virtual public int Flags {
+		get { return flags; }
+		set { flags = value; }
+	}
+
+	virtual public faceType Facetype {
+		get { return facetype; }
+	}
+
+	public int[] PatchSize {
+		get { return patchSize; }
 	}
 }

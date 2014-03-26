@@ -91,8 +91,11 @@ namespace Decompiler {
 
 		private void Error(object sender, EventArgs e) {
 			this.Dispatcher.Invoke((Action)(() => {
-				Console.WriteLine("ERROR CHANGING THINGIEE TO RED");
 				taskBarItemInfo1.ProgressState = TaskbarItemProgressState.Error;
+				active.Remove((DecompilerThread)sender);
+				sender = null;
+				finished++;
+				StartNextIfAble();
 			}));
 		}
 

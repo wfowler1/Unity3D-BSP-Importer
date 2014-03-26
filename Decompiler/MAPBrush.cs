@@ -14,6 +14,8 @@ public class MAPBrush {
 	// For debugging purposes only, if there's a problem these will be in the error message
 	private int entnum;
 	private int brushnum;
+
+	private MAPPatch patch = null;
 	
 	// CONSTRUCTORS
 	
@@ -43,6 +45,10 @@ public class MAPBrush {
 		for (int i = 0; i < sides.NumSides; i++) {
 			this.sides[i] = new MAPBrushSide(sides[i]);
 		}
+	}
+
+	public MAPBrush(MAPPatch patch) {
+		this.patch = patch;
 	}
 	
 	// METHODS
@@ -124,14 +130,17 @@ public class MAPBrush {
 	// DEPRECATED for use in generating mapfiles.
 	[Obsolete]
 	public override string ToString() {
-		string out_Renamed = "{\n";
+		if(patch != null) {
+			return patch.ToString();
+		}
+		string output = "{\n";
 		if (isDetailBrush) {
-			out_Renamed += "\"BRUSHFLAGS\" \"DETAIL\"\n";
+			output += "\"BRUSHFLAGS\" \"DETAIL\"\n";
 		}
 		for (int i = 0; i < sides.Length; i++) {
-			out_Renamed += (sides[i].ToString() + "\n");
+			output += (sides[i].ToString() + "\n");
 		}
-		return out_Renamed+"}";
+		return output+"}";
 	}
 	
 	// Calculates 3 face corners, to be used to define the plane in ASCII format.
@@ -981,5 +990,9 @@ public class MAPBrush {
 		get {
 			return entnum;
 		}
+	}
+
+	public MAPPatch Patch {
+		get { return patch; }
 	}
 }

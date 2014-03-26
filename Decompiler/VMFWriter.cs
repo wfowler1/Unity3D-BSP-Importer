@@ -383,162 +383,176 @@ public class VMFWriter {
 			double texScaleY = inBrushSide.TexScaleY;
 			float texRot = inBrushSide.TexRot;
 			double lgtScale = inBrushSide.LgtScale;
-			if (BSPVersion == mapType.TYPE_NIGHTFIRE || BSPVersion == mapType.TYPE_DOOM || BSPVersion == mapType.TYPE_HEXEN)
-			{
-				if (texture.ToUpper().Equals("special/nodraw".ToUpper()) || texture.ToUpper().Equals("special/null".ToUpper()))
+			if (BSPVersion == mapType.TYPE_QUAKE3 || BSPVersion == mapType.TYPE_MOHAA || BSPVersion == mapType.TYPE_COD || BSPVersion == mapType.TYPE_STEF2 || BSPVersion == mapType.TYPE_STEF2DEMO || BSPVersion == mapType.TYPE_FAKK) {
+				try
 				{
-					texture = "tools/toolsnodraw";
-				}
-				else
-				{
-					if (texture.ToUpper().Equals("special/clip".ToUpper()))
+					if (texture.Substring(0, (9) - (0)).ToUpper().Equals("textures/".ToUpper()))
 					{
-						texture = "tools/toolsclip";
+						texture = texture.Substring(9);
+					}
+				}
+				catch (System.ArgumentOutOfRangeException)
+				{
+					;
+				}
+			} else {
+				if (BSPVersion == mapType.TYPE_NIGHTFIRE || BSPVersion == mapType.TYPE_DOOM || BSPVersion == mapType.TYPE_HEXEN)
+				{
+					if (texture.ToUpper().Equals("special/nodraw".ToUpper()) || texture.ToUpper().Equals("special/null".ToUpper()))
+					{
+						texture = "tools/toolsnodraw";
 					}
 					else
 					{
-						if (texture.ToUpper().Equals("special/sky".ToUpper()))
+						if (texture.ToUpper().Equals("special/clip".ToUpper()))
 						{
-							texture = "tools/toolsskybox";
+							texture = "tools/toolsclip";
 						}
 						else
 						{
-							if (texture.ToUpper().Equals("special/trigger".ToUpper()))
+							if (texture.ToUpper().Equals("special/sky".ToUpper()))
 							{
-								texture = "tools/toolstrigger";
+								texture = "tools/toolsskybox";
 							}
 							else
 							{
-								if (texture.ToUpper().Equals("special/playerclip".ToUpper()))
+								if (texture.ToUpper().Equals("special/trigger".ToUpper()))
 								{
-									texture = "tools/toolsplayerclip";
+									texture = "tools/toolstrigger";
 								}
 								else
 								{
-									if (texture.ToUpper().Equals("special/npcclip".ToUpper()) || texture.ToUpper().Equals("special/enemyclip".ToUpper()))
+									if (texture.ToUpper().Equals("special/playerclip".ToUpper()))
 									{
-										texture = "tools/toolsnpcclip";
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-			else
-			{
-				if (BSPVersion == mapType.TYPE_QUAKE2)
-				{
-					try
-					{
-						if (texture.ToUpper().Equals("special/hint".ToUpper()))
-						{
-							texture = "tools/toolshint";
-						}
-						else
-						{
-							if (texture.ToUpper().Equals("special/skip".ToUpper()))
-							{
-								texture = "tools/toolsskip";
-							}
-							else
-							{
-								if (texture.ToUpper().Equals("special/sky".ToUpper()))
-								{
-									texture = "tools/toolsskybox";
-								}
-								else
-								{
-									if (texture.Substring(texture.Length - 8).ToUpper().Equals("/trigger".ToUpper()))
-									{
-										texture = "tools/toolstrigger";
+										texture = "tools/toolsplayerclip";
 									}
 									else
 									{
-										if (texture.Substring(texture.Length - 5).ToUpper().Equals("/clip".ToUpper()))
+										if (texture.ToUpper().Equals("special/npcclip".ToUpper()) || texture.ToUpper().Equals("special/enemyclip".ToUpper()))
 										{
-											texture = "tools/toolsclip";
+											texture = "tools/toolsnpcclip";
 										}
 									}
 								}
 							}
 						}
 					}
-					catch (System.ArgumentOutOfRangeException e)
-					{
-						;
-					}
 				}
 				else
 				{
-					if (BSPVersion == mapType.TYPE_SOURCE17 || BSPVersion == mapType.TYPE_SOURCE18 || BSPVersion == mapType.TYPE_SOURCE19 || BSPVersion == mapType.TYPE_SOURCE20 || BSPVersion == mapType.TYPE_SOURCE21 || BSPVersion == mapType.TYPE_SOURCE22 || BSPVersion == mapType.TYPE_SOURCE23 || BSPVersion == mapType.TYPE_DMOMAM || BSPVersion == mapType.TYPE_VINDICTUS || BSPVersion == mapType.TYPE_TACTICALINTERVENTION)
+					if (BSPVersion == mapType.TYPE_QUAKE2)
 					{
 						try
 						{
-							if (texture.Substring(0, (5) - (0)).ToUpper().Equals("maps/".ToUpper()))
+							if (texture.ToUpper().Equals("special/hint".ToUpper()))
 							{
-								texture = texture.Substring(5);
-								for (int i = 0; i < texture.Length; i++)
-								{
-									if (texture[i] == '/')
-									{
-										texture = texture.Substring(i + 1);
-										break;
-									}
-								}
-							}
-						}
-						catch (System.ArgumentOutOfRangeException)
-						{
-							;
-						}
-						// Find cubemap textures
-						int numUnderscores = 0;
-						bool validnumber = false;
-						for (int i = texture.Length - 1; i > 0; i--)
-						{
-							if (texture[i] <= '9' && texture[i] >= '0')
-							{
-								// Current is a number, start building string
-								validnumber = true;
+								texture = "tools/toolshint";
 							}
 							else
 							{
-								if (texture[i] == '-')
+								if (texture.ToUpper().Equals("special/skip".ToUpper()))
 								{
-									// Current is a minus sign (-).
-									if (!validnumber)
-									{
-										break; // Make sure there's a number to add the minus sign to. If not, kill the loop.
-									}
+									texture = "tools/toolsskip";
 								}
 								else
 								{
-									if (texture[i] == '_')
+									if (texture.ToUpper().Equals("special/sky".ToUpper()))
 									{
-										// Current is an underscore (_)
-										if (validnumber)
+										texture = "tools/toolsskybox";
+									}
+									else
+									{
+										if (texture.Substring(texture.Length - 8).ToUpper().Equals("/trigger".ToUpper()))
 										{
-											// Make sure there is a number in the current string
-											numUnderscores++; // before moving on to the next one.
-											validnumber = false;
-											if (numUnderscores == 3)
+											texture = "tools/toolstrigger";
+										}
+										else
+										{
+											if (texture.Substring(texture.Length - 5).ToUpper().Equals("/clip".ToUpper()))
 											{
-												// If we've got all our numbers
-												texture = texture.Substring(0, (i) - (0)); // Cut the texture string
-												break; // Kill the loop, we're done
+												texture = "tools/toolsclip";
+											}
+										}
+									}
+								}
+							}
+						}
+						catch (System.ArgumentOutOfRangeException e)
+						{
+							;
+						}
+					}
+					else
+					{
+						if (BSPVersion == mapType.TYPE_SOURCE17 || BSPVersion == mapType.TYPE_SOURCE18 || BSPVersion == mapType.TYPE_SOURCE19 || BSPVersion == mapType.TYPE_SOURCE20 || BSPVersion == mapType.TYPE_SOURCE21 || BSPVersion == mapType.TYPE_SOURCE22 || BSPVersion == mapType.TYPE_SOURCE23 || BSPVersion == mapType.TYPE_DMOMAM || BSPVersion == mapType.TYPE_VINDICTUS || BSPVersion == mapType.TYPE_TACTICALINTERVENTION)
+						{
+							try
+							{
+								if (texture.Substring(0, (5) - (0)).ToUpper().Equals("maps/".ToUpper()))
+								{
+									texture = texture.Substring(5);
+									for (int i = 0; i < texture.Length; i++)
+									{
+										if (texture[i] == '/')
+										{
+											texture = texture.Substring(i + 1);
+											break;
+										}
+									}
+								}
+							}
+							catch (System.ArgumentOutOfRangeException)
+							{
+								;
+							}
+							// Find cubemap textures
+							int numUnderscores = 0;
+							bool validnumber = false;
+							for (int i = texture.Length - 1; i > 0; i--)
+							{
+								if (texture[i] <= '9' && texture[i] >= '0')
+								{
+									// Current is a number, start building string
+									validnumber = true;
+								}
+								else
+								{
+									if (texture[i] == '-')
+									{
+										// Current is a minus sign (-).
+										if (!validnumber)
+										{
+											break; // Make sure there's a number to add the minus sign to. If not, kill the loop.
+										}
+									}
+									else
+									{
+										if (texture[i] == '_')
+										{
+											// Current is an underscore (_)
+											if (validnumber)
+											{
+												// Make sure there is a number in the current string
+												numUnderscores++; // before moving on to the next one.
+												validnumber = false;
+												if (numUnderscores == 3)
+												{
+													// If we've got all our numbers
+													texture = texture.Substring(0, (i) - (0)); // Cut the texture string
+													break; // Kill the loop, we're done
+												}
+											}
+											else
+											{
+												// No number after the underscore
+												break;
 											}
 										}
 										else
 										{
-											// No number after the underscore
+											// Not an acceptable character
 											break;
 										}
-									}
-									else
-									{
-										// Not an acceptable character
-										break;
 									}
 								}
 							}

@@ -47,6 +47,9 @@ public class BSP38Decompiler {
 		//int numAreaPortals=0;
 		int numTotalItems = 0;
 		int onePercent = (int)((BSPObject.Brushes.Count + BSPObject.Entities.Count)/100);
+		if(onePercent < 1) {
+			onePercent = 1;
+		}
 		bool containsAreaPortals = false;
 		for (int i = 0; i < BSPObject.Entities.Count; i++)
 		{

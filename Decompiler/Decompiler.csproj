@@ -115,6 +115,7 @@
     <Compile Include="MAPBrushSide.cs" />
     <Compile Include="MAPDisplacement.cs" />
     <Compile Include="MAPMaker.cs" />
+    <Compile Include="MAPPatch.cs" />
     <Compile Include="Model.cs" />
     <Compile Include="MOHRadiantMAPWriter.cs" />
     <Compile Include="Node.cs" />
