@@ -50,6 +50,8 @@ public class DNode:LumpObject {
 	this.RChild=RChild;
 	this.LChild=LChild;
 	}*/
+
+	public DNode():base(new byte[0]) { }
 	
 	// This constructor takes in a byte array, as though
 	// it had just been read by a FileInputStream.

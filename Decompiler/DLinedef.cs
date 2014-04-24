@@ -19,6 +19,8 @@ public class DLinedef:LumpObject {
 	
 	// CONSTRUCTORS
 	
+	public DLinedef():base(new byte[0]) { }
+
 	public DLinedef(byte[] data, mapType type):base(data) {
 		start = DataReader.readShort(data[0], data[1]);
 		end = DataReader.readShort(data[2], data[3]);

@@ -9,6 +9,9 @@ public class SourceCubemap:LumpObject {
 	private int size;
 	
 	// CONSTRUCTORS
+
+	public SourceCubemap():base(new byte[0]) { }
+
 	public SourceCubemap(LumpObject data, mapType type):base(data.Data) {
 		new SourceCubemap(data.Data, type);
 	}

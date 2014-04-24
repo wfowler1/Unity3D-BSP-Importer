@@ -22,6 +22,8 @@ public class DThing:LumpObject {
 	
 	// CONSTRUCTORS
 	
+	public DThing():base(new byte[0]) { }
+
 	public DThing(byte[] data, mapType type):base(data) {
 		switch (type) {
 			case mapType.TYPE_DOOM: 

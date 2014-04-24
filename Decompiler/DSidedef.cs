@@ -23,6 +23,8 @@ public class DSidedef:LumpObject {
 	public const int Y = 1;
 	
 	// CONSTRUCTORS
+
+	public DSidedef():base(new byte[0]) { }
 	
 	public DSidedef(byte[] data):base(data) {
 		offsets = new short[2];

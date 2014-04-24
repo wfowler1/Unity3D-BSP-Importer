@@ -27,6 +27,9 @@ public class Model:LumpObject {
 	private int numFaces = - 1;
 	
 	// CONSTRUCTORS
+
+	public Model():base(new byte[0]) { }
+
 	public Model(LumpObject data, mapType type):base(data.Data) {
 		new Model(data.Data, type);
 	}

@@ -10,6 +10,9 @@ public class Node:LumpObject {
 	private int child2 = 0; // since that would reference the head node causing an infinite loop.
 	
 	// CONSTRUCTORS
+
+	public Node():base(new byte[0]) { }
+
 	public Node(LumpObject data, mapType type):base(data.Data) {
 		new Node(data.Data, type);
 	}

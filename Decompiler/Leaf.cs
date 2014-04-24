@@ -15,6 +15,9 @@ public class Leaf:LumpObject {
 	private int numMarkFaces=-1;
 	
 	// CONSTRUCTORS
+
+	public Leaf():base(new byte[0]) { }
+
 	public Leaf(LumpObject data, mapType type):base(data.Data) {
 		new Leaf(data.Data, type);
 	}

@@ -4,8 +4,7 @@ using System;
 // Some BSP formats lack this lump (or it is contained in a different one)
 // so their cases will be left out.
 
-public class TexInfo:LumpObject
-{
+public class TexInfo:LumpObject {
 	
 	// INITIAL DATA DECLARATION AND DEFINITION OF CONSTANTS
 	public const int S = 0;
@@ -18,6 +17,8 @@ public class TexInfo:LumpObject
 	private int texture = - 1;
 	
 	// CONSTRUCTORS
+	public TexInfo():base(new byte[0]) { }
+
 	public TexInfo(LumpObject data, mapType type):base(data.Data) {
 		new TexInfo(data.Data, type);
 	}

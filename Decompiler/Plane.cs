@@ -11,6 +11,8 @@ public class Plane:LumpObject, IEquatable<Plane> {
 	private double dist = System.Double.NaN;
 	
 	// CONSTRUCTORS
+
+	public Plane():base(new byte[0]) { }
 	
 	// This one takes the components separate and in the correct data type
 	public Plane(float inA, float inB, float inC, float inDist):this((double)inA, (double)inB, (double)inC, (double)inDist) {

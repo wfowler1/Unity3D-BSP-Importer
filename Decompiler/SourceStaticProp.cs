@@ -20,6 +20,8 @@ public class SourceStaticProp:LumpObject {
 	internal string targetname = null;
 	
 	// CONSTRUCTORS
+	public SourceStaticProp():base(new byte[0]) { }
+
 	public SourceStaticProp(LumpObject data, mapType type, int version):base(data.Data) {
 		new SourceStaticProp(data.Data, type, version);
 	}

@@ -35,6 +35,8 @@ public class Face:LumpObject {
 	private faceType facetype = faceType.UNDEFINED;
 	
 	// CONSTRUCTORS
+
+	public Face():base(new byte[0]) { }
 	
 	public Face(LumpObject data, mapType type):base(data.Data) {
 		new Face(data.Data, type);

@@ -15,6 +15,8 @@ public class SourceTexData:LumpObject {
 	private int view_height;
 	
 	// CONSTRUCTORS
+
+	public SourceTexData():base(new byte[0]) { }
 	
 	// Takes everything exactly as it is stored
 	public SourceTexData(Vector3D reflectivity, int stringTableIndex, int width, int height, int view_width, int view_height):base(new byte[0])

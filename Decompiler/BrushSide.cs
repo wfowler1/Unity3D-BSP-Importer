@@ -13,8 +13,10 @@ public class BrushSide:LumpObject {
 	private sbyte bevel = - 1;
 	
 	// CONSTRUCTORS
-	public BrushSide(LumpObject bobSaget, mapType type):base(bobSaget.Data) {
-		new BrushSide(bobSaget.Data, type);
+	public BrushSide():base(new byte[0]) { }
+
+	public BrushSide(LumpObject copy, mapType type):base(copy.Data) {
+		new BrushSide(copy.Data, type);
 	}
 	
 	public BrushSide(byte[] data, mapType type):base(data) {

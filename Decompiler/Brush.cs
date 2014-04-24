@@ -12,6 +12,8 @@ public class Brush:LumpObject {
 	private byte[] contents;
 	
 	// CONSTRUCTORS
+	public Brush():base(new byte[0]) { }
+
 	public Brush(LumpObject oldObject, mapType type):base(oldObject.Data) {
 		new Brush(oldObject.Data, type);
 	}

@@ -31,6 +31,8 @@ public class DSector:LumpObject {
 	this.tag=tag;
 	}*/
 	
+	public DSector():base(new byte[0]) { }
+
 	public DSector(byte[] data):base(data) {
 		floor = DataReader.readShort(data[0], data[1]);
 		cieling = DataReader.readShort(data[2], data[3]);

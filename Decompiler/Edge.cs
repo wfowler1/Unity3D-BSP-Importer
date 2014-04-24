@@ -14,6 +14,8 @@ public class Edge:LumpObject {
 	// CONSTRUCTORS
 	
 	// This constructor takes all data in their proper data types
+	public Edge():base(new byte[0]) { }
+
 	public Edge(short inFirstVertex, short inSecondVertex):base(new byte[0]) {
 		firstVertex = (int) inFirstVertex;
 		secondVertex = (int) inSecondVertex;

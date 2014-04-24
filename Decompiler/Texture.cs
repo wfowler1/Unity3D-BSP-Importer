@@ -19,6 +19,8 @@ public class Texture:LumpObject {
 	private TexInfo texAxes;
 	
 	// CONSTRUCTORS
+	public Texture():base(new byte[0]) { }
+
 	public Texture(string texture):base(Convert.FromBase64String(texture)) {
 		this.name = texture;
 	}

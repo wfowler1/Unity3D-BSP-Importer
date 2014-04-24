@@ -15,6 +15,8 @@ public class SourceDispVertex:LumpObject {
 	
 	// CONSTRUCTORS
 	
+	public SourceDispVertex():base(new byte[0]) { }
+
 	// This constructor takes 20 bytes in a byte array, as though
 	// it had just been read by a FileInputStream.
 	public SourceDispVertex(byte[] data):base(data) {

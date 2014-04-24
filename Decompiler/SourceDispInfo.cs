@@ -15,6 +15,8 @@ public class SourceDispInfo:LumpObject {
 	private uint[] allowedVerts;
 	
 	// CONSTRUCTORS
+
+	public SourceDispInfo():base(new byte[0]) { }
 	
 	// This constructor takes bytes in a byte array, as though
 	// it had just been read by a FileInputStream.

@@ -510,7 +510,11 @@ public class Entity:LumpObject {
 					if(attributes.ContainsKey("model")) {
 						string st = attributes["model"];
 						if(st[0]=='*') {
-							return System.Int32.Parse(attributes["model"].Substring(1));
+							try {
+								return System.Int32.Parse(st.Substring(1));
+							} catch(System.FormatException) {
+								return -1;
+							}
 						} else {
 							return -1;
 						}

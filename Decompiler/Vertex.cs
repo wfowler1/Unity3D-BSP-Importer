@@ -5,14 +5,14 @@ using System;
 public class Vertex:LumpObject {
 	
 	// INITIAL DATA DECLARATION AND DEFINITION OF CONSTANTS
-	public const int X = 0;
-	public const int Y = 1;
-	public const int Z = 2;
 	
 	private Vector3D vertex;
 	private float[] texCoord = new float[] { System.Single.NaN, System.Single.NaN };
 	
 	// CONSTRUCTORS
+
+	public Vertex():base(new byte[0]) { }
+
 	public Vertex(Vector3D vertex):base(new byte[0]) {
 		this.vertex = vertex;
 	}
@@ -40,8 +40,8 @@ public class Vertex:LumpObject {
 			case mapType.TYPE_QUAKE3: 
 			case mapType.TYPE_COD: 
 			case mapType.TYPE_FAKK: 
-				texCoord[X] = DataReader.readFloat(data[12], data[13], data[14], data[15]);
-				texCoord[Y] = DataReader.readFloat(data[16], data[17], data[18], data[19]);
+				texCoord[0] = DataReader.readFloat(data[12], data[13], data[14], data[15]);
+				texCoord[1] = DataReader.readFloat(data[16], data[17], data[18], data[19]);
 				goto case mapType.TYPE_QUAKE;
 			case mapType.TYPE_QUAKE: 
 			case mapType.TYPE_NIGHTFIRE: 
@@ -127,12 +127,12 @@ public class Vertex:LumpObject {
 	// ACCESSORS/MUTATORS
 	public virtual float TexCoordX {
 		get {
-			return texCoord[X];
+			return texCoord[0];
 		}
 	}
 	public virtual float TexCoordY {
 		get {
-			return texCoord[Y];
+			return texCoord[1];
 		}
 	}
 	public virtual Vector3D Vector {
@@ -140,4 +140,9 @@ public class Vertex:LumpObject {
 			return vertex;
 		}
 	}
+
+	public double X { get { return vertex.X; } set { vertex.X = value; } }
+	public double Y { get { return vertex.Y; } set { vertex.Y = value; } }
+	public double Z { get { return vertex.Z; } set { vertex.Z = value; } }
+	public double this[int index] { get { return vertex[index]; } set { vertex[index]=value; } }
 }

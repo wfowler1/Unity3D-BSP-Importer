@@ -11,6 +11,10 @@ public class LumpObject {
 	public LumpObject(byte[] data) {
 		this.data = data;
 	}
+
+	public LumpObject() {
+		this.data = new byte[0];
+	}
 	
 	// METHODS
 	

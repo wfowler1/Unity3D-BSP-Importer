@@ -26,6 +26,8 @@ public class DSegment:LumpObject {
 	this.direction=direction;
 	this.offset=offset;
 	}*/
+
+	public DSegment():base(new byte[0]) { }
 	
 	// This one takes an array of bytes (as if read directly from a file) and reads them
 	// directly into the proper data types.
