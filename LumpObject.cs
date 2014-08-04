@@ -45,8 +45,26 @@ public class LumpObject:IEquatable<LumpObject> {
 		return true;
 	}
 
+	public override bool Equals(object o2) {
+		return Equals(o2 as LumpObject);
+	}
+	
 	public bool Equals(LumpObject o2) {
-		return this==o2;
+		return this == o2;
+	}
+	
+	public override int GetHashCode() {
+		if(data != null) {
+			unchecked {
+				int res = data.Length * 31337;
+				for(int i=0;i<data.Length;i++) {
+					res ^= (data[i] << ((i % 4) * 8));
+				}
+				return res;
+			}
+		} else {
+			return 0;
+		}
 	}
 	
 	// ACCESSORS/MUTATORS

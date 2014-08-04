@@ -22,7 +22,7 @@ public class DoomMap {
 	private Lump<DThing> things;
 	private Lump<DLinedef> linedefs;
 	private Lump<DSidedef> sidedefs;
-	private Lump<Vertex> vertices;
+	private Lump<UIVertex> vertices;
 	private Lump<DSegment> segs;
 	private Lump<Edge> subsectors;
 	private Lump<DNode> nodes;
@@ -147,7 +147,7 @@ public class DoomMap {
 		}
 	}
 
-	virtual public Lump<Vertex> Vertices {
+	virtual public Lump<UIVertex> Vertices {
 		set {
 			vertices = value;
 		}

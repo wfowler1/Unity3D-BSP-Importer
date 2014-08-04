@@ -9,7 +9,7 @@ using System.Collections.Generic;
 // For example, Nightfire's texture lump only contains 64-byte null-padded strings, but
 // Quake 2's has texture scaling included, which is lump 17 in Nightfire.
 
-public class Texture:LumpObject {
+public class Texturedef:LumpObject {
 
 	// INITIAL DATA DECLARATION AND DEFINITION OF CONSTANTS
 	private string name;
@@ -19,15 +19,15 @@ public class Texture:LumpObject {
 	private TexInfo texAxes;
 	
 	// CONSTRUCTORS
-	public Texture(string texture):base(Convert.FromBase64String(texture)) {
+	public Texturedef(string texture):base(Convert.FromBase64String(texture)) {
 		this.name = texture;
 	}
 	
-	public Texture(LumpObject data, mapType type):base(data.Data) {
-		new Texture(data.Data, type);
+	public Texturedef(LumpObject data, mapType type):base(data.Data) {
+		new Texturedef(data.Data, type);
 	}
 	
-	public Texture(byte[] data, mapType type):base(data) {
+	public Texturedef(byte[] data, mapType type):base(data) {
 		switch (type) {
 			case mapType.TYPE_NIGHTFIRE: 
 				name = DataReader.readNullTerminatedString(new byte[]{data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8], data[9], data[10], data[11], data[12], data[13], data[14], data[15], data[16], data[17], data[18], data[19], data[20], data[21], data[22], data[23], data[24], data[25], data[26], data[27], data[28], data[29], data[30], data[31], data[32], data[33], data[34], data[35], data[36], data[37], data[38], data[39], data[40], data[41], data[42], data[43], data[44], data[45], data[46], data[47], data[48], data[49], data[50], data[51], data[52], data[53], data[54], data[55], data[56], data[57], data[58], data[59], data[60], data[61], data[62], data[63]});
@@ -79,7 +79,7 @@ public class Texture:LumpObject {
 	}
 	
 	// METHODS
-	public static Textures createLump(byte[] data, mapType type) {
+	public static Texturedefs createLump(byte[] data, mapType type) {
 		int numElements = -1; // For Quake and Source, which use nonconstant struct lengths
 		int[] offsets = new int[0]; // For Quake, which stores offsets to each texture definition structure, which IS a constant length
 		int structLength = 0;
@@ -135,21 +135,21 @@ public class Texture:LumpObject {
 				structLength = 40;
 				break;
 		}
-		Textures lump;
+		Texturedefs lump;
 		if (numElements == - 1) {
 			int offset = 0;
 			//elements = new Texture[data.Length / structLength];
-			lump = new Textures(new List<Texture>(data.Length / structLength), data.Length, structLength);
+			lump = new Texturedefs(new List<Texturedef>(data.Length / structLength), data.Length, structLength);
 			byte[] bytes = new byte[structLength];
 			for (int i = 0; i < data.Length / structLength; i++) {
 				for (int j = 0; j < structLength; j++) {
 					bytes[j] = data[offset + j];
 				}
-				lump.Add(new Texture(bytes, type));
+				lump.Add(new Texturedef(bytes, type));
 				offset += structLength;
 			}
 		} else {
-			lump = new Textures(new List<Texture>(numElements), data.Length, structLength);
+			lump = new Texturedefs(new List<Texturedef>(numElements), data.Length, structLength);
 			if (offsets.Length != 0) {
 				// Quake/GoldSrc
 				for (int i = 0; i < numElements; i++) {
@@ -158,7 +158,7 @@ public class Texture:LumpObject {
 					for (int j = 0; j < structLength; j++) {
 						bytes[j] = data[offset + j];
 					}
-					lump.Add(new Texture(bytes, type));
+					lump.Add(new Texturedef(bytes, type));
 					offset += structLength;
 				}
 			} else {
@@ -169,7 +169,7 @@ public class Texture:LumpObject {
 				for (int i = 0; i < data.Length; i++) {
 					if (data[i] == (byte) 0x00) {
 						// They are null-terminated strings, of non-constant length (not padded)
-						lump.Add(new Texture(bytes, type));
+						lump.Add(new Texturedef(bytes, type));
 						bytes = new byte[0];
 						current++;
 					} else {

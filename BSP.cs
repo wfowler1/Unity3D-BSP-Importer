@@ -54,8 +54,8 @@ public class BSP {
 	// Quake 1/GoldSrc
 	private Entities entities;
 	private Lump<Plane> planes;
-	private Textures textures;
-	private Lump<Vertex> vertices;
+	private Texturedefs textures;
+	private Lump<UIVertex> vertices;
 	private Lump<Node> nodes;
 	private Lump<TexInfo> texInfo;
 	private Lump<Face> faces;
@@ -72,7 +72,7 @@ public class BSP {
 	// MOHAA
 	//private MoHAAStaticProps staticProps;
 	// Nightfire
-	private Textures materials;
+	private Texturedefs materials;
 	private NumList indices;
 	private Lump<LumpObject> normals;
 	// Source
@@ -380,7 +380,7 @@ public class BSP {
 		}
 	}
 
-	public virtual Lump<Vertex> Vertices {
+	public virtual Lump<UIVertex> Vertices {
 		set {
 			vertices = value;
 		}
@@ -497,7 +497,7 @@ public class BSP {
 		}
 	}
 
-	public virtual Textures Textures {
+	public virtual Texturedefs Textures {
 		set {
 			textures = value;
 		}
@@ -506,7 +506,7 @@ public class BSP {
 		}
 	}
 
-	public virtual Textures Materials {
+	public virtual Texturedefs Materials {
 		set {
 			materials = value;
 		}

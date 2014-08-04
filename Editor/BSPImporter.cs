@@ -8,7 +8,7 @@ using System.Linq;
 public class BSPImporter : EditorWindow {
 	private string path = "path";
 	private string doomMapName = "map name (Doom only)";
-	private string texturePath = "Textures/Resources";
+	private string texturePath = "Textures/";
 	private bool loadIntoScene = true;
 	private bool saveAsPrefab = true;
 	private bool combineMeshes = true;
@@ -32,7 +32,7 @@ public class BSPImporter : EditorWindow {
 		EditorGUILayout.BeginVertical(); {
 			path = EditorGUILayout.TextField(new GUIContent("Path", "Path to the BSP, starting from Assets"), path);
 			doomMapName = EditorGUILayout.TextField(new GUIContent("Map", "Map name within a WAD, for Doom/Doom2/Heretic/Hexen only"), doomMapName);
-			texturePath = EditorGUILayout.TextField(new GUIContent("Texture path", "Path to textures, starting from Assets. MUST be in a Resources folder."), texturePath);
+			texturePath = EditorGUILayout.TextField(new GUIContent("Texture path", "Path to textures, starting from Assets."), texturePath);
 			loadIntoScene = EditorGUILayout.Toggle(new GUIContent("Load into scene", "Load the BSP directly into the current scene"), loadIntoScene);
 			saveAsPrefab = EditorGUILayout.Toggle(new GUIContent("Save as prefab", "Save the BSP as a prefab"), saveAsPrefab);
 			combineMeshes = EditorGUILayout.Toggle(new GUIContent("Combine Meshes", "Disable this if you get a \"count <= std::numeric_limits<UInt16>::max()\" error"), combineMeshes);
@@ -43,16 +43,13 @@ public class BSPImporter : EditorWindow {
 	}
 	
 	public void ReadBSP(string path) {
-		if(File.Exists(Application.dataPath + "/" + path)) {
-			if(!texturePath.Contains("Resources")) {
-				Debug.LogWarning("WARNING: Texture path does not contain a Resources folder! Won't be able to load any textures!");
-			}
-			BSPReader reader = new BSPReader(Application.dataPath + "/" + path, mapType.TYPE_UNDEFINED);
+		if(File.Exists(path)) {
+			BSPReader reader = new BSPReader(path, mapType.TYPE_UNDEFINED);
 			reader.readBSP();
 			BSP bspObject = reader.BSPData;
 			LoadBSP42(bspObject);
 		} else {
-			Debug.LogError("File "+ Application.dataPath + "/" + path +" not found!");
+			Debug.LogError("File "+ path +" not found!");
 		}
 	}
 	
@@ -63,26 +60,24 @@ public class BSPImporter : EditorWindow {
 		//Shader transparent = Shader.Find("Transparent/Cutout/Diffuse");
 		GameObject bspGameObject = new GameObject(bspObject.MapNameNoExtension);
 		
-		foreach(Texture texture in bspObject.Textures) {
+		foreach(Texturedef texture in bspObject.Textures) {
 			string globalTexturePath = Application.dataPath+"/"+texturePath+"/"+texture.Name+".png";
 			if(!File.Exists(globalTexturePath)) {
 				Debug.Log(globalTexturePath+" does not exist!");
 			}
-			string resourcesPath = globalTexturePath.Substring(globalTexturePath.IndexOf("Resources")+9);
-			if(resourcesPath[0] == '/' || resourcesPath[0] == '\\') {
-				resourcesPath = resourcesPath.Substring(1);
-			}
-			textureDict[texture.Name] = Resources.Load(resourcesPath.Substring(0,resourcesPath.Length-4), typeof(Texture2D)) as Texture2D;
+			textureDict[texture.Name] = AssetDatabase.LoadAssetAtPath("Assets/"+texturePath+"/"+texture.Name+".png", typeof(Texture2D)) as Texture2D;
 			if(textureDict[texture.Name] == null) {
 				Debug.LogWarning("Texture "+texture.Name + " not found! Texture scaling will probably be wrong if imported later.");
 			}
 			materialDict[texture.Name] = new Material(def);
 			materialDict[texture.Name].mainTexture = textureDict[texture.Name];
-			Directory.CreateDirectory(Application.dataPath+"/Materials/Resources/nightfire/"+texture.Name.Substring(0,texture.Name.IndexOf('/')));
-			if(!File.Exists(Application.dataPath+"/Materials/Resources/nightfire/"+texture.Name+".mat")) {
-				AssetDatabase.CreateAsset(materialDict[texture.Name], "Assets/Materials/Resources/nightfire/"+texture.Name+".mat");
+			Directory.CreateDirectory(Application.dataPath+"/Materials/"+texturePath+"/"+texture.Name.Substring(0, texture.Name.LastIndexOf('/')));
+			if(!File.Exists(Application.dataPath+"/Materials/"+texturePath+"/"+texture.Name+".mat")) {
+				AssetDatabase.CreateAsset(materialDict[texture.Name], "Assets/Materials/"+texturePath+"/"+texture.Name+".mat");
 			}
 		}
+
+		AssetDatabase.Refresh();
 		
 		foreach(Entity entity in bspObject.Entities) {
 			GameObject entityGameObject;
@@ -144,7 +139,7 @@ public class BSPImporter : EditorWindow {
 									Matrix4x4 texmatinverse = texmatrix.inverse;
 									Vector2 originShifts = new Vector2(Vector3.Dot(entity.Origin, texinfo.SAxis.normalized) * texinfo.SAxis.magnitude, Vector3.Dot(entity.Origin, texinfo.TAxis.normalized) * texinfo.TAxis.magnitude);
 									for(int l=0;l<vertices.Length;l++) {
-										vertices[l] = SwapYZ(bspObject.Vertices[face.FirstVertex + l].Vector * 0.0254f) + origin;
+										vertices[l] = SwapYZ(bspObject.Vertices[face.FirstVertex + l].position * 0.0254f) + origin;
 										Vector3 textureCoord = texmatinverse.MultiplyPoint3x4(vertices[l]);
 										if(textureDict[bspObject.Textures[face.Texture].Name] != null) {
 											uvs[l] = new Vector2((sAxis.sqrMagnitude*textureCoord[0]+texinfo.SShift-originShifts[0])/textureDict[bspObject.Textures[face.Texture].Name].width, -(tAxis.sqrMagnitude*textureCoord[1]+texinfo.TShift-originShifts[1])/textureDict[bspObject.Textures[face.Texture].Name].height);
@@ -160,7 +155,7 @@ public class BSPImporter : EditorWindow {
 									}
 									mesh.triangles = triangles;
 									mesh.RecalculateNormals();
-									renderer.sharedMaterial = Resources.Load("nightfire/"+bspObject.Textures[face.Texture].Name, typeof(Material)) as Material;
+									renderer.sharedMaterial = AssetDatabase.LoadAssetAtPath("Assets/Materials/"+texturePath+"/"+bspObject.Textures[face.Texture].Name+".mat", typeof(Material)) as Material;
 									//renderer.sharedMaterial = materialDict[bspObject.Textures[face.Texture].Name];
 									if(!facemeshfilters.ContainsKey(bspObject.Textures[face.Texture].Name)) {
 										facemeshfilters[bspObject.Textures[face.Texture].Name] = new List<MeshFilter>();
@@ -175,7 +170,7 @@ public class BSPImporter : EditorWindow {
 				List<string> meshFilterTextureNames = new List<string>();
 				// Combine faces using the same texture into a single mesh.
 				// This saves tens of thousands of draw calls.
-				foreach(Texture texture in bspObject.Textures) {
+				foreach(Texturedef texture in bspObject.Textures) {
 					if(facemeshfilters.ContainsKey(texture.Name)) {
 						if(facemeshfilters[texture.Name].Count > 0) {
 							MeshFilter[] meshFilters = Enumerable.ToArray(facemeshfilters[texture.Name]);
@@ -194,7 +189,7 @@ public class BSPImporter : EditorWindow {
 							filter.sharedMesh = modelmesh;
 							meshFilterTextureNames.Add(texture.Name);
 							if(!combineMeshes) {
-								meshGameObject.renderer.material = Resources.Load("nightfire/"+texture.Name, typeof(Material)) as Material;
+								meshGameObject.renderer.material = AssetDatabase.LoadAssetAtPath("Assets/Materials/"+texturePath+"/"+texture.Name+".mat", typeof(Material)) as Material;
 								modelmesh.Optimize();
 								if(entity["classname"] == "worldspawn" || entity["classname"] == "func_wall") {
 									meshGameObject.AddComponent<MeshCollider>();
@@ -224,7 +219,7 @@ public class BSPImporter : EditorWindow {
 						for(int l=0;l<meshFilters.Length;l++) {
 							combine[l].mesh = meshFilters[l].sharedMesh;
 							combine[l].transform = meshFilters[l].transform.localToWorldMatrix;
-							materials[l] = Resources.Load("nightfire/"+meshFilterTextureNames[l], typeof(Material)) as Material;
+							materials[l] = AssetDatabase.LoadAssetAtPath("Assets/Materials/"+texturePath+"/"+meshFilterTextureNames[l]+".mat", typeof(Material)) as Material;
 							GameObject.DestroyImmediate(meshFilters[l].gameObject);
 						}
 						Mesh bmodelmesh = new Mesh();
@@ -237,7 +232,7 @@ public class BSPImporter : EditorWindow {
 						bmodelMeshFilters[0].gameObject.transform.parent = bspGameObject.transform;
 						GameObject.DestroyImmediate(entityGameObject);
 						entityGameObject = bmodelMeshFilters[0].gameObject;
-						entityGameObject.renderer.sharedMaterial = Resources.Load("nightfire/"+meshFilterTextureNames[0], typeof(Material)) as Material;
+						entityGameObject.renderer.sharedMaterial = AssetDatabase.LoadAssetAtPath("Assets/Materials/"+texturePath+"/"+meshFilterTextureNames[0]+".mat", typeof(Material)) as Material;
 						filter = entityGameObject.GetComponent<MeshFilter>();
 					}
 					if(entity["classname"] == "worldspawn" || entity["classname"] == "func_wall") {

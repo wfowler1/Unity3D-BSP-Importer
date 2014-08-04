@@ -5,16 +5,16 @@ using System.Collections.Generic;
 // Extends LumpObject with some useful methods for manipulating Texture objects,
 // especially when handling them as a group.
 
-public class Textures:Lump<Texture> {
+public class Texturedefs:Lump<Texturedef> {
 	// INITIAL DATA DECLARATION AND DEFINITION OF CONSTANTS
 		
 	// CONSTRUCTORS
 	
-	public Textures(List<Texture> elements, int length, int structLength):base(elements, length, structLength) {
+	public Texturedefs(List<Texturedef> elements, int length, int structLength):base(elements, length, structLength) {
 	}
 	
 	// METHODS
-	[Obsolete("Textures.printTextures() is for debug purposes only!")]
+	[Obsolete("Texturedefs.printTextures() is for debug purposes only!")]
 	public virtual void printTextures() {
 		// FOR DEBUG PURPOSES ONLY
 		for (int i = 0; i < Count; i++) {

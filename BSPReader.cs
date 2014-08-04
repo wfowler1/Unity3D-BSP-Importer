@@ -119,7 +119,7 @@ public class BSPReader {
 									break;
 								case 3:
 									theLump = readLumpNum(i);
-									BSPObject.Vertices = Vertex.createLump(theLump, version);
+									BSPObject.Vertices = createVertexLump(theLump, version);
 									break;
 								case 5:
 									theLump = readLumpNum(i);
@@ -186,7 +186,7 @@ public class BSPReader {
 									break;
 								case 43:
 									theLump = readLumpNum(i);
-									BSPObject.Textures = Texture.createLump(theLump, version);
+									BSPObject.Textures = Texturedef.createLump(theLump, version);
 									break;
 								case 44:
 									theLump = readLumpNum(i);
@@ -217,15 +217,15 @@ public class BSPReader {
 									break;
 								case 2:
 									theLump = readLumpNum(i);
-									BSPObject.Textures = Texture.createLump(theLump, version);
+									BSPObject.Textures = Texturedef.createLump(theLump, version);
 									break;
 								case 3:
 									theLump = readLumpNum(i);
-									BSPObject.Materials = Texture.createLump(theLump, version);
+									BSPObject.Materials = Texturedef.createLump(theLump, version);
 									break;
 								case 4:
 									theLump = readLumpNum(i);
-									BSPObject.Vertices = Vertex.createLump(theLump, version);
+									BSPObject.Vertices = createVertexLump(theLump, version);
 									break;
 								case 6:
 									theLump = readLumpNum(i);
@@ -283,7 +283,7 @@ public class BSPReader {
 									break;
 								case 2:
 									theLump = readLumpNum(i);
-									BSPObject.Vertices = Vertex.createLump(theLump, version);
+									BSPObject.Vertices = createVertexLump(theLump, version);
 									break;
 								case 4:
 									theLump = readLumpNum(i);
@@ -291,7 +291,7 @@ public class BSPReader {
 									break;
 								case 5:
 									theLump = readLumpNum(i);
-									BSPObject.Textures = Texture.createLump(theLump, version);
+									BSPObject.Textures = Texturedef.createLump(theLump, version);
 									break;
 								case 6:
 									theLump = readLumpNum(i);
@@ -350,11 +350,11 @@ public class BSPReader {
 									break;
 								case 2:
 									theLump = readLumpNum(i);
-									BSPObject.Textures = Texture.createLump(theLump, version);
+									BSPObject.Textures = Texturedef.createLump(theLump, version);
 									break;
 								case 3:
 									theLump = readLumpNum(i);
-									BSPObject.Vertices = Vertex.createLump(theLump, version);
+									BSPObject.Vertices = createVertexLump(theLump, version);
 									break;
 								case 5:
 									theLump = readLumpNum(i);
@@ -404,7 +404,7 @@ public class BSPReader {
 							switch (i) {
 								case 0:
 									theLump = readLumpNum(i);
-									BSPObject.Textures = Texture.createLump(theLump, version);
+									BSPObject.Textures = Texturedef.createLump(theLump, version);
 									break;
 								case 1:
 									theLump = readLumpNum(i);
@@ -441,7 +441,7 @@ public class BSPReader {
 							switch (i) {
 								case 0:
 									theLump = readLumpNum(i);
-									BSPObject.Textures = Texture.createLump(theLump, version);
+									BSPObject.Textures = Texturedef.createLump(theLump, version);
 									break;
 								case 1:
 									theLump = readLumpNum(i);
@@ -482,7 +482,7 @@ public class BSPReader {
 							switch (i) {
 								case 0:
 									theLump = readLumpNum(i);
-									BSPObject.Textures = Texture.createLump(theLump, version);
+									BSPObject.Textures = Texturedef.createLump(theLump, version);
 									break;
 								case 1:
 									theLump = readLumpNum(i);
@@ -524,7 +524,7 @@ public class BSPReader {
 									break;
 								case 1:
 									theLump = readLumpNum(i);
-									BSPObject.Textures = Texture.createLump(theLump, version);
+									BSPObject.Textures = Texturedef.createLump(theLump, version);
 									break;
 								case 2:
 									theLump = readLumpNum(i);
@@ -544,7 +544,7 @@ public class BSPReader {
 									break;
 								case 10:
 									theLump = readLumpNum(i);
-									BSPObject.Vertices = Vertex.createLump(theLump, version);
+									BSPObject.Vertices = createVertexLump(theLump, version);
 									break;
 								case 13:
 									theLump = readLumpNum(i);
@@ -565,7 +565,7 @@ public class BSPReader {
 							switch (i) {
 								case 0:
 									theLump = readLumpNum(i);
-									BSPObject.Textures = Texture.createLump(theLump, version);
+									BSPObject.Textures = Texturedef.createLump(theLump, version);
 									break;
 								case 2:
 									theLump = readLumpNum(i);
@@ -603,7 +603,7 @@ public class BSPReader {
 							switch (i) {
 								case 0:
 									theLump = readLumpNum(i);
-									BSPObject.Textures = Texture.createLump(theLump, version);
+									BSPObject.Textures = Texturedef.createLump(theLump, version);
 									break;
 								case 4:
 									theLump = readLumpNum(i);
@@ -640,7 +640,7 @@ public class BSPReader {
 							switch (i) {
 								case 0:
 									theLump = readLumpNum(i);
-									BSPObject.Textures = Texture.createLump(theLump, version);
+									BSPObject.Textures = Texturedef.createLump(theLump, version);
 									break;
 								case 4:
 									theLump = readLumpNum(i);
@@ -689,7 +689,7 @@ public class BSPReader {
 							currentMap.Things = DThing.createLump(readLumpNum(i+1), version);
 							currentMap.Linedefs = DLinedef.createLump(readLumpNum(i+2), version);
 							currentMap.Sidedefs = DSidedef.createLump(readLumpNum(i+3));
-							currentMap.Vertices = Vertex.createLump(readLumpNum(i+4), version);
+							currentMap.Vertices = createVertexLump(readLumpNum(i+4), version);
 							currentMap.Segments = DSegment.createLump(readLumpNum(i+5));
 							currentMap.SubSectors = Edge.createLump(readLumpNum(i+6), version);
 							currentMap.Nodes = DNode.createLump(readLumpNum(i+7));
@@ -1105,6 +1105,110 @@ public class BSPReader {
 			offset += structLength;
 		}
 		return lump;
+	}
+
+	public static Lump<UIVertex> createVertexLump(byte[] data, mapType type) {
+		int structLength = 0;
+		switch(type) {
+			case mapType.TYPE_DOOM:
+			case mapType.TYPE_HEXEN:
+				structLength = 4;
+				break;
+			case mapType.TYPE_QUAKE:
+			case mapType.TYPE_NIGHTFIRE:
+			case mapType.TYPE_SIN:
+			case mapType.TYPE_SOF:
+			case mapType.TYPE_SOURCE17:
+			case mapType.TYPE_SOURCE18:
+			case mapType.TYPE_SOURCE19:
+			case mapType.TYPE_SOURCE20:
+			case mapType.TYPE_SOURCE21:
+			case mapType.TYPE_SOURCE22:
+			case mapType.TYPE_SOURCE23:
+			case mapType.TYPE_SOURCE27:
+			case mapType.TYPE_TACTICALINTERVENTION:
+			case mapType.TYPE_QUAKE2:
+			case mapType.TYPE_DAIKATANA:
+			case mapType.TYPE_VINDICTUS:
+			case mapType.TYPE_DMOMAM:
+				structLength = 12;
+				break;
+			case mapType.TYPE_STEF2:
+			case mapType.TYPE_MOHAA:
+			case mapType.TYPE_STEF2DEMO:
+			case mapType.TYPE_QUAKE3:
+			case mapType.TYPE_COD:
+			case mapType.TYPE_FAKK:
+				structLength = 44;
+				break;
+			case mapType.TYPE_RAVEN:
+				structLength = 80;
+				break;
+			default:
+				structLength = 0; // This will cause the shit to hit the fan.
+				break;
+		}
+		int offset=0;
+		Lump<UIVertex> lump = new Lump<UIVertex>(data.Length, structLength, data.Length / structLength);
+		byte[] bytes=new byte[structLength];
+		for(int i=0; i<data.Length / structLength; i++) {
+			for(int j=0; j<structLength; j++) {
+				bytes[j]=data[offset+j];
+			}
+			lump.Add(CreateVertex(bytes, type));
+			offset+=structLength;
+		}
+		return lump;
+	}
+
+	public static UIVertex CreateVertex(byte[] data, mapType type) {
+		UIVertex result = new UIVertex();
+		switch (type) {
+			case mapType.TYPE_DOOM:
+			case mapType.TYPE_HEXEN:
+				result.position = new Vector3(DataReader.readShort(data[0], data[1]), DataReader.readShort(data[2], data[3]));
+				break;
+			case mapType.TYPE_MOHAA:
+			case mapType.TYPE_QUAKE3:
+			case mapType.TYPE_COD:
+			case mapType.TYPE_COD2:
+			case mapType.TYPE_COD4:
+			case mapType.TYPE_FAKK:
+				result.uv = new Vector2(DataReader.readFloat(data[12], data[13], data[14], data[15]), DataReader.readFloat(data[16], data[17], data[18], data[19]));
+				result.color = new Color(data[40], data[41], data[42], data[43]);
+				goto case mapType.TYPE_QUAKE;
+			case mapType.TYPE_QUAKE:
+			case mapType.TYPE_NIGHTFIRE:
+			case mapType.TYPE_SIN:
+			case mapType.TYPE_SOF:
+			case mapType.TYPE_SOURCE17:
+			case mapType.TYPE_SOURCE18:
+			case mapType.TYPE_SOURCE19:
+			case mapType.TYPE_SOURCE20:
+			case mapType.TYPE_SOURCE21:
+			case mapType.TYPE_SOURCE22:
+			case mapType.TYPE_SOURCE23:
+			case mapType.TYPE_SOURCE27:
+			case mapType.TYPE_TACTICALINTERVENTION:
+			case mapType.TYPE_QUAKE2:
+			case mapType.TYPE_DAIKATANA:
+			case mapType.TYPE_VINDICTUS:
+			case mapType.TYPE_DMOMAM:
+				result.position = DataReader.readPoint3F(data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8], data[9], data[10], data[11]);
+				break;
+			case mapType.TYPE_RAVEN:
+				result.position = DataReader.readPoint3F(data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8], data[9], data[10], data[11]);
+				result.uv = new Vector2(DataReader.readFloat(data[12], data[13], data[14], data[15]), DataReader.readFloat(data[16], data[17], data[18], data[19]));
+				result.color = new Color(data[64], data[65], data[66], data[67]);
+				break;
+			case mapType.TYPE_STEF2:
+			case mapType.TYPE_STEF2DEMO:
+				result.position = DataReader.readPoint3F(data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8], data[9], data[10], data[11]);
+				result.uv = new Vector2(DataReader.readFloat(data[12], data[13], data[14], data[15]), DataReader.readFloat(data[16], data[17], data[18], data[19]));
+				result.color = new Color(data[32], data[33], data[34], data[35]);
+				break;
+		}
+		return result;
 	}
 	
 	// ACCESSORS/MUTATORS
