@@ -1,85 +1,87 @@
 using System;
 // LumpObject class
 // A base class for any given lump object. Holds the data as a byte array.
-[Serializable]
-public class LumpObject:IEquatable<LumpObject> {
-	
-	// INITIAL DATA DECLARATION AND DEFINITION OF CONSTANTS
-	private byte[] data;
-	
-	// CONSTRUCTORS
-	public LumpObject(byte[] data) {
-		this.data = data;
-	}
+namespace BSPImporter {
+	[Serializable]
+	public class LumpObject : IEquatable<LumpObject> {
 
-	public LumpObject() {
-		this.data = new byte[0];
-	}
-	
-	// METHODS
-	public static bool operator ==(LumpObject o1, LumpObject o2) {
-		if(Object.ReferenceEquals(o1, null) ^ Object.ReferenceEquals(o2, null)) { return false; }
-		if(Object.ReferenceEquals(o1, null) && Object.ReferenceEquals(o2, null)) { return true; }
-		if(o1.Length == o2.Length && o1.Length != 0) {
-			for(int i=0;i<o1.Length;i++) {
-				if(o1.Data[i] != o2.Data[i]) {
-					return false;
-				}
-			}
-			return true;
+		// INITIAL DATA DECLARATION AND DEFINITION OF CONSTANTS
+		private byte[] data;
+
+		// CONSTRUCTORS
+		public LumpObject(byte[] data) {
+			this.data = data;
 		}
-		return false;
-	}
 
-	public static bool operator !=(LumpObject o1, LumpObject o2) {
-		if(Object.ReferenceEquals(o1, null) ^ Object.ReferenceEquals(o2, null)) { return true; }
-		if(Object.ReferenceEquals(o1, null) && Object.ReferenceEquals(o2, null)) { return false; }
-		if(o1.Length == o2.Length) {
-			for(int i=0;i<o1.Length;i++) {
-				if(o1.Data[i] != o2.Data[i]) {
-					return true;
+		public LumpObject() {
+			this.data = new byte[0];
+		}
+
+		// METHODS
+		public static bool operator ==(LumpObject o1, LumpObject o2) {
+			if(Object.ReferenceEquals(o1, null) ^ Object.ReferenceEquals(o2, null)) { return false; }
+			if(Object.ReferenceEquals(o1, null) && Object.ReferenceEquals(o2, null)) { return true; }
+			if(o1.Length == o2.Length && o1.Length != 0) {
+				for(int i=0; i<o1.Length; i++) {
+					if(o1.Data[i] != o2.Data[i]) {
+						return false;
+					}
 				}
+				return true;
 			}
 			return false;
 		}
-		return true;
-	}
 
-	public override bool Equals(object o2) {
-		return Equals(o2 as LumpObject);
-	}
-	
-	public bool Equals(LumpObject o2) {
-		return this == o2;
-	}
-	
-	public override int GetHashCode() {
-		if(data != null) {
-			unchecked {
-				int res = data.Length * 31337;
-				for(int i=0;i<data.Length;i++) {
-					res ^= (data[i] << ((i % 4) * 8));
+		public static bool operator !=(LumpObject o1, LumpObject o2) {
+			if(Object.ReferenceEquals(o1, null) ^ Object.ReferenceEquals(o2, null)) { return true; }
+			if(Object.ReferenceEquals(o1, null) && Object.ReferenceEquals(o2, null)) { return false; }
+			if(o1.Length == o2.Length) {
+				for(int i=0; i<o1.Length; i++) {
+					if(o1.Data[i] != o2.Data[i]) {
+						return true;
+					}
 				}
-				return res;
+				return false;
 			}
-		} else {
-			return 0;
+			return true;
 		}
-	}
-	
-	// ACCESSORS/MUTATORS
-	public virtual byte[] Data {
-		get {
-			return data;
+
+		public override bool Equals(object o2) {
+			return Equals(o2 as LumpObject);
 		}
-		set {
-			data = value;
+
+		public bool Equals(LumpObject o2) {
+			return this == o2;
 		}
-	}
-	
-	public virtual int Length {
-		get {
-			return data.Length;
+
+		public override int GetHashCode() {
+			if(data != null) {
+				unchecked {
+					int res = data.Length * 31337;
+					for(int i=0; i<data.Length; i++) {
+						res ^= (data[i] << ((i % 4) * 8));
+					}
+					return res;
+				}
+			} else {
+				return 0;
+			}
+		}
+
+		// ACCESSORS/MUTATORS
+		public virtual byte[] Data {
+			get {
+				return data;
+			}
+			set {
+				data = value;
+			}
+		}
+
+		public virtual int Length {
+			get {
+				return data.Length;
+			}
 		}
 	}
 }

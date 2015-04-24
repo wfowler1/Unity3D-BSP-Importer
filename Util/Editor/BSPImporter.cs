@@ -4,33 +4,33 @@ using UnityEditor;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using BSPImporter;
 
-public class BSPImporter : EditorWindow {
+public class BSPImporterEditor : EditorWindow {
 	private string path = "path";
 	private string doomMapName = "map name (Doom only)";
 	private string texturePath = "Textures/";
 	private bool loadIntoScene = true;
 	private bool saveAsPrefab = true;
 	private bool combineMeshes = true;
-
+	
 	private static Dictionary<string, Texture2D> textureDict = new Dictionary<string, Texture2D>();
 	private static Dictionary<string, Material> materialDict = new Dictionary<string, Material>();
-
-	[MenuItem("Window/BSP Import")]
+	
+	[MenuItem ("Window/BSP Import")]
 	public static void ShowWindow() {
-		BSPImporter main = (BSPImporter)EditorWindow.GetWindow(typeof(BSPImporter));
+		BSPImporterEditor main = (BSPImporterEditor)EditorWindow.GetWindow(typeof(BSPImporterEditor));
 		main.autoRepaintOnSceneChange = true;
 		UnityEngine.Object.DontDestroyOnLoad(main);
 		main.Start();
 	}
-
+	
 	public void Start() {
-
+		
 	}
-
+	
 	public void OnGUI() {
-		EditorGUILayout.BeginVertical();
-		{
+		EditorGUILayout.BeginVertical(); {
 			path = EditorGUILayout.TextField(new GUIContent("Path", "Path to the BSP, starting from Assets"), path);
 			doomMapName = EditorGUILayout.TextField(new GUIContent("Map", "Map name within a WAD, for Doom/Doom2/Heretic/Hexen only"), doomMapName);
 			texturePath = EditorGUILayout.TextField(new GUIContent("Texture path", "Path to textures, starting from Assets."), texturePath);
@@ -40,10 +40,9 @@ public class BSPImporter : EditorWindow {
 			if(GUILayout.Button("Import")) {
 				ReadBSP(path);
 			}
-		}
-		EditorGUILayout.EndVertical();
+		} EditorGUILayout.EndVertical();
 	}
-
+	
 	public void ReadBSP(string path) {
 		if(File.Exists(path)) {
 			BSPReader reader = new BSPReader(path, mapType.TYPE_UNDEFINED);
@@ -56,7 +55,7 @@ public class BSPImporter : EditorWindow {
 			Debug.LogError("File " + path + " not found!");
 		}
 	}
-
+	
 	public void ImportBSP(BSP bspObject) {
 		RenderSettings.fog = false;
 		Directory.CreateDirectory(Application.dataPath + "/Models/" + bspObject.MapNameNoExtension);
@@ -212,6 +211,6 @@ public class BSPImporter : EditorWindow {
 
 		AssetDatabase.Refresh();
 	}
-
+	
 }
 #endif

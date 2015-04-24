@@ -7,206 +7,208 @@
 using System;
 using UnityEngine;
 
-public class DoomMap {
-	
-	// INITIAL DATA DECLARATION AND DEFINITION OF CONSTANTS
-	
-	// Since all Doom engine maps were incorporated into the WAD, we need to keep
-	// track of both the location of the WAD file and the internal name of the map.
-	private string wadpath;
-	private string mapName;
-	private mapType version;
-	
-	// Each lump has its own class for handling its specific data structures.
-	// These are the only lumps we need for decompilation.
-	private Lump<DThing> things;
-	private Lump<DLinedef> linedefs;
-	private Lump<DSidedef> sidedefs;
-	private Lump<UIVertex> vertices;
-	private Lump<DSegment> segs;
-	private Lump<Edge> subsectors;
-	private Lump<DNode> nodes;
-	private Lump<DSector> sectors;
-	
-	// CONSTRUCTORS
-	// This accepts a folder path and looks for the BSP there.
-	public DoomMap(string wadpath, string map, mapType version) {
-		this.wadpath = wadpath;
-		this.mapName = map;
-		this.version = version;
-	}
-	
-	// METHODS
-	
-	public virtual void  printBSPReport() {
-		try {
-			Debug.Log("Things lump: " + things.Length + " bytes, " + things.Count + " items");
-			if (things.hasFunnySize()) {
-				Debug.Log("WARNING: Funny lump size in Things");
-			}
-		} catch (System.NullReferenceException) {
-		}
-		try {
-			Debug.Log("Linedefs lump: " + linedefs.Length + " bytes, " + linedefs.Count + " items");
-			if (linedefs.hasFunnySize()) {
-				Debug.Log("WARNING: Funny lump size in Linedefs");
-			}
-		} catch (System.NullReferenceException) {
-		}
-		try {
-			Debug.Log("Sizedefs lump: " + sidedefs.Length + " bytes, " + sidedefs.Count + " items");
-			if (sidedefs.hasFunnySize()) {
-				Debug.Log("WARNING: Funny lump size in Sidedefs");
-			}
-		} catch (System.NullReferenceException) {
-		}
-		try {
-			Debug.Log("Vertices lump: " + vertices.Length + " bytes, " + vertices.Count + " items");
-			if (vertices.hasFunnySize()) {
-				Debug.Log("WARNING: Funny lump size in Vertices");
-			}
-		} catch (System.NullReferenceException) {
-		}
-		try {
-			Debug.Log("Segments lump: " + segs.Length + " bytes, " + segs.Count + " items");
-			if (segs.hasFunnySize()) {
-				Debug.Log("WARNING: Funny lump size in Segments");
-			}
-		} catch (System.NullReferenceException) {
-		}
-		try {
-			Debug.Log("Subsectors lump: " + subsectors.Length + " bytes, " + subsectors.Count + " items");
-			if (subsectors.hasFunnySize()) {
-				Debug.Log("WARNING: Funny lump size in Subsectors");
-			}
-		} catch (System.NullReferenceException) {
-		}
-		try {
-			Debug.Log("Nodes lump: " + nodes.Length + " bytes, " + nodes.Count + " items");
-			if (nodes.hasFunnySize()) {
-				Debug.Log("WARNING: Funny lump size in Nodes");
-			}
-		} catch (System.NullReferenceException) {
-		}
-		try {
-			Debug.Log("Sectors lump: " + sectors.Length + " bytes, " + sectors.Count + " items");
-			if (sectors.hasFunnySize()) {
-				Debug.Log("WARNING: Funny lump size in Sectors");
-			}
-		} catch (System.NullReferenceException) {
-		}
-	}
+namespace BSPImporter {
+	public class DoomMap {
 
-	// ACCESSORS/MUTATORS
-	virtual public mapType Version {
-		get {
-			return version;
-		}
-	}
+		// INITIAL DATA DECLARATION AND DEFINITION OF CONSTANTS
 
-	virtual public string Path {
-		get {
-			return wadpath;
-		}
-	}
+		// Since all Doom engine maps were incorporated into the WAD, we need to keep
+		// track of both the location of the WAD file and the internal name of the map.
+		private string wadpath;
+		private string mapName;
+		private mapType version;
 
-	virtual public string MapName {
-		get {
-			return mapName;
-		}
-	}
+		// Each lump has its own class for handling its specific data structures.
+		// These are the only lumps we need for decompilation.
+		private Lump<DThing> things;
+		private Lump<DLinedef> linedefs;
+		private Lump<DSidedef> sidedefs;
+		private Lump<UIVertex> vertices;
+		private Lump<DSegment> segs;
+		private Lump<Edge> subsectors;
+		private Lump<DNode> nodes;
+		private Lump<DSector> sectors;
 
-	virtual public string Folder {
-		get {
-			int i;
-			for (i = 0; i < wadpath.Length; i++) {
-				if (wadpath[wadpath.Length - 1 - i] == '\\') {
-					break;
+		// CONSTRUCTORS
+		// This accepts a folder path and looks for the BSP there.
+		public DoomMap(string wadpath, string map, mapType version) {
+			this.wadpath = wadpath;
+			this.mapName = map;
+			this.version = version;
+		}
+
+		// METHODS
+
+		public virtual void printBSPReport() {
+			try {
+				Debug.Log("Things lump: " + things.Length + " bytes, " + things.Count + " items");
+				if(things.hasFunnySize()) {
+					Debug.Log("WARNING: Funny lump size in Things");
 				}
-				if (wadpath[wadpath.Length - 1 - i] == '/') {
-					break;
-				}
+			} catch(System.NullReferenceException) {
 			}
-			return wadpath.Substring(0, (wadpath.Length - i) - (0));
+			try {
+				Debug.Log("Linedefs lump: " + linedefs.Length + " bytes, " + linedefs.Count + " items");
+				if(linedefs.hasFunnySize()) {
+					Debug.Log("WARNING: Funny lump size in Linedefs");
+				}
+			} catch(System.NullReferenceException) {
+			}
+			try {
+				Debug.Log("Sizedefs lump: " + sidedefs.Length + " bytes, " + sidedefs.Count + " items");
+				if(sidedefs.hasFunnySize()) {
+					Debug.Log("WARNING: Funny lump size in Sidedefs");
+				}
+			} catch(System.NullReferenceException) {
+			}
+			try {
+				Debug.Log("Vertices lump: " + vertices.Length + " bytes, " + vertices.Count + " items");
+				if(vertices.hasFunnySize()) {
+					Debug.Log("WARNING: Funny lump size in Vertices");
+				}
+			} catch(System.NullReferenceException) {
+			}
+			try {
+				Debug.Log("Segments lump: " + segs.Length + " bytes, " + segs.Count + " items");
+				if(segs.hasFunnySize()) {
+					Debug.Log("WARNING: Funny lump size in Segments");
+				}
+			} catch(System.NullReferenceException) {
+			}
+			try {
+				Debug.Log("Subsectors lump: " + subsectors.Length + " bytes, " + subsectors.Count + " items");
+				if(subsectors.hasFunnySize()) {
+					Debug.Log("WARNING: Funny lump size in Subsectors");
+				}
+			} catch(System.NullReferenceException) {
+			}
+			try {
+				Debug.Log("Nodes lump: " + nodes.Length + " bytes, " + nodes.Count + " items");
+				if(nodes.hasFunnySize()) {
+					Debug.Log("WARNING: Funny lump size in Nodes");
+				}
+			} catch(System.NullReferenceException) {
+			}
+			try {
+				Debug.Log("Sectors lump: " + sectors.Length + " bytes, " + sectors.Count + " items");
+				if(sectors.hasFunnySize()) {
+					Debug.Log("WARNING: Funny lump size in Sectors");
+				}
+			} catch(System.NullReferenceException) {
+			}
 		}
-	}
 
-	virtual public string WadName {
-		get {
-			System.IO.FileInfo newFile = new System.IO.FileInfo(wadpath);
-			return newFile.Name.Substring(0, (newFile.Name.Length - 4) - (0));
+		// ACCESSORS/MUTATORS
+		virtual public mapType Version {
+			get {
+				return version;
+			}
 		}
-	}
 
-	virtual public Lump<DSidedef> Sidedefs {
-		set {
-			sidedefs = value;
+		virtual public string Path {
+			get {
+				return wadpath;
+			}
 		}
-		get {
-			return sidedefs;
-		}
-	}
 
-	virtual public Lump<UIVertex> Vertices {
-		set {
-			vertices = value;
+		virtual public string MapName {
+			get {
+				return mapName;
+			}
 		}
-		get {
-			return vertices;
-		}
-	}
 
-	virtual public Lump<DSegment> Segments {
-		set {
-			segs = value;
+		virtual public string Folder {
+			get {
+				int i;
+				for(i = 0; i < wadpath.Length; i++) {
+					if(wadpath[wadpath.Length - 1 - i] == '\\') {
+						break;
+					}
+					if(wadpath[wadpath.Length - 1 - i] == '/') {
+						break;
+					}
+				}
+				return wadpath.Substring(0, (wadpath.Length - i) - (0));
+			}
 		}
-		get {
-			return segs;
-		}
-	}
 
-	virtual public Lump<Edge> SubSectors {
-		set {
-			subsectors = value;
+		virtual public string WadName {
+			get {
+				System.IO.FileInfo newFile = new System.IO.FileInfo(wadpath);
+				return newFile.Name.Substring(0, (newFile.Name.Length - 4) - (0));
+			}
 		}
-		get {
-			return subsectors;
-		}
-	}
 
-	virtual public Lump<DNode> Nodes {
-		set {
-			nodes = value;
+		virtual public Lump<DSidedef> Sidedefs {
+			set {
+				sidedefs = value;
+			}
+			get {
+				return sidedefs;
+			}
 		}
-		get {
-			return nodes;
-		}
-	}
 
-	virtual public Lump<DSector> Sectors {
-		set {
-			sectors = value;
+		virtual public Lump<UIVertex> Vertices {
+			set {
+				vertices = value;
+			}
+			get {
+				return vertices;
+			}
 		}
-		get {
-			return sectors;
-		}
-	}
 
-	public virtual Lump<DLinedef> Linedefs {
-		set {
-			linedefs = value;
+		virtual public Lump<DSegment> Segments {
+			set {
+				segs = value;
+			}
+			get {
+				return segs;
+			}
 		}
-		get {
-			return linedefs;
-		}
-	}
 
-	public virtual Lump<DThing> Things {
-		get {
-			return things;
+		virtual public Lump<Edge> SubSectors {
+			set {
+				subsectors = value;
+			}
+			get {
+				return subsectors;
+			}
 		}
-		set {
-			things = value;
+
+		virtual public Lump<DNode> Nodes {
+			set {
+				nodes = value;
+			}
+			get {
+				return nodes;
+			}
+		}
+
+		virtual public Lump<DSector> Sectors {
+			set {
+				sectors = value;
+			}
+			get {
+				return sectors;
+			}
+		}
+
+		public virtual Lump<DLinedef> Linedefs {
+			set {
+				linedefs = value;
+			}
+			get {
+				return linedefs;
+			}
+		}
+
+		public virtual Lump<DThing> Things {
+			get {
+				return things;
+			}
+			set {
+				things = value;
+			}
 		}
 	}
 }

@@ -2,49 +2,55 @@ using System;
 using System.Collections.Generic;
 // Lump class
 // If special treatment is needed for a list, another class can be made to extend this one.
-[Serializable] public class Lump<T> : List<T> {
-	// INITIAL DATA DECLARATION AND DEFINITION OF CONSTANTS
 
-	private int lumpLength = 0;
-	private int structLength = 0;
+namespace BSPImporter {
+	[Serializable]
+	public class Lump<T> : List<T> {
+		// INITIAL DATA DECLARATION AND DEFINITION OF CONSTANTS
 
-	// CONSTRUCTORS
+		private int lumpLength = 0;
+		private int structLength = 0;
 
-	public Lump(int lumpLength, int structLength) {
-		this.structLength = structLength;
-		this.lumpLength = lumpLength;
-	}
+		// CONSTRUCTORS
 
-	public Lump(List<T> data, int lumpLength, int structLength) : base(data) {
-		this.structLength = structLength;
-		this.lumpLength = lumpLength;
-	}
-
-	public Lump(int lumpLength, int structLength, int initialCapacity) : base(initialCapacity) {
-		this.structLength = structLength;
-		this.lumpLength = lumpLength;
-	}
-
-	// METHODS
-	public virtual bool hasFunnySize() {
-		if(Count == 0 || structLength < 1) {
-			return false;
+		public Lump(int lumpLength, int structLength) {
+			this.structLength = structLength;
+			this.lumpLength = lumpLength;
 		}
-		return lumpLength % Count != 0;
-	}
 
-	// ACCESSORS/MUTATORS
-
-	public int Length {
-		get {
-			return lumpLength;
+		public Lump(List<T> data, int lumpLength, int structLength)
+			: base(data) {
+			this.structLength = structLength;
+			this.lumpLength = lumpLength;
 		}
-		set {
-			lumpLength = value;
-		}
-	}
 
-	public int StructLength {
-		get { return structLength; }
+		public Lump(int lumpLength, int structLength, int initialCapacity)
+			: base(initialCapacity) {
+			this.structLength = structLength;
+			this.lumpLength = lumpLength;
+		}
+
+		// METHODS
+		public virtual bool hasFunnySize() {
+			if(Count == 0 || structLength < 1) {
+				return false;
+			}
+			return lumpLength % Count != 0;
+		}
+
+		// ACCESSORS/MUTATORS
+
+		public int Length {
+			get {
+				return lumpLength;
+			}
+			set {
+				lumpLength = value;
+			}
+		}
+
+		public int StructLength {
+			get { return structLength; }
+		}
 	}
 }
