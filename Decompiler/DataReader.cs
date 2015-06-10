@@ -8,105 +8,66 @@ using System;
 // Avoiding confusion between big and little endian values (all are assumed little endian)
 // Cleaning up code
 
-public class DataReader {
-	
+public static class DataReader {
+
 	// INITIAL DATA DECLARATION AND DEFINITION OF CONSTANTS
-	
+
 	// CONSTRUCTORS
-	
+
 	// METHODS
-	
-	public static short readShort(byte first, byte second) {
-		return (short)((second << 8) | (first & 0xff));
+
+	public static short readShort(params byte[] data) {
+		return (short)((data[1] << 8) | (data[0] & 0xff));
 	}
-	
-	public static short readShort(byte[] data) {
-		return readShort(data[0], data[1]);
-	}
-	
-	public static ushort readUShort(byte first, byte second) {
+
+	public static ushort readUShort(params byte[] data) {
 		unchecked {
-			return (ushort)((second << 8) | first);
+			return (ushort)((data[1] << 8) | data[0]);
 		}
 	}
-	
-	public static ushort readUShort(byte[] data) {
-		return readUShort(data[0], data[1]);
+
+	public static int readInt(params byte[] data) {
+		return ((data[3] << 24) | (data[2] << 16) | (data[1] << 8) | data[0]);
 	}
-	
-	public static int readInt(byte first, byte second, byte third, byte fourth) {
-		return ((fourth << 24) | (third << 16) | (second << 8) | first);
-	}
-	
-	public static int readInt(byte[] data) {
-		return readInt(data[0], data[1], data[2], data[3]);
-	}
-	
-	public static uint readUInt(byte first, byte second, byte third, byte fourth) {
+
+	public static uint readUInt(params byte[] data) {
 		unchecked {
-			return (uint)((fourth << 24) | (third << 16) | (second << 8) | first);
+			return (uint)((data[3] << 24) | (data[2] << 16) | (data[1] << 8) | data[0]);
 		}
 	}
-	
-	public static uint readUInt(byte[] data) {
-		return readUInt(data[0], data[1], data[2], data[3]);
+
+	public static long readLong(params byte[] data) {
+		return ((data[7] << 56) | (data[6] << 48) | (data[5] << 40) | (data[4] << 32) | (data[3] << 24) | (data[2] << 16) | (data[1] << 8) | data[0]);
 	}
-	
-	public static long readLong(byte first, byte second, byte third, byte fourth, byte fifth, byte sixth, byte seventh, byte eighth) {
-		return ((eighth << 56) | (seventh << 48) | (sixth << 40) | (fifth << 32) | (fourth << 24) | (third << 16) | (second << 8) | first);
-	}
-	
-	public static long readLong(byte[] data) {
-		return readLong(data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7]);
-	}
-	
-	public static ulong readULong(byte first, byte second, byte third, byte fourth, byte fifth, byte sixth, byte seventh, byte eighth) {
+
+	public static ulong readULong(params byte[] data) {
 		unchecked {
-			return (ulong)((eighth << 56) | (seventh << 48) | (sixth << 40) | (fifth << 32) | (fourth << 24) | (third << 16) | (second << 8) | first);
+			return (ulong)((data[7] << 56) | (data[6] << 48) | (data[5] << 40) | (data[4] << 32) | (data[3] << 24) | (data[2] << 16) | (data[1] << 8) | data[0]);
 		}
 	}
-	
-	public static ulong readULong(byte[] data) {
-		return readULong(data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7]);
-	}
-	
-	public static float readFloat(byte first, byte second, byte third, byte fourth) {
-		return readFloat(new byte[] { first, second, third, fourth });
-	}
-	
-	public static float readFloat(byte[] data) {
+
+	public static float readFloat(params byte[] data) {
 		return System.BitConverter.ToSingle(data, 0);
 	}
-	
-	public static Vector3D readPoint3F(byte first, byte second, byte third, byte fourth, byte fifth, byte sixth, byte seventh, byte eighth, byte ninth, byte tenth, byte eleventh, byte twelfth) {
-		return new Vector3D(readFloat(first, second, third, fourth), readFloat(fifth, sixth, seventh, eighth), readFloat(ninth, tenth, eleventh, twelfth));
-	}
-	
-	public static Vector3D readPoint3F(byte[] data) {
+
+	public static Vector3D readPoint3F(params byte[] data) {
 		return new Vector3D(readFloat(data[0], data[1], data[2], data[3]), readFloat(data[4], data[5], data[6], data[7]), readFloat(data[8], data[9], data[10], data[11]));
 	}
 	
-	public static double readDouble(byte first, byte second, byte third, byte fourth, byte fifth, byte sixth, byte seventh, byte eighth) {
-		return readDouble(new byte[] {first, second, third, fourth, fifth, sixth, seventh, eighth});
-	}
-	
-	public static double readDouble(byte[] data) {
-		return System.BitConverter.ToDouble(data, 0);
-	}
-	
-	public static Vector3D readPoint3D(byte first, byte second, byte third, byte fourth, byte fifth, byte sixth, byte seventh, byte eighth, byte ninth, byte tenth, byte eleventh, byte twelfth, byte thirteenth, byte fourteenth, byte fifteenth, byte sixteenth, byte seventeenth, byte eighteenth, byte ninteenth, byte twentieth, byte twentyfirst, byte twentysecond, byte twentythird, byte twentyfourth) {
-		return new Vector3D(readDouble(first, second, third, fourth, fifth, sixth, seventh, eighth), readDouble(ninth, tenth, eleventh, twelfth, thirteenth, fourteenth, fifteenth, sixteenth), readDouble(seventeenth, eighteenth, ninteenth, twentieth, twentyfirst, twentysecond, twentythird, twentyfourth));
-	}
-	
-	public static Vector3D readPoint3D(byte[] data) {
+	public static Vector3D readPoint3D(params byte[] data) {
 		return new Vector3D(readDouble(data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7]), readDouble(data[8], data[9], data[10], data[11], data[12], data[13], data[14], data[15]), readDouble(data[16], data[17], data[18], data[19], data[20], data[21], data[22], data[23]));
 	}
 	
-	public static string readNullTerminatedString(byte[] data) {
+
+	public static double readDouble(params byte[] data) {
+		return System.BitConverter.ToDouble(data, 0);
+	}
+
+	public static string readNullTerminatedString(params byte[] data) {
 		return System.Text.Encoding.ASCII.GetString(data).TrimEnd('\0');
 	}
-	
-	public static string readString(byte[] data) {
+
+	public static string readString(params byte[] data) {
 		return System.Text.Encoding.ASCII.GetString(data);
 	}
 
