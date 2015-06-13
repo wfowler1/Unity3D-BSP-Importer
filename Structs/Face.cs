@@ -1,4 +1,5 @@
 using System;
+using UnityEngine;
 // Face class
 // Replaces all the separate face classes for different versions of BSP.
 // Or, at least the ones I need.
@@ -23,22 +24,21 @@ namespace BSPImporter {
 		private int textureScale = -1;
 		private int displacement = -1;
 		private int original = -1;
-		private byte[] flags;
+		private uint flags;
 		private int firstIndex = -1;
 		private int numIndices = -1;
 		private int unknown = -1;
 		private int lightStyles = -1;
 		private int lightMaps = -1;
+		private Vector2 patchSize = new Vector2();
 
 		// CONSTRUCTORS
 
-		public Face(LumpObject data, mapType type)
-			: base(data.Data) {
+		public Face(LumpObject data, mapType type) : base(data.Data) {
 			new Face(data.Data, type);
 		}
 
-		public Face(byte[] data, mapType type)
-			: base(data) {
+		public Face(byte[] data, mapType type) : base(data) {
 			switch(type) {
 				case mapType.TYPE_QUAKE:
 				case mapType.TYPE_QUAKE2:
@@ -58,11 +58,12 @@ namespace BSPImporter {
 				case mapType.TYPE_MOHAA:
 				case mapType.TYPE_FAKK:
 					texture = DataReader.readInt(data[0], data[1], data[2], data[3]);
-					flags = new byte[] { data[8], data[9], data[10], data[11] };
+					flags = DataReader.readUInt(data[8], data[9], data[10], data[11]);
 					firstVertex = DataReader.readInt(data[12], data[13], data[14], data[15]);
 					numVertices = DataReader.readInt(data[16], data[17], data[18], data[19]);
 					firstIndex = DataReader.readInt(data[20], data[21], data[22], data[23]);
 					numIndices = DataReader.readInt(data[24], data[25], data[26], data[27]);
+					patchSize = new Vector2(DataReader.readInt(data[96], data[97], data[98], data[99]), DataReader.readInt(data[100], data[101], data[102], data[103]));
 					break;
 				case mapType.TYPE_SOURCE17:
 					plane = DataReader.readUShort(data[32], data[33]);
@@ -105,7 +106,7 @@ namespace BSPImporter {
 					numVertices = DataReader.readInt(data[8], data[9], data[10], data[11]);
 					firstIndex = DataReader.readInt(data[12], data[13], data[14], data[15]);
 					numIndices = DataReader.readInt(data[16], data[17], data[18], data[19]);
-					flags = new byte[] { data[20], data[21], data[22], data[23] };
+					flags = DataReader.readUInt(data[20], data[21], data[22], data[23]);
 					texture = DataReader.readInt(data[24], data[25], data[26], data[27]);
 					material = DataReader.readInt(data[28], data[29], data[30], data[31]);
 					textureScale = DataReader.readInt(data[32], data[33], data[34], data[35]);
@@ -245,7 +246,7 @@ namespace BSPImporter {
 			}
 		}
 
-		virtual public byte[] Flags {
+		virtual public uint Flags {
 			get {
 				return flags;
 			}
@@ -296,6 +297,15 @@ namespace BSPImporter {
 			}
 			set {
 				lightMaps = value;
+			}
+		}
+
+		public Vector2 PatchSize {
+			get {
+				return patchSize;
+			}
+			set {
+				patchSize = value;
 			}
 		}
 	}

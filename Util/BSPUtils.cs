@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections.Generic;
 
 namespace BSPImporter {
@@ -135,7 +135,7 @@ namespace BSPImporter {
 			if(face.NumVertices >= 0) {
 				vertices = new UIVertex[face.NumVertices];
 				for(int i = 0; i < vertices.Length; i++) {
-					vertices[i] = BSPUtils.SwapYZ(bspObject.Vertices[face.FirstVertex + i].Scale(BSPUtils.inch2meterScale)).Translate(translate);
+					vertices[i] = BSPUtils.Swizzle(bspObject.Vertices[face.FirstVertex + i].Scale(BSPUtils.inch2meterScale)).Translate(translate);
 				}
 			} else {
 				vertices = new UIVertex[face.NumEdges + 1];
@@ -189,7 +189,7 @@ namespace BSPImporter {
 					}
 				}
 				for(int i = 0; i < vertices.Length; i++) {
-					vertices[i] = BSPUtils.SwapYZ(vertices[i].Scale(BSPUtils.inch2meterScale)).Translate(translate);
+					vertices[i] = BSPUtils.Swizzle(vertices[i].Scale(BSPUtils.inch2meterScale)).Translate(translate);
 				}
 			}
 			return vertices;
@@ -207,8 +207,8 @@ namespace BSPImporter {
 		}
 
 		public static Mesh LegacyBuildFaceMesh(Vector3[] vertices, int[] triangles, TexInfo texinfo, Vector3 origin, Texture2D texture) {
-			Vector3 sAxis = SwapYZ(texinfo.SAxis / inch2meterScale); // Convert from Quake (left-handed, Z-up, inches) coordinate system to Unity (right-handed, Y-up, meters) coordinates
-			Vector3 tAxis = SwapYZ(texinfo.TAxis / inch2meterScale); // This is NOT a typo. The texture axis vectors need to be DIVIDED by the conversion.
+			Vector3 sAxis = Swizzle(texinfo.SAxis / inch2meterScale); // Convert from Quake (left-handed, Z-up, inches) coordinate system to Unity (right-handed, Y-up, meters) coordinates
+			Vector3 tAxis = Swizzle(texinfo.TAxis / inch2meterScale); // This is NOT a typo. The texture axis vectors need to be DIVIDED by the conversion.
 			Vector2 originShifts = new Vector2(Vector3.Dot(origin, texinfo.SAxis.normalized) * texinfo.SAxis.magnitude, Vector3.Dot(origin, texinfo.TAxis.normalized) * texinfo.TAxis.magnitude);
 			Matrix4x4 texmatinverse = BuildTexMatrix(sAxis, tAxis).inverse;
 			Vector2[] uvs = new Vector2[vertices.Length];
@@ -230,7 +230,7 @@ namespace BSPImporter {
 			return mesh;
 		}
 
-		public static Mesh Q3BuildFaceMesh(Vector3[] vertices, int[] triangles, Vector2[] uvs, Vector3 origin, Texture2D texture) {
+		public static Mesh Q3BuildFaceMesh(Vector3[] vertices, int[] triangles, Vector2[] uvs, Vector3 origin) {
 			Mesh mesh = new Mesh();
 			mesh.Clear();
 			mesh.vertices = vertices;
@@ -259,14 +259,14 @@ namespace BSPImporter {
 			return new Vector2((sAxis.sqrMagnitude * textureCoord[0] + sShift - sOrigin) / (float)texWidth, -(tAxis.sqrMagnitude * textureCoord[1] + tShift - tOrigin) / (float)texHeight);
 		}
 
-		public static Vector3 SwapYZ(Vector3 v) {
+		public static Vector3 Swizzle(Vector3 v) {
 			return new Vector3(v.x, v.z, v.y);
 		}
 
-		public static UIVertex SwapYZ(UIVertex v) {
+		public static UIVertex Swizzle(UIVertex v) {
 			UIVertex ret = new UIVertex();
-			ret.position = SwapYZ(v.position);
-			ret.normal = SwapYZ(v.normal);
+			ret.position = Swizzle(v.position);
+			ret.normal = Swizzle(v.normal);
 			ret.color = v.color;
 			ret.uv0 = v.uv0;
 			ret.uv1 = v.uv1;

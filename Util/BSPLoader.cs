@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -8,6 +8,7 @@ namespace BSPImporter {
 
 		public static string path = "";
 		public static string texturePath = "";
+		public static int tesselationLevel = 10;
 
 		private static Dictionary<string, Texture2D> textureDict = new Dictionary<string, Texture2D>();
 		private static Dictionary<string, Material> materialDict = new Dictionary<string, Material>();
@@ -40,7 +41,7 @@ namespace BSPImporter {
 					entityGameObject = new GameObject(entity["classname"]);
 				}
 				entityGameObject.transform.parent = bspGameObject.transform;
-				Vector3 origin = BSPUtils.SwapYZ(entity.Origin * BSPUtils.inch2meterScale);
+				Vector3 origin = BSPUtils.Swizzle(entity.Origin * BSPUtils.inch2meterScale);
 				Vector3 eulerangles = entity.Angles;
 				eulerangles.x = -eulerangles.x;
 				int modelNumber = entity.ModelNumber;
@@ -80,7 +81,7 @@ namespace BSPImporter {
 									meshCorners[k] = vertices[k].position;
 									uvs[k] = vertices[k].uv0; // On anything but Q3-based engines these will all be zeroes
 								}
-								Mesh faceMesh;
+								Mesh faceMesh = null;
 								if(bspObject.Version == mapType.TYPE_COD ||
 									bspObject.Version == mapType.TYPE_COD2 ||
 									bspObject.Version == mapType.TYPE_COD4 ||
@@ -90,7 +91,16 @@ namespace BSPImporter {
 									bspObject.Version == mapType.TYPE_RAVEN ||
 									bspObject.Version == mapType.TYPE_STEF2 ||
 									bspObject.Version == mapType.TYPE_STEF2DEMO) {
-									faceMesh = BSPUtils.Q3BuildFaceMesh(meshCorners, triangles, uvs, entity.Origin, null);
+									if(currentFace.Flags == 2) {
+										GameObject patchGO = new GameObject("Bezier patch");
+										patchGO.transform.parent = entityGameObject.transform;
+										BezierPatch patch = patchGO.AddComponent<BezierPatch>();
+										patch.controls = vertices;
+										patch.size = currentFace.PatchSize;
+										patch.CreatePatchMesh(tesselationLevel, materialDict[bspObject.Textures[textureIndex].Name]);
+									} else {
+										faceMesh = BSPUtils.Q3BuildFaceMesh(meshCorners, triangles, uvs, entity.Origin);
+									}
 								} else {
 									if(textureDict.ContainsKey(bspObject.Textures[textureIndex].Name)) {
 										faceMesh = BSPUtils.LegacyBuildFaceMesh(meshCorners, triangles, texinfo, entity.Origin, textureDict[bspObject.Textures[textureIndex].Name]);
@@ -101,13 +111,15 @@ namespace BSPImporter {
 								if(!faceMeshes.ContainsKey(bspObject.Textures[textureIndex].Name)) {
 									faceMeshes.Add(bspObject.Textures[textureIndex].Name, new List<Mesh>());
 								}
-								faceMeshes[bspObject.Textures[textureIndex].Name].Add(faceMesh);
+								if(faceMesh != null) {
+									faceMeshes[bspObject.Textures[textureIndex].Name].Add(faceMesh);
+								}
 							}
 						}
 						foreach(string key in faceMeshes.Keys) {
 							textureMeshes.Add(key, BSPUtils.CombineAllMeshes(faceMeshes[key].ToArray<Mesh>(), entityGameObject.transform, true, false));
 						}
-						if(BSPUtils.numVertices < 65535) { // If we can combine all the faces into one mesh and use a single game object
+						/*if(BSPUtils.numVertices < 65535) { // If we can combine all the faces into one mesh and use a single game object
 							Mesh entityMesh = BSPUtils.CombineAllMeshes(textureMeshes.Values.ToArray<Mesh>(), entityGameObject.transform, false, false);
 							entityGameObject.AddComponent<MeshFilter>().mesh = entityMesh;
 							Material[] sharedMaterials = new Material[textureMeshes.Count];
@@ -116,7 +128,7 @@ namespace BSPImporter {
 							}
 							entityGameObject.AddComponent<MeshRenderer>().sharedMaterials = sharedMaterials;
 							entityGameObject.AddComponent<MeshCollider>();
-						} else { // If there's too many vertices, we must treat each face as its own mesh
+						} else {*/ // If there's too many vertices, we must treat each face as its own mesh
 							foreach(string key in textureMeshes.Keys) {
 								GameObject textureMeshGO = new GameObject(key);
 								textureMeshGO.transform.parent = entityGameObject.transform;
@@ -124,7 +136,7 @@ namespace BSPImporter {
 								textureMeshGO.AddComponent<MeshRenderer>().sharedMaterial = materialDict[key];
 								textureMeshGO.AddComponent<MeshCollider>();
 							}
-						}
+						//}
 					}
 				} else {
 					entityGameObject.transform.position = origin;
@@ -135,7 +147,7 @@ namespace BSPImporter {
 		}
 
 		public static void LoadTextures(BSP bspObject) {
-			Shader def = Shader.Find("Transparent/Cutout/Diffuse");
+			Shader def = Shader.Find("Standard");
 			foreach(Texturedef texture in bspObject.Textures) {
 				string globalTexturePath;
 				if(texturePath.Contains(":")) {

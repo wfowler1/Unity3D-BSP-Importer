@@ -557,7 +557,7 @@ namespace BSPImporter {
 						break;
 					case mapType.TYPE_FAKK:
 						if(debugLog) {
-							Debug.Log("Heavy Metal FAKK² BSP");
+							Debug.Log("Heavy Metal FAKKÂ² BSP");
 						}
 						for(int i=0; i<20; i++) {
 							try {
@@ -1208,7 +1208,7 @@ namespace BSPImporter {
 				for(int k = 0; k < structLength; k++) {
 					bytes[k] = data[offset + k];
 				}
-				lump.Add(new Plane(BSPUtils.SwapYZ(DataReader.readPoint3F(bytes[0], bytes[1], bytes[2], bytes[3], bytes[4], bytes[5], bytes[6], bytes[7], bytes[8], bytes[9], bytes[10], bytes[11])), DataReader.readFloat(bytes[12], bytes[13], bytes[14], bytes[15]) * BSPUtils.inch2meterScale));
+				lump.Add(new Plane(BSPUtils.Swizzle(DataReader.readPoint3F(bytes[0], bytes[1], bytes[2], bytes[3], bytes[4], bytes[5], bytes[6], bytes[7], bytes[8], bytes[9], bytes[10], bytes[11])), DataReader.readFloat(bytes[12], bytes[13], bytes[14], bytes[15]) * BSPUtils.inch2meterScale));
 				offset += structLength;
 			}
 			return lump;
@@ -1282,7 +1282,7 @@ namespace BSPImporter {
 				case mapType.TYPE_COD4:
 				case mapType.TYPE_FAKK:
 					result.uv0 = new Vector2(DataReader.readFloat(data[12], data[13], data[14], data[15]), -DataReader.readFloat(data[16], data[17], data[18], data[19]));
-					result.color = new Color(data[40] / 255.0f, data[41] / 255.0f, data[42] / 255.0f, data[43] / 255.0f);
+					result.color = new Color32(data[40], data[41], data[42], data[43]);
 					goto case mapType.TYPE_DMOMAM;
 				case mapType.TYPE_QUAKE:
 				case mapType.TYPE_NIGHTFIRE:
@@ -1306,13 +1306,13 @@ namespace BSPImporter {
 				case mapType.TYPE_RAVEN:
 					result.position = DataReader.readPoint3F(data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8], data[9], data[10], data[11]);
 					result.uv0 = new Vector2(DataReader.readFloat(data[12], data[13], data[14], data[15]), -DataReader.readFloat(data[16], data[17], data[18], data[19]));
-					result.color = new Color(data[64] / 255.0f, data[65] / 255.0f, data[66] / 255.0f, data[67] / 255.0f);
+					result.color = new Color32(data[64], data[65], data[66], data[67]);
 					break;
 				case mapType.TYPE_STEF2:
 				case mapType.TYPE_STEF2DEMO:
 					result.position = DataReader.readPoint3F(data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8], data[9], data[10], data[11]);
 					result.uv0 = new Vector2(DataReader.readFloat(data[12], data[13], data[14], data[15]), -DataReader.readFloat(data[16], data[17], data[18], data[19]));
-					result.color = new Color(data[32] / 255.0f, data[33] / 255.0f, data[34] / 255.0f, data[35] / 255.0f);
+					result.color = new Color32(data[32], data[33], data[34], data[35]);
 					break;
 			}
 			return result;
