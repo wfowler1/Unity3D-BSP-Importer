@@ -135,7 +135,7 @@ namespace BSPImporter {
 			if(face.NumVertices >= 0) {
 				vertices = new UIVertex[face.NumVertices];
 				for(int i = 0; i < vertices.Length; i++) {
-					vertices[i] = BSPUtils.Swizzle(bspObject.Vertices[face.FirstVertex + i].Scale(BSPUtils.inch2meterScale)).Translate(translate);
+					vertices[i] = BSPUtils.Swizzle(bspObject.Vertices[face.FirstVertex + i].Scale(BSPUtils.inch2meterScale))/*.Translate(translate)*/;
 				}
 			} else {
 				vertices = new UIVertex[face.NumEdges + 1];
@@ -189,7 +189,7 @@ namespace BSPImporter {
 					}
 				}
 				for(int i = 0; i < vertices.Length; i++) {
-					vertices[i] = BSPUtils.Swizzle(vertices[i].Scale(BSPUtils.inch2meterScale)).Translate(translate);
+					vertices[i] = BSPUtils.Swizzle(vertices[i].Scale(BSPUtils.inch2meterScale))/*.Translate(translate)*/;
 				}
 			}
 			return vertices;
@@ -209,7 +209,8 @@ namespace BSPImporter {
 		public static Mesh LegacyBuildFaceMesh(Vector3[] vertices, int[] triangles, TexInfo texinfo, Vector3 origin, Texture2D texture) {
 			Vector3 sAxis = Swizzle(texinfo.SAxis / inch2meterScale); // Convert from Quake (left-handed, Z-up, inches) coordinate system to Unity (right-handed, Y-up, meters) coordinates
 			Vector3 tAxis = Swizzle(texinfo.TAxis / inch2meterScale); // This is NOT a typo. The texture axis vectors need to be DIVIDED by the conversion.
-			Vector2 originShifts = new Vector2(Vector3.Dot(origin, texinfo.SAxis.normalized) * texinfo.SAxis.magnitude, Vector3.Dot(origin, texinfo.TAxis.normalized) * texinfo.TAxis.magnitude);
+			//Vector2 originShifts = new Vector2(Vector3.Dot(origin, texinfo.SAxis.normalized) * texinfo.SAxis.magnitude, Vector3.Dot(origin, texinfo.TAxis.normalized) * texinfo.TAxis.magnitude);
+			Vector2 originShifts = Vector2.zero;
 			Matrix4x4 texmatinverse = BuildTexMatrix(sAxis, tAxis).inverse;
 			Vector2[] uvs = new Vector2[vertices.Length];
 			Mesh mesh = new Mesh();
@@ -322,7 +323,7 @@ namespace BSPImporter {
 
 		// Takes in a light entity with color values between 0 and 255, and converts it to Unity lighting
 		public static void NormalizeParseLight(Entity ent, Light light) {
-			if(ent.hasAttribute("_light")) {
+			if(ent.ContainsKey("_light")) {
 				Color color = NormalizeParseColor(ent["_light"]);
 				light.color = color;
 				light.intensity = color.a;

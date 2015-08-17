@@ -14,6 +14,9 @@ public class BSPImporterEditor : EditorWindow {
 	private bool saveAsPrefab = true;
 	private bool combineMeshes = true;
 	public static int tesselationLevel = 10;
+
+	public delegate void EntityGameObjectCreatedAction(GameObject gameObject, Entity entity);
+	public static EntityGameObjectCreatedAction EntityGameObjectCreated;
 	
 	private static Dictionary<string, Texture2D> textureDict = new Dictionary<string, Texture2D>();
 	private static Dictionary<string, Material> materialDict = new Dictionary<string, Material>();
@@ -23,11 +26,6 @@ public class BSPImporterEditor : EditorWindow {
 		BSPImporterEditor main = (BSPImporterEditor)EditorWindow.GetWindow(typeof(BSPImporterEditor));
 		main.autoRepaintOnSceneChange = true;
 		UnityEngine.Object.DontDestroyOnLoad(main);
-		main.Start();
-	}
-	
-	public void Start() {
-		
 	}
 	
 	public void OnGUI() {
@@ -66,16 +64,16 @@ public class BSPImporterEditor : EditorWindow {
 
 		foreach(Entity entity in bspObject.Entities) {
 			GameObject entityGameObject;
-			if(entity.hasAttribute("targetname")) {
+			if(entity.ContainsKey("targetname")) {
 				entityGameObject = new GameObject(entity["classname"] + " " + entity["targetname"]);
 			} else {
 				entityGameObject = new GameObject(entity["classname"]);
 			}
 			entityGameObject.transform.parent = bspGameObject.transform;
-			Vector3 origin = BSPUtils.Swizzle(entity.Origin * BSPUtils.inch2meterScale);
-			Vector3 eulerangles = entity.Angles;
+			Vector3 origin = BSPUtils.Swizzle(entity.origin * BSPUtils.inch2meterScale);
+			Vector3 eulerangles = entity.angles;
 			eulerangles.x = -eulerangles.x;
-			int modelNumber = entity.ModelNumber;
+			int modelNumber = entity.modelNumber;
 			if(modelNumber > -1) {
 				BSPUtils.numVertices = 0;
 				List<Face> faces = BSPUtils.GetFacesInModel(bspObject, bspObject.Models[modelNumber]);
@@ -130,13 +128,13 @@ public class BSPImporterEditor : EditorWindow {
 									patch.size = currentFace.PatchSize;
 									patch.CreatePatchMesh(tesselationLevel, materialDict[bspObject.Textures[textureIndex].Name]);
 								} else {
-									faceMesh = BSPUtils.Q3BuildFaceMesh(meshCorners, triangles, uvs, entity.Origin);
+									faceMesh = BSPUtils.Q3BuildFaceMesh(meshCorners, triangles, uvs, entity.origin);
 								}
 							} else {
 								if(textureDict.ContainsKey(bspObject.Textures[textureIndex].Name)) {
-									faceMesh = BSPUtils.LegacyBuildFaceMesh(meshCorners, triangles, texinfo, entity.Origin, textureDict[bspObject.Textures[textureIndex].Name]);
+									faceMesh = BSPUtils.LegacyBuildFaceMesh(meshCorners, triangles, texinfo, entity.origin, textureDict[bspObject.Textures[textureIndex].Name]);
 								} else {
-									faceMesh = BSPUtils.LegacyBuildFaceMesh(meshCorners, triangles, texinfo, entity.Origin, null);
+									faceMesh = BSPUtils.LegacyBuildFaceMesh(meshCorners, triangles, texinfo, entity.origin, null);
 								}
 							}
 							if(!faceMeshes.ContainsKey(bspObject.Textures[textureIndex].Name)) {
@@ -172,9 +170,14 @@ public class BSPImporterEditor : EditorWindow {
 					//}
 				}
 			} else {
-				entityGameObject.transform.position = origin;
 				entityGameObject.transform.eulerAngles = eulerangles;
 				BSPUtils.ParseEntity(entity, bspGameObject, entityGameObject);
+			}
+
+			entityGameObject.transform.position = origin;
+
+			if(EntityGameObjectCreated != null) {
+				EntityGameObjectCreated(entityGameObject, entity);
 			}
 		}
 		if(saveAsPrefab) {

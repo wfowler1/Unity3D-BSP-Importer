@@ -101,7 +101,7 @@ namespace BSPImporter {
 			// this is either a BSP format which doesn't use that lump, or there's an error which will become apparent.
 			Debug.Log("Internal version number: "+(int)version+" ("+version+")");
 			if(entities != null) {
-				Debug.Log("Entities lump: " + entities.Length + " bytes, " + entities.Count + " items");
+				Debug.Log("Entities lump: " + entities.Count + " bytes, " + entities.Count + " items");
 			}
 			if(planes != null) {
 				Debug.Log("Planes lump: " + planes.Length + " bytes, " + planes.Count + " items");

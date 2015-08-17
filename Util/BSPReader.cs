@@ -112,7 +112,7 @@ namespace BSPImporter {
 								switch(i) {
 									case 0:
 										theLump = readLumpNum(i);
-										BSPObject.Entities = Entity.createLump(theLump);
+										BSPObject.Entities = new Entities(theLump);
 										break;
 									case 1:
 										theLump = readLumpNum(i);
@@ -224,7 +224,7 @@ namespace BSPImporter {
 								switch(i) {
 									case 0:
 										theLump = readLumpNum(i);
-										BSPObject.Entities = Entity.createLump(theLump);
+										BSPObject.Entities = new Entities(theLump);
 										break;
 									case 1:
 										theLump = readLumpNum(i);
@@ -303,7 +303,7 @@ namespace BSPImporter {
 								switch(i) {
 									case 0:
 										theLump = readLumpNum(i);
-										BSPObject.Entities = Entity.createLump(theLump);
+										BSPObject.Entities = new Entities(theLump);
 										break;
 									case 1:
 										theLump = readLumpNum(i);
@@ -376,7 +376,7 @@ namespace BSPImporter {
 								switch(i) {
 									case 0:
 										theLump = readLumpNum(i);
-										BSPObject.Entities = Entity.createLump(theLump);
+										BSPObject.Entities = new Entities(theLump);
 										break;
 									case 1:
 										theLump = readLumpNum(i);
@@ -482,7 +482,7 @@ namespace BSPImporter {
 										break;
 									case 16:
 										theLump = readLumpNum(i);
-										BSPObject.Entities = Entity.createLump(theLump);
+										BSPObject.Entities = new Entities(theLump);
 										break;
 								}
 							} catch {
@@ -543,7 +543,7 @@ namespace BSPImporter {
 										break;
 									case 14:
 										theLump = readLumpNum(i);
-										BSPObject.Entities = Entity.createLump(theLump);
+										BSPObject.Entities = new Entities(theLump);
 										break;
 									//case 24:
 									//	theLump = readLumpNum(i);
@@ -608,7 +608,7 @@ namespace BSPImporter {
 										break;
 									case 14:
 										theLump = readLumpNum(i);
-										BSPObject.Entities = Entity.createLump(theLump);
+										BSPObject.Entities = new Entities(theLump);
 										break;
 								}
 							} catch {
@@ -626,7 +626,7 @@ namespace BSPImporter {
 								switch(i) {
 									case 0:
 										theLump = readLumpNum(i);
-										BSPObject.Entities = Entity.createLump(theLump);
+										BSPObject.Entities = new Entities(theLump);
 										break;
 									case 1:
 										theLump = readLumpNum(i);
@@ -707,7 +707,7 @@ namespace BSPImporter {
 										break;
 									case 29:
 										theLump = readLumpNum(i);
-										BSPObject.Entities = Entity.createLump(theLump);
+										BSPObject.Entities = new Entities(theLump);
 										break;
 								}
 							} catch {
@@ -745,7 +745,7 @@ namespace BSPImporter {
 										break;
 									case 37:
 										theLump = readLumpNum(i);
-										BSPObject.Entities = Entity.createLump(theLump);
+										BSPObject.Entities = new Entities(theLump);
 										break;
 								}
 							} catch {
@@ -782,7 +782,7 @@ namespace BSPImporter {
 										break;
 									case 39:
 										theLump = readLumpNum(i);
-										BSPObject.Entities = Entity.createLump(theLump);
+										BSPObject.Entities = new Entities(theLump);
 										break;
 								}
 							} catch {
