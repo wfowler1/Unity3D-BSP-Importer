@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using LibBSP;
 
 namespace BSPImporter {
 	public static class BSPUtils {
@@ -9,11 +10,11 @@ namespace BSPImporter {
 		public static int numVertices = 0;
 
 		public static int GetTextureIndex(BSP bspObject, Face face) {
-			if(face.Texture >= 0) {
-				return face.Texture;
+			if(face.texture >= 0) {
+				return face.texture;
 			} else {
-				if(face.TextureScale > 0) {
-					return bspObject.TexDatas[bspObject.TexInfo[face.TextureScale].Texture].StringTableIndex;
+				if(face.textureScale > 0) {
+					return bspObject.texDatas[bspObject.texInfo[face.textureScale].texture].stringTableIndex;
 				}
 			}
 			return 0;
@@ -21,26 +22,26 @@ namespace BSPImporter {
 
 		public static List<Face> GetFacesInModel(BSP bspObject, Model model) {
 			List<Face> result = null;
-			if(model.FirstFace >= 0) {
-				for(int i = 0; i < model.NumFaces; i++) {
+			if(model.firstFace >= 0) {
+				for(int i = 0; i < model.numFaces; i++) {
 					if(result == null) {
 						result = new List<Face>();
 					}
-					result.Add(bspObject.Faces[model.FirstFace + i]);
+					result.Add(bspObject.faces[model.firstFace + i]);
 				}
 			} else {
-				bool[] faceUsed = new bool[bspObject.Faces.Count];
+				bool[] faceUsed = new bool[bspObject.faces.Count];
 				List<Leaf> leaves = GetLeavesInModel(bspObject, model);
 				foreach(Leaf leaf in leaves) {
-					if(leaf.FirstMarkFace >= 0) {
-						for(int i = 0; i < leaf.NumMarkFaces; i++) {
-							int currentFace = (int)bspObject.MarkSurfaces[leaf.FirstMarkFace + i];
+					if(leaf.firstMarkFace >= 0) {
+						for(int i = 0; i < leaf.numMarkFaces; i++) {
+							int currentFace = (int)bspObject.markSurfaces[leaf.firstMarkFace + i];
 							if(!faceUsed[currentFace]) {
 								faceUsed[currentFace] = true;
 								if(result == null) {
 									result = new List<Face>();
 								}
-								result.Add(bspObject.Faces[currentFace]);
+								result.Add(bspObject.faces[currentFace]);
 							}
 						}
 					}
@@ -51,14 +52,14 @@ namespace BSPImporter {
 
 		public static List<Leaf> GetLeavesInModel(BSP bspObject, Model model) {
 			List<Leaf> result = null;
-			if(model.FirstLeaf < 0) {
-				if(model.HeadNode >= 0) {
-					result = GetLeavesInNode(bspObject, bspObject.Nodes[model.HeadNode]);
+			if(model.firstLeaf < 0) {
+				if(model.headNode >= 0) {
+					result = GetLeavesInNode(bspObject, bspObject.nodes[model.headNode]);
 				}
 			} else {
-				result = new List<Leaf>(model.NumLeaves);
-				for(int i = 0; i < model.NumLeaves; i++) {
-					result.Add(bspObject.Leaves[model.FirstLeaf + i]);
+				result = new List<Leaf>(model.numLeaves);
+				for(int i = 0; i < model.numLeaves; i++) {
+					result.Add(bspObject.leaves[model.firstLeaf + i]);
 				}
 			}
 			return result;
@@ -73,17 +74,17 @@ namespace BSPImporter {
 
 			while(!(nodestack.Count == 0)) {
 				currentNode = nodestack.Pop();
-				int right = currentNode.Child2;
+				int right = currentNode.child2;
 				if(right >= 0) {
-					nodestack.Push(bspObject.Nodes[right]);
+					nodestack.Push(bspObject.nodes[right]);
 				} else {
-					nodeLeaves.Add(bspObject.Leaves[(right * (-1)) - 1]);
+					nodeLeaves.Add(bspObject.leaves[(right * (-1)) - 1]);
 				}
-				int left = currentNode.Child1;
+				int left = currentNode.child1;
 				if(left >= 0) {
-					nodestack.Push(bspObject.Nodes[left]);
+					nodestack.Push(bspObject.nodes[left]);
 				} else {
-					nodeLeaves.Add(bspObject.Leaves[(left * (-1)) - 1]);
+					nodeLeaves.Add(bspObject.leaves[(left * (-1)) - 1]);
 				}
 			}
 			return nodeLeaves;
@@ -91,10 +92,10 @@ namespace BSPImporter {
 
 		public static List<Brush> GetBrushesInLeaf(BSP bspObject, Leaf leaf) {
 			List<Brush> result = null;
-			if(leaf.FirstMarkBrush >= 0) {
-				result = new List<Brush>(leaf.NumMarkBrushes);
-				for(int i = 0; i < leaf.NumMarkBrushes; i++) {
-					result.Add(bspObject.Brushes[(int)bspObject.MarkBrushes[leaf.FirstMarkBrush + i]]);
+			if(leaf.firstMarkBrush >= 0) {
+				result = new List<Brush>(leaf.numMarkBrushes);
+				for(int i = 0; i < leaf.numMarkBrushes; i++) {
+					result.Add(bspObject.brushes[(int)bspObject.markBrushes[leaf.firstMarkBrush + i]]);
 				}
 			}
 			return result;
@@ -102,10 +103,10 @@ namespace BSPImporter {
 
 		public static List<Face> GetFacesInLeaf(BSP bspObject, Leaf leaf) {
 			List<Face> result = null;
-			if(leaf.FirstMarkFace >= 0) {
-				result = new List<Face>(leaf.NumMarkFaces);
-				for(int i = 0; i < leaf.NumMarkFaces; i++) {
-					result.Add(bspObject.Faces[(int)bspObject.MarkSurfaces[leaf.FirstMarkFace + i]]);
+			if(leaf.firstMarkFace >= 0) {
+				result = new List<Face>(leaf.numMarkFaces);
+				for(int i = 0; i < leaf.numMarkFaces; i++) {
+					result.Add(bspObject.faces[(int)bspObject.markSurfaces[leaf.firstMarkFace + i]]);
 				}
 			}
 			return result;
@@ -113,14 +114,14 @@ namespace BSPImporter {
 
 		public static List<Brush> GetBrushesInModel(BSP bspObject, Model model) {
 			List<Brush> result = null;
-			if(bspObject.Version != mapType.TYPE_QUAKE) {
-				if(model.FirstBrush >= 0) {
-					result = new List<Brush>(model.NumBrushes);
-					for(int i = 0; i < model.NumBrushes; i++) {
-						result.Add(bspObject.Brushes[model.FirstBrush + i]);
+			if(bspObject.version != MapType.Quake) {
+				if(model.firstBrush >= 0) {
+					result = new List<Brush>(model.numBrushes);
+					for(int i = 0; i < model.numBrushes; i++) {
+						result.Add(bspObject.brushes[model.firstBrush + i]);
 					}
 				} else {
-					List<Leaf> leaves = GetLeavesInNode(bspObject, bspObject.Nodes[model.HeadNode]);
+					List<Leaf> leaves = GetLeavesInNode(bspObject, bspObject.nodes[model.headNode]);
 					result = new List<Brush>();
 					foreach(Leaf leaf in leaves) {
 						result.AddRange(GetBrushesInLeaf(bspObject, leaf));
@@ -132,32 +133,32 @@ namespace BSPImporter {
 
 		public static UIVertex[] GetVertices(BSP bspObject, Face face, Vector3 translate, ref int[] triangles) {
 			UIVertex[] vertices = null;
-			if(face.NumVertices >= 0) {
-				vertices = new UIVertex[face.NumVertices];
+			if(face.numVertices >= 0) {
+				vertices = new UIVertex[face.numVertices];
 				for(int i = 0; i < vertices.Length; i++) {
-					vertices[i] = BSPUtils.Swizzle(bspObject.Vertices[face.FirstVertex + i].Scale(BSPUtils.inch2meterScale))/*.Translate(translate)*/;
+					vertices[i] = BSPUtils.Swizzle(bspObject.vertices[face.firstVertex + i].Scale(BSPUtils.inch2meterScale))/*.Translate(translate)*/;
 				}
 			} else {
-				vertices = new UIVertex[face.NumEdges + 1];
+				vertices = new UIVertex[face.numEdges + 1];
 				triangles = new int[(vertices.Length - 2) * 3];
-				int firstSurfEdge = (int)bspObject.SurfEdges[face.FirstEdge];
+				int firstSurfEdge = (int)bspObject.surfEdges[face.firstEdge];
 				if(firstSurfEdge > 0) {
-					vertices[0] = bspObject.Vertices[bspObject.Edges[firstSurfEdge].FirstVertex];
+					vertices[0] = bspObject.vertices[bspObject.edges[firstSurfEdge].firstVertex];
 				} else {
-					vertices[0] = bspObject.Vertices[bspObject.Edges[firstSurfEdge * -1].SecondVertex];
+					vertices[0] = bspObject.vertices[bspObject.edges[firstSurfEdge * -1].secondVertex];
 				}
 				int currtriangle = 0;
 				int currvert = 1;
-				for(int i = 1; i < face.NumEdges; i++) {
-					int currSurfEdge = (int)bspObject.SurfEdges[face.FirstEdge + i];
+				for(int i = 1; i < face.numEdges; i++) {
+					int currSurfEdge = (int)bspObject.surfEdges[face.firstEdge + i];
 					UIVertex first;
 					UIVertex second;
 					if(currSurfEdge > 0) {
-						first = bspObject.Vertices[bspObject.Edges[currSurfEdge].FirstVertex];
-						second = bspObject.Vertices[bspObject.Edges[currSurfEdge].SecondVertex];
+						first = bspObject.vertices[bspObject.edges[currSurfEdge].firstVertex];
+						second = bspObject.vertices[bspObject.edges[currSurfEdge].secondVertex];
 					} else {
-						first = bspObject.Vertices[bspObject.Edges[currSurfEdge * -1].SecondVertex];
-						second = bspObject.Vertices[bspObject.Edges[currSurfEdge * -1].FirstVertex];
+						first = bspObject.vertices[bspObject.edges[currSurfEdge * -1].secondVertex];
+						second = bspObject.vertices[bspObject.edges[currSurfEdge * -1].firstVertex];
 					}
 					if(first.position != vertices[0].position && second.position != vertices[0].position) { // All tris involve first vertex, so disregard edges referencing it
 						triangles[currtriangle * 3] = 0;
@@ -207,8 +208,8 @@ namespace BSPImporter {
 		}
 
 		public static Mesh LegacyBuildFaceMesh(Vector3[] vertices, int[] triangles, TexInfo texinfo, Vector3 origin, Texture2D texture) {
-			Vector3 sAxis = Swizzle(texinfo.SAxis / inch2meterScale); // Convert from Quake (left-handed, Z-up, inches) coordinate system to Unity (right-handed, Y-up, meters) coordinates
-			Vector3 tAxis = Swizzle(texinfo.TAxis / inch2meterScale); // This is NOT a typo. The texture axis vectors need to be DIVIDED by the conversion.
+			Vector3 sAxis = Swizzle(texinfo.axes[0] / inch2meterScale); // Convert from Quake (left-handed, Z-up, inches) coordinate system to Unity (right-handed, Y-up, meters) coordinates
+			Vector3 tAxis = Swizzle(texinfo.axes[1] / inch2meterScale); // This is NOT a typo. The texture axis vectors need to be DIVIDED by the conversion.
 			//Vector2 originShifts = new Vector2(Vector3.Dot(origin, texinfo.SAxis.normalized) * texinfo.SAxis.magnitude, Vector3.Dot(origin, texinfo.TAxis.normalized) * texinfo.TAxis.magnitude);
 			Vector2 originShifts = Vector2.zero;
 			Matrix4x4 texmatinverse = BuildTexMatrix(sAxis, tAxis).inverse;
@@ -218,9 +219,9 @@ namespace BSPImporter {
 			for(int l = 0; l < vertices.Length; l++) {
 				Vector3 textureCoord = texmatinverse.MultiplyPoint3x4(vertices[l]);
 				if(texture != null) {
-					uvs[l] = CalcUV(sAxis, tAxis, textureCoord, texinfo.SShift, texinfo.TShift, originShifts.x, originShifts.y, texture.width, texture.height);
+					uvs[l] = CalcUV(sAxis, tAxis, textureCoord, texinfo.shifts[0], texinfo.shifts[1], originShifts.x, originShifts.y, texture.width, texture.height);
 				} else {
-					uvs[l] = CalcUV(sAxis, tAxis, textureCoord, texinfo.SShift, texinfo.TShift, originShifts.x, originShifts.y, 64, 64);
+					uvs[l] = CalcUV(sAxis, tAxis, textureCoord, texinfo.shifts[0], texinfo.shifts[1], originShifts.x, originShifts.y, 64, 64);
 				}
 			}
 			mesh.vertices = vertices;
@@ -260,6 +261,11 @@ namespace BSPImporter {
 			return new Vector2((sAxis.sqrMagnitude * textureCoord[0] + sShift - sOrigin) / (float)texWidth, -(tAxis.sqrMagnitude * textureCoord[1] + tShift - tOrigin) / (float)texHeight);
 		}
 
+		/// <summary>
+		/// Swaps the Y and Z coordinates of a Vector, converting between Quake's Z-Up coordinates to Unity's Y-Up.
+		/// </summary>
+		/// <param name="v">The Vector to "swizzle"</param>
+		/// <returns>The "swizzled" Vector</returns>
 		public static Vector3 Swizzle(Vector3 v) {
 			return new Vector3(v.x, v.z, v.y);
 		}
@@ -340,6 +346,17 @@ namespace BSPImporter {
 				} catch { ; }
 			}
 			return new Color(colorAsNums[0] / 255.0f, colorAsNums[1] / 255.0f, colorAsNums[2] / 255.0f, colorAsNums[3] / 255.0f);
+		}
+
+		// Only for Source engine.
+		public static int FindTexDataWithTexture(this BSP bsp, string texture) {
+			for (int i = 0; i < bsp.texDatas.Count; i++) {
+				string temp = bsp.textures.GetTextureAtOffset((uint)bsp.texTable[bsp.texDatas[i].stringTableIndex]);
+				if (temp.Equals(texture)) {
+					return i;
+				}
+			}
+			return -1;
 		}
 
 	}
