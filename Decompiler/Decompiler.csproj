@@ -13,6 +13,7 @@
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -25,7 +26,6 @@
     <MapFileExtensions>true</MapFileExtensions>
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
@@ -54,7 +54,7 @@
     <StartupObject>Decompiler.App</StartupObject>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>icon.ico</ApplicationIcon>
+    <ApplicationIcon>Source\Gui\icon.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup />
   <PropertyGroup />
@@ -65,6 +65,7 @@
     <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
@@ -79,75 +80,43 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
-    <ApplicationDefinition Include="App.xaml">
+    <ApplicationDefinition Include="Source\Gui\App.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Brush.cs" />
-    <Compile Include="BrushSide.cs" />
-    <Compile Include="BSP.cs" />
-    <Compile Include="BSP38Decompiler.cs" />
-    <Compile Include="BSP42Decompiler.cs" />
-    <Compile Include="BSP46Decompiler.cs" />
-    <Compile Include="BSPReader.cs" />
-    <Compile Include="DataReader.cs" />
-    <Compile Include="DecompilerThread.cs" />
-    <Compile Include="DLinedef.cs" />
-    <Compile Include="DNode.cs" />
-    <Compile Include="DoomEditMapWriter.cs" />
-    <Compile Include="DoomMap.cs" />
-    <Compile Include="DSector.cs" />
-    <Compile Include="DSegment.cs" />
-    <Compile Include="DSidedef.cs" />
-    <Compile Include="DThing.cs" />
-    <Compile Include="Edge.cs" />
-    <Compile Include="Entities.cs" />
-    <Compile Include="Entity.cs" />
-    <Compile Include="Face.cs" />
-    <Compile Include="GTKRadiantMapWriter.cs" />
-    <Compile Include="Job.cs" />
-    <Compile Include="Jobs.cs" />
-    <Compile Include="Leaf.cs" />
-    <Compile Include="Lump.cs" />
-    <Compile Include="LumpObject.cs" />
-    <Compile Include="MAP510Writer.cs" />
-    <Compile Include="MAPBrush.cs" />
-    <Compile Include="MAPBrushSide.cs" />
-    <Compile Include="MAPDisplacement.cs" />
-    <Compile Include="MAPMaker.cs" />
-    <Compile Include="MAPPatch.cs" />
-    <Compile Include="Model.cs" />
-    <Compile Include="MOHRadiantMAPWriter.cs" />
-    <Compile Include="Node.cs" />
-    <Compile Include="NumList.cs" />
-    <Compile Include="Plane.cs" />
-    <Compile Include="QuakeDecompiler.cs" />
     <Compile Include="Revision.cs" />
-    <Compile Include="Settings.cs" />
-    <Compile Include="SourceBSPDecompiler.cs" />
-    <Compile Include="SourceCubemap.cs" />
-    <Compile Include="SourceDispInfo.cs" />
-    <Compile Include="SourceDispVertex.cs" />
-    <Compile Include="SourceDispVertices.cs" />
-    <Compile Include="SourceStaticProp.cs" />
-    <Compile Include="SourceStaticProps.cs" />
-    <Compile Include="SourceTexData.cs" />
-    <Compile Include="TexInfo.cs" />
-    <Compile Include="Texture.cs" />
-    <Compile Include="Textures.cs" />
-    <Compile Include="Vector3D.cs" />
-    <Compile Include="Vertex.cs" />
-    <Compile Include="VMFWriter.cs" />
-    <Compile Include="WADDecompiler.cs" />
-    <Page Include="MainWindow.xaml">
+    <Compile Include="Source\Extensions\BrushExtensions.cs" />
+    <Compile Include="Source\Extensions\BSPExtensions.cs" />
+    <Compile Include="Source\Extensions\EntityExtensions.cs" />
+    <Compile Include="Source\Extensions\FaceExtensions.cs" />
+    <Compile Include="Source\Extensions\MAPBrushExtensions.cs" />
+    <Compile Include="Source\Extensions\MAPBrushSideExtensions.cs" />
+    <Compile Include="Source\Extensions\CubemapExtensions.cs" />
+    <Compile Include="Source\Extensions\StaticPropExtensions.cs" />
+    <Compile Include="Source\Extensions\TexInfoExtensions.cs" />
+    <Compile Include="Source\Util\Job.cs" />
+    <Compile Include="Source\Util\JobQueueManager.cs" />
+    <Compile Include="Source\Util\MAPWriter.cs" />
+    <Compile Include="Source\Util\DoomEditMapGenerator.cs" />
+    <Compile Include="Source\Util\EntityToDoomEdit.cs" />
+    <Compile Include="Source\Util\EntityToMoHRadiant.cs" />
+    <Compile Include="Source\Util\MoHRadiantMapGenerator.cs" />
+    <Compile Include="Source\Util\RadiantMapGenerator.cs" />
+    <Compile Include="Source\Util\EntityToRadiant.cs" />
+    <Compile Include="Source\Util\HammerMapGenerator.cs" />
+    <Compile Include="Source\Util\EntityToHammer.cs" />
+    <Compile Include="Source\Util\GearcraftMapGenerator.cs" />
+    <Compile Include="Source\Util\BSPDecompiler.cs" />
+    <Compile Include="Source\Util\EntityToGearcraft.cs" />
+    <Page Include="Source\Gui\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Compile Include="App.xaml.cs">
+    <Compile Include="Source\Gui\App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="MainWindow.xaml.cs">
+    <Compile Include="Source\Gui\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
@@ -169,6 +138,7 @@
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -177,10 +147,10 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <None Include="Source\Gui\App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="main.png" />
+    <Resource Include="Source\Gui\main.png" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.5">
@@ -200,18 +170,28 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="icon.ico" />
+    <Resource Include="Source\Gui\icon.ico" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\external\LibBSP\LibBSP\LibBSP.csproj">
+      <Project>{33e4ffca-8d0b-4089-afd2-527547531578}</Project>
+      <Name>LibBSP</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>cd..
 cd..
-svnversion &gt;&gt; version.txt
+del /Q Revision.cs
+git rev-list --all --count &gt;&gt; version.txt
 set /p revision= &lt; version.txt
 del /Q version.txt
 type nul&gt; Revision.cs
+echo namespace Decompiler {&gt;&gt; Revision.cs
 echo public static class Revision {&gt;&gt; Revision.cs
 echo public static string versionString = "%25revision%25";&gt;&gt; Revision.cs
+echo }&gt;&gt; Revision.cs
 echo }&gt;&gt; Revision.cs</PreBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
