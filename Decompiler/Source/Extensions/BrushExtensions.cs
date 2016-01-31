@@ -18,6 +18,7 @@ namespace Decompiler {
 		/// <param name="version">The type of <see cref="BSP"/> the <paramref name="brush"/> is from.</param>
 		/// <returns><c>true</c> if the <see cref="Brush.contents"/> indicate detail, <c>false</c> otherwise.</returns>
 		public static bool IsDetail(this Brush brush, MapType version) {
+			if (brush.contents == -1) { return false; }
 			switch (version) {
 				case MapType.Nightfire: {
 					return ((brush.contents & (1 << 9)) != 0);
@@ -59,6 +60,7 @@ namespace Decompiler {
 		/// <param name="version">The type of <see cref="BSP"/> the <paramref name="brush"/> is from.</param>
 		/// <returns><c>true</c> if the <see cref="Brush.contents"/> indicate water, <c>false</c> otherwise.</returns>
 		public static bool IsWater(this Brush brush, MapType version) {
+			if (brush.contents == -1) { return false; }
 			switch (version) {
 				case MapType.Quake: {
 					return brush.contents == -3;
