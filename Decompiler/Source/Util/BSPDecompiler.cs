@@ -59,7 +59,6 @@ namespace Decompiler {
 				}
 			}
 
-			_master.progress = 1;
 			return entities;
 		}
 

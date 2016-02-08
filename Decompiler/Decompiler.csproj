@@ -97,17 +97,17 @@
     <Compile Include="Source\Util\Job.cs" />
     <Compile Include="Source\Util\JobQueueManager.cs" />
     <Compile Include="Source\Util\MAPWriter.cs" />
-    <Compile Include="Source\Util\DoomEditMapGenerator.cs" />
-    <Compile Include="Source\Util\EntityToDoomEdit.cs" />
-    <Compile Include="Source\Util\EntityToMoHRadiant.cs" />
-    <Compile Include="Source\Util\MoHRadiantMapGenerator.cs" />
-    <Compile Include="Source\Util\RadiantMapGenerator.cs" />
-    <Compile Include="Source\Util\EntityToRadiant.cs" />
-    <Compile Include="Source\Util\HammerMapGenerator.cs" />
-    <Compile Include="Source\Util\EntityToHammer.cs" />
-    <Compile Include="Source\Util\GearcraftMapGenerator.cs" />
+    <Compile Include="Source\Util\MapGenerators\DoomEditMapGenerator.cs" />
+    <Compile Include="Source\Util\EntityPostProcessors\EntityToDoomEdit.cs" />
+    <Compile Include="Source\Util\EntityPostProcessors\EntityToMoHRadiant.cs" />
+    <Compile Include="Source\Util\MapGenerators\MoHRadiantMapGenerator.cs" />
+    <Compile Include="Source\Util\MapGenerators\RadiantMapGenerator.cs" />
+    <Compile Include="Source\Util\EntityPostProcessors\EntityToRadiant.cs" />
+    <Compile Include="Source\Util\MapGenerators\HammerMapGenerator.cs" />
+    <Compile Include="Source\Util\EntityPostProcessors\EntityToHammer.cs" />
+    <Compile Include="Source\Util\MapGenerators\GearcraftMapGenerator.cs" />
     <Compile Include="Source\Util\BSPDecompiler.cs" />
-    <Compile Include="Source\Util\EntityToGearcraft.cs" />
+    <Compile Include="Source\Util\EntityPostProcessors\EntityToGearcraft.cs" />
     <Page Include="Source\Gui\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

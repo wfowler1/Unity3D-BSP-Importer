@@ -51,40 +51,12 @@ namespace Decompiler.GUI {
 		}
 
 		/// <summary>
-		/// Handler for File -&gt; Open menu option.
+		/// Handler for File -&gt; Open BSP menu option.
 		/// </summary>
 		/// <param name="sender">Sender of this event.</param>
 		/// <param name="e"><c>RoutedEventArgs</c> for this event.</param>
 		private void FileOpen_Click(object sender, RoutedEventArgs e) {
-			OpenFileDialog fileOpener = new OpenFileDialog();
-			fileOpener.Filter = "BSP Supported Files|*.bsp;*.d3dbsp|All Files|*.*";
-			fileOpener.Multiselect = true;
-
-			// Process open file dialog box results 
-			if (fileOpener.ShowDialog() == true) {
-				string[] filesToOpen = fileOpener.FileNames;
-				for (int i = 0; i < filesToOpen.Length; ++i) {
-					Job.Settings settings = new Job.Settings() {
-						replace512WithNull = miSpecialNull.IsChecked,
-						noFaceFlags = miIgnoreFaceFlags.IsChecked,
-						brushesToWorld = miToWorld.IsChecked,
-						noTexCorrection = miNoTextureCorrect.IsChecked,
-						noEntCorrection = miNoEntityCorrect.IsChecked,
-						outputFolder = outputFolder,
-						openAs = openAs,
-						toAuto = miSaveAsAuto.IsChecked,
-						toM510 = miSaveAsGC.IsChecked,
-						toVMF = miSaveAsVMF.IsChecked,
-						toGTK = miSaveAsGTK.IsChecked,
-						toDoomEdit = miSaveAsDE.IsChecked,
-						toMoH = miSaveAsMOH.IsChecked
-					};
-					Job theJob = new Job(jobs.Count, filesToOpen[i], settings);
-					theJob.PropertyChanged += new PropertyChangedEventHandler(UpdateTaskbar);
-					jobs.Add(theJob);
-				}
-				jobs.StartNextIfAble();
-			}
+			ShowOpenDialog(false);
 		}
 
 		/// <summary>
@@ -103,10 +75,11 @@ namespace Decompiler.GUI {
 				_OpenAsChecked.IsChecked = true;
 				openAs = (MapType)Int32.Parse(_OpenAsChecked.Tag.ToString());
 			}
+			EnableFileOpenMapIfAble();
 		}
 
 		/// <summary>
-		/// Handler for File -&gt; Output Format -&gt;> Auto menu option.
+		/// Handler for File -&gt; Output Format -&gt; Auto menu option.
 		/// </summary>
 		/// <param name="sender">Sender of this event.</param>
 		/// <param name="e"><c>RoutedEventArgs</c> for this event.</param>
@@ -117,6 +90,64 @@ namespace Decompiler.GUI {
 			miSaveAsGC.IsChecked = false;
 			miSaveAsGTK.IsChecked = false;
 			miSaveAsDE.IsChecked = false;
+			EnableFileOpenMapIfAble();
+		}
+
+		/// <summary>
+		/// Enables the File -&gt; Open Map option if current settings allow it.
+		/// </summary>
+		private void EnableFileOpenMapIfAble() {
+			miOpenMap.IsEnabled = !miSaveAsAuto.IsChecked && !miOpenAsAuto.IsChecked;
+		}
+
+		/// <summary>
+		/// Handler for File -&gt; Open MAP or VMF menu option.
+		/// </summary>
+		/// <param name="sender">Sender of this event.</param>
+		/// <param name="e"><c>RoutedEventArgs</c> for this event.</param>
+		private void FileOpenMAP_Click(object sender, RoutedEventArgs e) {
+			ShowOpenDialog(true);
+		}
+
+		/// <summary>
+		/// Shows the Open dialog, for compiled or uncompiled maps.
+		/// </summary>
+		/// <param name="uncompiled">Is the map we're looking for uncompiled?</param>
+		private void ShowOpenDialog(bool uncompiled) {
+			OpenFileDialog fileOpener = new OpenFileDialog();
+			if (uncompiled) {
+				fileOpener.Filter = "Uncompiled Map Files|*.map;*.vmf|MAP Files|*.map|VMF Files|*.vmf|All files|*.*";
+			} else {
+				fileOpener.Filter = "BSP Files|*.bsp;*.d3dbsp|All Files|*.*";
+			}
+			fileOpener.Multiselect = true;
+
+			// Process open file dialog box results 
+			if (fileOpener.ShowDialog() == true) {
+				string[] filesToOpen = fileOpener.FileNames;
+				for (int i = 0; i < filesToOpen.Length; ++i) {
+					Job.Settings settings = new Job.Settings() {
+						replace512WithNull = miSpecialNull.IsChecked,
+						noFaceFlags = miIgnoreFaceFlags.IsChecked,
+						brushesToWorld = miToWorld.IsChecked,
+						noTexCorrection = miNoTextureCorrect.IsChecked,
+						noEntCorrection = miNoEntityCorrect.IsChecked,
+						outputFolder = outputFolder,
+						openAs = openAs,
+						fromUncompiled = uncompiled,
+						toAuto = miSaveAsAuto.IsChecked,
+						toM510 = miSaveAsGC.IsChecked,
+						toVMF = miSaveAsVMF.IsChecked,
+						toGTK = miSaveAsGTK.IsChecked,
+						toDoomEdit = miSaveAsDE.IsChecked,
+						toMoH = miSaveAsMOH.IsChecked
+					};
+					Job theJob = new Job(jobs.Count, filesToOpen[i], settings);
+					theJob.PropertyChanged += new PropertyChangedEventHandler(UpdateTaskbar);
+					jobs.Add(theJob);
+				}
+				jobs.StartNextIfAble();
+			}
 		}
 
 		/// <summary>
@@ -130,6 +161,7 @@ namespace Decompiler.GUI {
 			} else {
 				miSaveAsAuto.IsChecked = false;
 			}
+			EnableFileOpenMapIfAble();
 		}
 
 		/// <summary>

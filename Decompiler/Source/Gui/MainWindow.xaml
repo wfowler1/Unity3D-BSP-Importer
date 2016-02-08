@@ -14,7 +14,7 @@
 		</Grid.ColumnDefinitions>
 		<Menu IsMainMenu="True">
 			<MenuItem Header="_File">
-				<MenuItem Header="Open _map..." Click="FileOpen_Click" />
+				<MenuItem Header="Open _BSP..." Click="FileOpen_Click" />
 				<MenuItem Header="Open _as...">
 					<MenuItem Header="_Auto" Tag="0" Click="OpenAs_Click" IsChecked="True" x:Name="miOpenAsAuto" />
 					<Separator />
@@ -49,6 +49,8 @@
 					<MenuItem Header="Vindictus" Tag="346131372" Click="OpenAs_Click" />
 					<MenuItem Header="Tactical Intervention" Tag="1268885814" Click="OpenAs_Click" />
 				</MenuItem>
+				<Separator />
+				<MenuItem Header="Open MAP or VMF" Click="FileOpenMAP_Click" x:Name="miOpenMap" IsEnabled="False" ToolTip="Converts an uncompiled map to another format."/>
 				<Separator />
 				<MenuItem Header="Output _format...">
 					<MenuItem Header="_Auto" IsCheckable="True" IsChecked="True" Click="OutputAuto_Click" x:Name="miSaveAsAuto" />

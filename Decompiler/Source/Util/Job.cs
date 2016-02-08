@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -40,6 +41,7 @@ namespace Decompiler {
 			public string outputFolder = "";
 
 			public MapType openAs = MapType.Undefined;
+			public bool fromUncompiled = false;
 			public bool toAuto = true;
 			public bool toM510 = false;
 			public bool toVMF = false;
@@ -146,14 +148,29 @@ namespace Decompiler {
 			BSP bsp = null;
 			try {
 				Entities output = null;
-				bsp = new BSP(_path);
-				bsp.version = settings.openAs;
-				BSPDecompiler decompiler = new BSPDecompiler(bsp, this);
-				output = decompiler.Decompile();
-				MAPWriter writer = new MAPWriter(output, bsp.Folder, bsp.MapNameNoExtension, bsp.version, this);
+				string mapDirectory = "";
+				string mapName = "";
+				MapType version = MapType.Undefined;
+				if (settings.fromUncompiled) {
+					FileInfo file = new FileInfo(_path);
+					version = settings.openAs;
+					output = new Entities(file, settings.openAs);
+					mapDirectory = file.DirectoryName + "\\";
+					mapName = file.Name;
+				} else {
+					bsp = new BSP(_path);
+					bsp.version = settings.openAs;
+					BSPDecompiler decompiler = new BSPDecompiler(bsp, this);
+					output = decompiler.Decompile();
+					mapDirectory = bsp.Folder;
+					mapName = bsp.MapNameNoExtension;
+					version = bsp.version;
+				}
+				MAPWriter writer = new MAPWriter(output, mapDirectory, mapName, version, this);
 				writer.WriteAll();
 				DateTime end = DateTime.Now;
 				Print("Time taken: " + (end - begin).ToString() + (char)0x0D + (char)0x0A);
+				progress = 1;
 				if (JobFinishedEvent != null) {
 					JobFinishedEvent(this, EventArgs.Empty);
 				}
@@ -165,7 +182,6 @@ namespace Decompiler {
 				if (bsp != null) {
 					bsp.Close();
 				}
-				//Thread.CurrentThread.Abort();
 			}
 		}
 	}
