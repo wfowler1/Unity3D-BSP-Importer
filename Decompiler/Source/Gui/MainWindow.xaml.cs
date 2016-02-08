@@ -46,7 +46,7 @@ namespace Decompiler.GUI {
 			if (Revision.versionString == "") {
 				this.Title = "BSP Decompiler v5 by 005";
 			} else {
-				this.Title = "BSP Decompiler v5_" + Revision.versionString + " by 005";
+				this.Title = "BSP Decompiler v5." + Revision.versionString + " by 005";
 			}
 		}
 
