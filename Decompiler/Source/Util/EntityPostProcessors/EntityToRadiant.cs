@@ -65,6 +65,13 @@ namespace Decompiler {
 
 			// We might modify the collection as we iterate over it. Can't use foreach.
 			for (int i = 0; i < _entities.Count; ++i) {
+				foreach (MAPBrush brush in _entities[i].brushes) {
+					if (brush.isDetail) {
+						foreach (MAPBrushSide side in brush.sides) {
+							side.flags = side.flags | 134217728;
+						}
+					}
+				}
 				if (!_master.settings.noEntCorrection) {
 					PostProcessEntity(_entities[i]);
 				}

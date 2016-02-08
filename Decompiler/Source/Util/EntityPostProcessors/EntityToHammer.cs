@@ -54,7 +54,8 @@ namespace Decompiler {
 				bool hasWater = false;
 				// Make sure all water brushes currently in the worldspawn get converted to Source.
 				foreach (Entity worldspawn in worldspawns) {
-					foreach (MAPBrush brush in worldspawn.brushes) {
+					for (int i = 0; i < worldspawn.brushes.Count; ++i) {
+						MAPBrush brush = worldspawn.brushes[i];
 						if (brush.isWater) {
 							hasWater = true;
 							ConvertToWater(brush);
@@ -82,6 +83,19 @@ namespace Decompiler {
 					lodControl["cheapwaterenddistance"] = "2000";
 					lodControl["cheapwaterstartdistance"] = "1000";
 					lodControl.origin = origin;
+				}
+			}
+
+			foreach (Entity worldspawn in worldspawns) {
+				for (int i = 0; i < worldspawn.brushes.Count; ++i) {
+					MAPBrush brush = worldspawn.brushes[i];
+					if (brush.isDetail) {
+						Entity newEntity = new Entity("func_detail");
+						newEntity.brushes.Add(brush);
+						_entities.Add(newEntity);
+						worldspawn.brushes.RemoveAt(i);
+						--i;
+					}
 				}
 			}
 
