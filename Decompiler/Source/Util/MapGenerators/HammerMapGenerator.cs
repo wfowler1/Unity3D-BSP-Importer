@@ -77,7 +77,7 @@ namespace Decompiler {
 					.Append(",")
 					.Append(connection.param)
 					.Append(",")
-					.Append(connection.delay)
+					.Append(connection.delay.ToString("###0.######", format))
 					.Append(",")
 					.Append(connection.fireOnce);
 					if (connection.unknown0 != "" || connection.unknown1 != "") {
@@ -156,9 +156,9 @@ namespace Decompiler {
 			.Append(" ")
 			.Append(brushside.textureS.z.ToString("###0.######", format))
 			.Append(" ")
-			.Append(brushside.textureShiftS)
+			.Append(brushside.textureShiftS.ToString("###0.######", format))
 			.Append("] ")
-			.Append(brushside.texScaleX)
+			.Append(brushside.texScaleX.ToString("###0.####", format))
 			.Append("\"\r\n\t\t\t\"vaxis\" \"[")
 			.Append(brushside.textureT.x.ToString("###0.######", format))
 			.Append(" ")
@@ -166,7 +166,7 @@ namespace Decompiler {
 			.Append(" ")
 			.Append(brushside.textureT.z.ToString("###0.######", format))
 			.Append(" ")
-			.Append(brushside.textureShiftT)
+			.Append(brushside.textureShiftT.ToString("###0.######", format))
 			.Append("] ")
 			.Append(brushside.texScaleY.ToString("###0.####", format))
 			.Append("\"\r\n\t\t\t\"rotation\" \"")
@@ -228,7 +228,7 @@ namespace Decompiler {
 					if (j > 0) {
 						sb.Append(" ");
 					}
-					sb.Append(displacement.alphas[i][j]);
+					sb.Append(displacement.alphas[i][j].ToString(format));
 				}
 				sb.Append("\"\r\n");
 			}
