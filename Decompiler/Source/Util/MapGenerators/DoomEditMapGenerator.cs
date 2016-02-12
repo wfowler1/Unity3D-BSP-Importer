@@ -123,14 +123,14 @@ namespace Decompiler {
 			sb.Append(" patchDef2\r\n {\r\n  ")
 			.Append(patch.texture)
 			.Append("\r\n  ( ")
-			.Append(patch.dims.x)
+			.Append((int)Math.Round(patch.dims.x))
 			.Append(" ")
-			.Append(patch.dims.y)
+			.Append((int)Math.Round(patch.dims.y))
 			.Append(" 0 0 0 )\r\n  (\r\n");
 			for (int i = 0; i < patch.dims.x; ++i) {
 				sb.Append("   (  ");
 				for (int j = 0; j < patch.dims.y; ++j) {
-					UIVertex vertex = patch.points[((int)patch.dims.x * j) + i];
+					UIVertex vertex = patch.points[((int)Math.Round(patch.dims.x) * j) + i];
 					sb.Append("( ")
 					.Append(vertex.position.x.ToString("###0.#####", format))
 					.Append(" ")
