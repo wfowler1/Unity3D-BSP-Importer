@@ -146,7 +146,9 @@ namespace Decompiler {
 		public void Run() {
 			DateTime begin = DateTime.Now;
 			BSP bsp = null;
+#if !DEBUG
 			try {
+#endif
 				Entities output = null;
 				string mapDirectory = "";
 				string mapName = "";
@@ -174,15 +176,13 @@ namespace Decompiler {
 				if (JobFinishedEvent != null) {
 					JobFinishedEvent(this, EventArgs.Empty);
 				}
+#if !DEBUG
 			} catch (Exception e) {
 				if (MessageEvent != null) {
 					MessageEvent(this, new MessageEventArgs("Exception caught in Job " + num + ": " + e.ToString(), true));
 				}
-			} finally {
-				if (bsp != null) {
-					bsp.Close();
-				}
 			}
+#endif
 		}
 	}
 
