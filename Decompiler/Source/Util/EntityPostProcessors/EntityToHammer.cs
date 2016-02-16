@@ -181,6 +181,7 @@ namespace Decompiler {
 				case MapType.Source21:
 				case MapType.Source22:
 				case MapType.Source23:
+				case MapType.L4D2:
 				case MapType.DMoMaM:
 				case MapType.Vindictus:
 				case MapType.TacticalInterventionEncrypted: {
@@ -756,6 +757,7 @@ namespace Decompiler {
 						case MapType.Source22:
 						case MapType.Source23:
 						case MapType.Source27:
+						case MapType.L4D2:
 						case MapType.DMoMaM:
 						case MapType.Vindictus:
 						case MapType.TacticalInterventionEncrypted: {

@@ -149,6 +149,7 @@ namespace Decompiler {
 				case MapType.Source22:
 				case MapType.Source23:
 				case MapType.DMoMaM:
+				case MapType.L4D2:
 				case MapType.Vindictus:
 				case MapType.TacticalInterventionEncrypted: {
 					PostProcessSourceEntity(entity);
@@ -622,6 +623,7 @@ namespace Decompiler {
 						case MapType.Source23:
 						case MapType.Source27:
 						case MapType.DMoMaM:
+						case MapType.L4D2:
 						case MapType.Vindictus:
 						case MapType.TacticalInterventionEncrypted: {
 							PostProcessSourceTexture(brushSide);
