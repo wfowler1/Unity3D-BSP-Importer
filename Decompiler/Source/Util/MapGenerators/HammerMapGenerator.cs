@@ -103,7 +103,7 @@ namespace Decompiler {
 		/// <param name="brush">The <see cref="MAPBrush"/> to process.</param>
 		/// <param name="sb">A <see cref="StringBuilder"/> object to append processed data from <paramref name="brush"/> to.</param>
 		private void ParseBrush(MAPBrush brush, StringBuilder sb) {
-			if (brush.patch != null) {
+			if (brush.patch != null || brush.terrain != null) {
 				return;
 			}
 			if (brush.sides.Count < 4) {

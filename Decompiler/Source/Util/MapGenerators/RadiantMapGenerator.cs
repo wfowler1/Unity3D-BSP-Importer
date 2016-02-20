@@ -41,11 +41,11 @@ namespace Decompiler {
 		}
 
 		/// <summary>
-		/// Process the data in an <see cref="Entity"/> into the passed <see cref="StringBuilder"/>.
+		/// Process the data in an <see cref="Entity"/> into the passed <c>StringBuilder</c>.
 		/// </summary>
 		/// <param name="entity">The <see cref="Entity"/> to process.</param>
 		/// <param name="index">The index of this <see cref="Entity"/> in the map.</param>
-		/// <param name="sb">A <see cref="StringBuilder"/> object to append processed data from <paramref name="entity"/> to.</param>
+		/// <param name="sb">A <c>StringBuilder</c> object to append processed data from <paramref name="entity"/> to.</param>
 		private void ParseEntity(Entity entity, int index, StringBuilder sb) {
 			sb.Append("// entity ")
 			.Append(index)
@@ -64,13 +64,13 @@ namespace Decompiler {
 		}
 
 		/// <summary>
-		/// Process the data in a <see cref="MAPBrush"/> into the passed <see cref="StringBuilder"/>.
+		/// Process the data in a <see cref="MAPBrush"/> into the passed <c>StringBuilder</c>.
 		/// </summary>
 		/// <param name="brush">The <see cref="MAPBrush"/> to process.</param>
 		/// <param name="index">The index of <see cref="MAPBrush"/> entity in the <see cref="Entity"/>.</param>
-		/// <param name="sb">A <see cref="StringBuilder"/> object to append processed data from <paramref name="brush"/> to.</param>
+		/// <param name="sb">A <c>StringBuilder</c> object to append processed data from <paramref name="brush"/> to.</param>
 		private void ParseBrush(MAPBrush brush, int index, StringBuilder sb) {
-			if (brush.sides.Count < 4 && brush.patch == null) {
+			if (brush.sides.Count < 4 && brush.patch == null && brush.terrain == null) {
 				// Can't create a brush with less than 4 sides
 				_master.Print("WARNING: Tried to create brush from " + brush.sides.Count + " sides!");
 				return;
@@ -80,6 +80,8 @@ namespace Decompiler {
 			.Append("\r\n{\r\n");
 			if (brush.patch != null) {
 				ParsePatch(brush.patch, sb);
+			} else if (brush.terrain != null) {
+				ParseTerrain(brush.terrain, sb);
 			} else {
 				foreach (MAPBrushSide brushSide in brush.sides) {
 					ParseBrushSide(brushSide, sb);
@@ -89,10 +91,10 @@ namespace Decompiler {
 		}
 		
 		/// <summary>
-		/// Process the data in a <see cref="MAPBrushSide"/> into the passed <see cref="StringBuilder"/>.
+		/// Process the data in a <see cref="MAPBrushSide"/> into the passed <c>StringBuilder</c>.
 		/// </summary>
 		/// <param name="brushside">The <see cref="MAPBrushSide"/> to process.</param>
-		/// <param name="sb">A <see cref="StringBuilder"/> object to append processed data from <paramref name="brushside"/> to.</param>
+		/// <param name="sb">A <c>StringBuilder</c> object to append processed data from <paramref name="brushside"/> to.</param>
 		private void ParseBrushSide(MAPBrushSide brushside, StringBuilder sb) {
 			sb.Append("( ")
 			.Append(brushside.vertices[0].x.ToString("###0.##########", format))
@@ -130,10 +132,10 @@ namespace Decompiler {
 		}
 
 		/// <summary>
-		/// Process the data in a <see cref="MAPPatch"/> into the passed <see cref="StringBuilder"/>.
+		/// Process the data in a <see cref="MAPPatch"/> into the passed <c>StringBuilder</c>.
 		/// </summary>
 		/// <param name="patch">The <see cref="MAPPatch"/> to process.</param>
-		/// <param name="sb">A <see cref="StringBuilder"/> object to append processed data from <paramref name="patch"/> to.</param>
+		/// <param name="sb">A <c>StringBuilder</c> object to append processed data from <paramref name="patch"/> to.</param>
 		private void ParsePatch(MAPPatch patch, StringBuilder sb) {
 			sb.Append("patchDef2\r\n{\r\n")
 			.Append(patch.texture)
@@ -161,6 +163,71 @@ namespace Decompiler {
 				sb.Append(")\r\n");
 			}
 			sb.Append(")\r\n}\r\n");
+		}
+
+		/// <summary>
+		/// Process the data in a <see cref="MAPTerrain"/> into the passed <c>StringBuilder</c>.
+		/// </summary>
+		/// <param name="terrain">The <see cref="MAPTerrain"/> to process.</param>
+		/// <param name="sb">A <c>StringBuilder</c> object to append processed data from <paramref name="terrain"/> to.</param>
+		private void ParseTerrain(MAPTerrain terrain, StringBuilder sb) {
+			sb.Append("  terrainDef\r\n  {\r\n    TEX( ")
+			.Append(terrain.texture)
+			.Append(" ")
+			.Append(terrain.textureShiftS.ToString("###0.##########", format))
+			.Append(" ")
+			.Append(terrain.textureShiftT.ToString("###0.##########", format))
+			.Append(" ")
+			.Append(terrain.texRot.ToString("###0.##########", format))
+			.Append(" ")
+			.Append(terrain.texScaleX.ToString("###0.##########", format))
+			.Append(" ")
+			.Append(terrain.texScaleY.ToString("###0.##########", format))
+			.Append(" ")
+			.Append(terrain.flags)
+			.Append(" 0 0 )\r\n    TD( ")
+			.Append(terrain.sideLength.ToString("###0", format))
+			.Append(" ")
+			.Append(terrain.start.x.ToString("###0.##########", format))
+			.Append(" ")
+			.Append(terrain.start.y.ToString("###0.##########", format))
+			.Append(" ")
+			.Append(terrain.start.z.ToString("###0.##########", format))
+			.Append(" )\r\n    IF( ")
+			.Append(terrain.IF.x.ToString("###0.##########", format))
+			.Append(" ")
+			.Append(terrain.IF.y.ToString("###0.##########", format))
+			.Append(" ")
+			.Append(terrain.IF.z.ToString("###0.##########", format))
+			.Append(" ")
+			.Append(terrain.IF.w.ToString("###0.##########", format))
+			.Append(" )\r\n    LF( ")
+			.Append(terrain.LF.x.ToString("###0.##########", format))
+			.Append(" ")
+			.Append(terrain.LF.y.ToString("###0.##########", format))
+			.Append(" ")
+			.Append(terrain.LF.z.ToString("###0.##########", format))
+			.Append(" ")
+			.Append(terrain.LF.w.ToString("###0.##########", format))
+			.Append(" )\r\n    V(\r\n");
+			for (int i = 0; i < terrain.heightMap.Length; ++i) {
+				sb.Append("      ");
+				for (int j = 0; j < terrain.heightMap[i].Length; ++j) {
+					sb.Append(terrain.heightMap[i][j].ToString("###0.##########", format))
+					.Append(" ");
+				}
+				sb.Append("\r\n");
+			}
+			sb.Append("    )\r\n    A(\r\n");
+			for (int i = 0; i < terrain.alphaMap.Length; ++i) {
+				sb.Append("      ");
+				for (int j = 0; j < terrain.alphaMap[i].Length; ++j) {
+					sb.Append(terrain.alphaMap[i][j].ToString("###0.##########", format))
+					.Append(" ");
+				}
+				sb.Append("\r\n");
+			}
+			sb.Append("    )\r\n  }\r\n");
 		}
 
 	}

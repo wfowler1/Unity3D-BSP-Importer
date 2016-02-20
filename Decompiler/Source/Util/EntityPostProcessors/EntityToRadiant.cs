@@ -44,7 +44,7 @@ namespace Decompiler {
 				 _version != MapType.CoD &&
 				 _version != MapType.CoD2 &&
 				 _version != MapType.CoD4) {
-				// Make sure all water brushes currently in the worldspawn get converted to Source.
+				// Make sure all water brushes currently in the worldspawn get converted to Radiant.
 				foreach (Entity worldspawn in worldspawns) {
 					foreach (MAPBrush brush in worldspawn.brushes) {
 						if (brush.isWater) {
@@ -52,7 +52,7 @@ namespace Decompiler {
 						}
 					}
 				}
-				// Make sure all func_water entities get converted to Source.
+				// Make sure all func_water entities get converted to Radiant.
 				List<Entity> waters = _entities.FindAll(entity => { return entity.className.Equals("func_water", StringComparison.InvariantCultureIgnoreCase); });
 				if (waters.Any()) {
 					// Parse water entities into just water brushes
@@ -110,6 +110,11 @@ namespace Decompiler {
 		/// </summary>
 		/// <param name="entity"><see cref="Entity"/> to postprocess.</param>
 		private void PostProcessEntity(Entity entity) {
+			if (entity.brushBased) {
+				foreach (MAPBrush brush in entity.brushes) {
+					brush.Translate(entity.origin);
+				}
+			}
 			switch (_version) {
 				case MapType.Nightfire: {
 					PostProcessNightfireEntity(entity);
@@ -179,6 +184,9 @@ namespace Decompiler {
 				}
 				if (brush.patch != null) {
 					PostProcessQuake3Texture(brush.patch);
+				}
+				if (brush.terrain != null) {
+					PostProcessQuake3Texture(brush.terrain);
 				}
 			}
 		}
@@ -269,6 +277,16 @@ namespace Decompiler {
 		private void PostProcessQuake3Texture(MAPPatch patch) {
 			if (patch.texture.Length >= 9 && patch.texture.Substring(0, 9).Equals("textures/", StringComparison.InvariantCultureIgnoreCase)) {
 				patch.texture = patch.texture.Substring(9);
+			}
+		}
+
+		/// <summary>
+		/// Postprocesser to convert the texture referenced by <paramref name="terrain"/> into one used by GTKRadiant, if necessary.
+		/// </summary>
+		/// <param name="terrain">The <see cref="MAPTerrain"/> to have its texture parsed.</param>
+		private void PostProcessQuake3Texture(MAPTerrain terrain) {
+			if (terrain.texture.Length >= 9 && terrain.texture.Substring(0, 9).Equals("textures/", StringComparison.InvariantCultureIgnoreCase)) {
+				terrain.texture = terrain.texture.Substring(9);
 			}
 		}
 

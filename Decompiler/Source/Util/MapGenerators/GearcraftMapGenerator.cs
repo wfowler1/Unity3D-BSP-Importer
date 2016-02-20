@@ -70,7 +70,7 @@ namespace Decompiler {
 		/// <param name="index">The index of <see cref="MAPBrush"/> entity in the <see cref="Entity"/>.</param>
 		/// <param name="sb">A <see cref="StringBuilder"/> object to append processed data from <paramref name="brush"/> to.</param>
 		private void ParseBrush(MAPBrush brush, int index, StringBuilder sb) {
-			if (brush.patch != null) {
+			if (brush.patch != null || brush.terrain != null) {
 				return;
 			}
 			if (brush.sides.Count < 4) {

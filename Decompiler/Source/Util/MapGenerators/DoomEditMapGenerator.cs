@@ -71,7 +71,7 @@ namespace Decompiler {
 		/// <param name="index">The index of <see cref="MAPBrush"/> entity in the <see cref="Entity"/>.</param>
 		/// <param name="sb">A <see cref="StringBuilder"/> object to append processed data from <paramref name="brush"/> to.</param>
 		private void ParseBrush(MAPBrush brush, int index, StringBuilder sb) {
-			if (brush.sides.Count < 4 && brush.patch == null) {
+			if (brush.sides.Count < 4 && brush.patch == null && brush.terrain == null) {
 				// Can't create a brush with less than 4 sides
 				_master.Print("WARNING: Tried to create brush from " + brush.sides.Count + " sides!");
 				return;

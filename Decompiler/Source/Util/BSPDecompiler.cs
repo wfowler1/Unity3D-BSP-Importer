@@ -105,6 +105,11 @@ namespace Decompiler {
 							MAPBrush newBrush = new MAPBrush();
 							newBrush.patch = patch;
 							entity.brushes.Add(newBrush);
+						} else if ((_bsp.version == MapType.STEF2 || _bsp.version == MapType.STEF2Demo) && face.flags == 5) {
+							MAPTerrain terrain = ProcessTerrain(face);
+							MAPBrush newBrush = new MAPBrush();
+							newBrush.terrain = terrain;
+							entity.brushes.Add(newBrush);
 						}
 					}
 				}
@@ -299,21 +304,82 @@ namespace Decompiler {
 		}
 
 		/// <summary>
-		/// Processes a <see cref="Face"/> as a biquadratic B�zier patch. The verices of the <see cref="Face"/> are interpreted
+		/// Processes a <see cref="Face"/> as a biquadratic Bezier patch. The vertices of the <see cref="Face"/> are interpreted
 		/// as control points for multiple spline curves, which are then interpolated and rendered at an arbitrary quality value.
 		/// For Quake 3 engine forks only.
 		/// </summary>
 		/// <param name="face">The <see cref="Face"/> object to process.</param>
 		/// <returns>A <see cref="MAPPatch"/> object to be added to a <see cref="MAPBrush"/> object.</returns>
-		public MAPPatch ProcessPatch(Face face) {
-			List<UIVertex> vertices = new List<UIVertex>(face.numVertices);
-			for (int i = 0; i < face.numVertices; ++i) {
-				vertices.Add(_bsp.vertices[face.firstVertex + i]);
-			}
+		private MAPPatch ProcessPatch(Face face) {
+			List<UIVertex> vertices = _bsp.GetReferencedObjects<UIVertex>(face, "vertices");
 			return new MAPPatch() {
 				dims = new Vector2d(face.patchSize.x, face.patchSize.y),
 				texture = _bsp.textures[face.texture].name,
 				points = vertices.ToArray<UIVertex>()
+			};
+		}
+
+		/// <summary>
+		/// Processes a <see cref="Face"/> as a terrain. The vertices of the <see cref="Face"/> are processed into a heightmap
+		/// defining the heights of the terrain at that point.
+		/// For Quake 3 engine forks only.
+		/// </summary>
+		/// <param name="face">The <see cref="Face"/> object to process.</param>
+		/// <returns>A <see cref="MAPPatch"/> object to be added to a <see cref="MAPBrush"/> object.</returns>
+		private MAPTerrain ProcessTerrain(Face face) {
+			string texture = _bsp.textures[face.texture].name;
+			int flags = _bsp.textures[face.texture].flags;
+			List<UIVertex> vertices = _bsp.GetReferencedObjects<UIVertex>(face, "vertices");
+			int side = (int)Math.Sqrt(vertices.Count);
+			Vector2d mins = new Vector2d(Double.PositiveInfinity, Double.PositiveInfinity);
+			Vector2d maxs = new Vector2d(Double.NegativeInfinity, Double.NegativeInfinity);
+			Vector3d start = Vector3d.undefined;
+			foreach (UIVertex v in vertices) {
+				if (v.position.x < mins.x) {
+					mins.x = v.position.x;
+				}
+				if (v.position.x > maxs.x) {
+					maxs.x = v.position.x;
+				}
+				if (v.position.y < mins.y) {
+					mins.y = v.position.y;
+				}
+				if (v.position.y > maxs.y) {
+					maxs.y = v.position.y;
+				}
+				if (v.position.x == mins.x && v.position.y == mins.y) {
+					start = v.position;
+				}
+			}
+			start.z = 0;
+			double sideLength = maxs.x - mins.x;
+			double gridUnit = sideLength / (side - 1);
+			float[][] heightMap = new float[side][];
+			float[][] alphaMap = new float[side][];
+			foreach (UIVertex v in vertices) {
+				int col = (int)Math.Round((v.position.x - mins.x) / gridUnit);
+				int row = (int)Math.Round((v.position.y - mins.y) / gridUnit);
+				if (heightMap[row] == null) {
+					heightMap[row] = new float[side];
+					alphaMap[row] = new float[side];
+				}
+				heightMap[row][col] = (float)(v.position.z);
+			}
+			return new MAPTerrain() {
+				side = side,
+				texture = texture,
+				textureShiftS = 0,
+				textureShiftT = 0,
+				texRot = 0,
+				texScaleX = 1,
+				texScaleY = 1,
+				flags = flags,
+				sideLength = sideLength,
+				start = start,
+				IF = Vector4d.zero,
+				LF = Vector4d.zero,
+				heightMap = heightMap,
+				alphaMap = alphaMap
 			};
 		}
 
@@ -323,7 +389,7 @@ namespace Decompiler {
 		/// </summary>
 		/// <param name="displacement">The <see cref="DisplacementInfo"/> object to process.</param>
 		/// <returns>A <see cref="MAPDisplacement"/> object to be added to a <see cref="MAPBrushSide"/>.</returns>
-		public MAPDisplacement ProcessDisplacement(DisplacementInfo displacement) {
+		private MAPDisplacement ProcessDisplacement(DisplacementInfo displacement) {
 			int power = displacement.power;
 			int first = displacement.dispVertStart;
 			Vector3d start = displacement.startPosition;
