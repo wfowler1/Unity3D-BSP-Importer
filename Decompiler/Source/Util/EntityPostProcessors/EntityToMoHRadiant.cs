@@ -130,6 +130,7 @@ namespace Decompiler {
 			foreach (MAPBrush brush in brushes) {
 				foreach (MAPBrushSide brushSide in brush.sides) {
 					ValidateTexInfo(brushSide);
+					PostProcessSpecialTexture(brushSide);
 					switch (_version) {
 						case MapType.Nightfire: {
 							PostProcessNightfireTexture(brushSide);
@@ -191,6 +192,36 @@ namespace Decompiler {
 			}
 			if (Double.IsInfinity(brushSide.textureT.x) || Double.IsNaN(brushSide.textureT.x) || Double.IsInfinity(brushSide.textureT.y) || Double.IsNaN(brushSide.textureT.y) || Double.IsInfinity(brushSide.textureT.z) || Double.IsNaN(brushSide.textureT.z) || brushSide.textureT == Vector3d.zero) {
 				brushSide.textureT = TextureInfo.TextureAxisFromPlane(brushSide.plane)[1];
+			}
+		}
+
+		/// <summary>
+		/// Postprocesser to convert the texture referenced by <paramref name="brushSide"/> into one used by GTKRadiant, if necessary.
+		/// These textures are produced by the decompiler algorithm itself.
+		/// </summary>
+		/// <param name="brushSide">The <see cref="MAPBrushSide"/> to have its texture parsed.</param>
+		private void PostProcessSpecialTexture(MAPBrushSide brushSide) {
+			switch (brushSide.texture.ToLower()) {
+				case "**nulltexture**": {
+					brushSide.texture = "common/nodraw";
+					break;
+				}
+				case "**skiptexture**": {
+					brushSide.texture = "common/skip";
+					break;
+				}
+				case "**skytexture**": {
+					brushSide.texture = "common/skyportal";
+					break;
+				}
+				case "**hinttexture**": {
+					brushSide.texture = "common/hint";
+					break;
+				}
+				case "**cliptexture**": {
+					brushSide.texture = "common/clip";
+					break;
+				}
 			}
 		}
 

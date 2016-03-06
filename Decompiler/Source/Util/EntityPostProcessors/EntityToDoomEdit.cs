@@ -66,6 +66,7 @@ namespace Decompiler {
 			foreach (MAPBrush brush in brushes) {
 				foreach (MAPBrushSide brushSide in brush.sides) {
 					ValidateTexInfo(brushSide);
+					PostProcessSpecialTexture(brushSide);
 					switch (_version) {
 						case MapType.Source17:
 						case MapType.Source18:
@@ -114,6 +115,33 @@ namespace Decompiler {
 		}
 
 		/// <summary>
+		/// Postprocesser to convert the texture referenced by <paramref name="brushSide"/> into one used by GTKRadiant, if necessary.
+		/// These textures are produced by the decompiler algorithm itself.
+		/// </summary>
+		/// <param name="brushSide">The <see cref="MAPBrushSide"/> to have its texture parsed.</param>
+		private void PostProcessSpecialTexture(MAPBrushSide brushSide) {
+			switch (brushSide.texture.ToLower()) {
+				case "**skiptexture**":
+				case "**nulltexture**": {
+					brushSide.texture = "textures/common/nodraw";
+					break;
+				}
+				case "**skytexture**": {
+					brushSide.texture = "textures/common/caulk";
+					break;
+				}
+				case "**hinttexture**": {
+					brushSide.texture = "textures/editor/visportal";
+					break;
+				}
+				case "**cliptexture**": {
+					brushSide.texture = "textures/common/clip";
+					break;
+				}
+			}
+		}
+
+		/// <summary>
 		/// Postprocesser to convert the texture referenced by <paramref name="brushSide"/> into one used by DoomEdit, if necessary.
 		/// </summary>
 		/// <param name="brushSide">The <see cref="MAPBrushSide"/> to have its texture parsed.</param>
@@ -142,7 +170,7 @@ namespace Decompiler {
 				}
 				case "tools/toolsskip":
 				case "tools/toolsnodraw": {
-					brushSide.texture = "tedtures/common/nodraw";
+					brushSide.texture = "textures/common/nodraw";
 					break;
 				}
 				case "tools/toolshint": {

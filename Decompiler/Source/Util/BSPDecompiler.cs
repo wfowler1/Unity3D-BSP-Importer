@@ -179,7 +179,7 @@ namespace Decompiler {
 				Face face = _bsp.faces[brushSide.face];
 				// In Nightfire, faces with "256" flag set should be ignored
 				if ((face.flags & (1 << 8)) != 0) { return null; }
-				texture = (_master.settings.replace512WithNull && (face.flags & (1 << 9)) != 0) ? "special/null" : _bsp.textures[face.texture].name;
+				texture = (_master.settings.replace512WithNull && (face.flags & (1 << 9)) != 0) ? "**nulltexture**" : _bsp.textures[face.texture].name;
 				texInfo = _bsp.texInfo[face.textureScale];
 				threePoints = GetPointsForFace(face, brushSide);
 				if (face.plane >= 0 && face.plane < _bsp.planes.Count) {
@@ -251,16 +251,16 @@ namespace Decompiler {
 							currentTexData = _bsp.texDatas[texInfo.texture];
 							texture = _bsp.textures.GetTextureAtOffset((uint)_bsp.texTable[currentTexData.stringTableIndex]);
 						} else {
-							texture = "tools/toolsskip";
+							texture = "**skiptexture**";
 						}
 					} else {
 						Texture textureDef = _bsp.textures[brushSide.texture];
 						if ((textureDef.flags & (1 << 2)) != 0) {
-							texture = "special/sky";
+							texture = "**skytexture**";
 						} else if ((textureDef.flags & (1 << 9)) != 0) {
-							texture = "special/skip";
+							texture = "**skiptexture**";
 						} else if ((textureDef.flags & (1 << 8)) != 0) {
-							texture = "special/hint";
+							texture = "**hinttexture**";
 						} else {
 							texture = textureDef.name;
 						}
@@ -269,7 +269,7 @@ namespace Decompiler {
 				} else {
 					Vector3d[] newAxes = TextureInfo.TextureAxisFromPlane(plane);
 					texInfo = new TextureInfo(newAxes[0], 0, newAxes[1], 0, 0, -1);
-					texture = "special/clip";
+					texture = "**cliptexture**";
 				}
 			}
 
