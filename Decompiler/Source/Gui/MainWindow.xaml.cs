@@ -43,10 +43,10 @@ namespace Decompiler.GUI {
 			taskBarItemInfo1.ProgressState = TaskbarItemProgressState.Normal;
 			Job.MessageEvent += Print;
 			Job.JobFinishedEvent += JobFinished;
-			if (Revision.versionString == "") {
+			if (Revision.version == "") {
 				this.Title = "BSP Decompiler v5 by 005";
 			} else {
-				this.Title = "BSP Decompiler v5." + Revision.versionString + " by 005";
+				this.Title = "BSP Decompiler v5." + Revision.version + " by 005";
 			}
 		}
 

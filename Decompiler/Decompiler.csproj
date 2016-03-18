@@ -84,7 +84,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Revision.cs" />
     <Compile Include="Source\Extensions\BrushExtensions.cs" />
     <Compile Include="Source\Extensions\BSPExtensions.cs" />
     <Compile Include="Source\Extensions\EntityExtensions.cs" />
@@ -108,6 +107,7 @@
     <Compile Include="Source\Util\MapGenerators\GearcraftMapGenerator.cs" />
     <Compile Include="Source\Util\BSPDecompiler.cs" />
     <Compile Include="Source\Util\EntityPostProcessors\EntityToGearcraft.cs" />
+    <Compile Include="Source\Util\Revision.cs" />
     <Page Include="Source\Gui\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -183,21 +183,35 @@
   <PropertyGroup>
     <PreBuildEvent>cd..
 cd..
-del /Q Revision.cs
 git rev-list --all --count &gt;&gt; version.txt
 set /p revision= &lt; version.txt
 del /Q version.txt
+cd..
+git rev-parse HEAD &gt;&gt; head.txt
+set /p head= &lt; head.txt
+del /Q head.txt
+cd Decompiler\Source\Util
+del /Q Revision.cs
 type nul&gt; Revision.cs
 echo namespace Decompiler {&gt;&gt; Revision.cs
-echo public static class Revision {&gt;&gt; Revision.cs
-echo public static string versionString = "%25revision%25";&gt;&gt; Revision.cs
-echo }&gt;&gt; Revision.cs
+echo 	public class Revision {&gt;&gt; Revision.cs
+echo 		public const string version = "%25revision%25";&gt;&gt; Revision.cs
+echo 		public const string head = "%25head%25";&gt;&gt; Revision.cs
+echo 	}&gt;&gt; Revision.cs
 echo }&gt;&gt; Revision.cs</PreBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
     <PostBuildEvent>cd..
 cd..
-del /Q Revision.cs</PostBuildEvent>
+cd Source\Util
+del /Q Revision.cs
+type nul&gt; Revision.cs
+echo namespace Decompiler {&gt;&gt; Revision.cs
+echo 	public class Revision {&gt;&gt; Revision.cs
+echo 		public const string version = "To be replaced on build";&gt;&gt; Revision.cs
+echo 		public const string head = "To be replaced on build";&gt;&gt; Revision.cs
+echo 	}&gt;&gt; Revision.cs
+echo }&gt;&gt; Revision.cs</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
