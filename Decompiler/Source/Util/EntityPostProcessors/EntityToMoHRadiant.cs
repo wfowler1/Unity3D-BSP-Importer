@@ -33,8 +33,7 @@ namespace Decompiler {
 		public void PostProcessEntities() {
 			// There should really only be one of these. But someone might have screwed with the map...
 			List<Entity> worldspawns = _entities.FindAll(entity => { return entity.className.Equals("worldspawn", StringComparison.InvariantCultureIgnoreCase); });
-
-			// TODO: This is awful. Let's rework the enum to have internal ways to check engine forks.
+			
 			if (_version != MapType.MOHAA) {
 				// Make sure all water brushes currently in the worldspawn get converted to Source.
 				foreach (Entity worldspawn in worldspawns) {
@@ -96,6 +95,10 @@ namespace Decompiler {
 		/// <param name="entity"><see cref="Entity"/> to postprocess.</param>
 		private void PostProcessEntity(Entity entity) {
 			switch (_version) {
+				case MapType.MOHAA: {
+					PostProcessMoHAAEntity(entity);
+					break;
+				}
 				case MapType.Nightfire: {
 					PostProcessNightfireEntity(entity);
 					break;
@@ -116,6 +119,42 @@ namespace Decompiler {
 				case "worldspawn": {
 					entity.Remove("mapversion");
 					break;
+				}
+			}
+			if (entity.brushBased)
+			{
+				Vector3d origin = entity.origin;
+				entity.Remove("origin");
+				entity.Remove("model");
+				if (origin != Vector3d.zero)
+				{
+					// If this brush has an origin
+					MAPBrush neworiginBrush = MAPBrushExtensions.CreateCube(new Vector3d(-16, -16, -16), new Vector3d(16, 16, 16), "common/origin");
+					entity.brushes.Add(neworiginBrush);
+				}
+				foreach (MAPBrush brush in entity.brushes)
+				{
+					brush.Translate(origin);
+				}
+			}
+		}
+
+		/// <summary>
+		/// Postprocesser to convert an <see cref="Entity"/> from a MoHAA BSP to one for MOHRadiant.
+		/// </summary>
+		/// <param name="entity">The <see cref="Entity"/> to parse.</param>
+		private void PostProcessMoHAAEntity(Entity entity) {
+			if (entity.brushBased) {
+				Vector3d origin = entity.origin;
+				entity.Remove("origin");
+				entity.Remove("model");
+				if (origin != Vector3d.zero) {
+					// If this brush has an origin
+					MAPBrush neworiginBrush = MAPBrushExtensions.CreateCube(new Vector3d(-16, -16, -16), new Vector3d(16, 16, 16), "common/origin");
+					entity.brushes.Add(neworiginBrush);
+				}
+				foreach (MAPBrush brush in entity.brushes) {
+					brush.Translate(origin);
 				}
 			}
 		}
