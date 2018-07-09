@@ -54,17 +54,17 @@ namespace BSPImporter {
 						Dictionary<string, Mesh> textureMeshes = new Dictionary<string, Mesh>();
 						foreach(Face currentFace in faces) {
 							if(currentFace.numVertices > 0 || currentFace.numEdges > 0) {
-								TexInfo texInfo = null;
+								TextureInfo TextureInfo = null;
 								int textureIndex = BSPUtils.GetTextureIndex(bspObject, currentFace);
 								if(bspObject.textures[textureIndex].texAxes != null) {
-									texInfo = bspObject.textures[textureIndex].texAxes;
+									TextureInfo = bspObject.textures[textureIndex].texAxes;
 								} else {
 									if (currentFace.textureScale > -1) {
-										texInfo = bspObject.texInfo[currentFace.textureScale];
+										TextureInfo = bspObject.texInfo[currentFace.textureScale];
 									} else {
 										if(currentFace.plane >= 0) { // If not we've hit a Q3 wall. Never mind that, Q3 stores UVs directly.
-											Vector3[] axes = TexInfo.TextureAxisFromPlane(bspObject.planes[currentFace.plane]);
-											texInfo = new TexInfo(axes[0], 0, axes[1], 0, 0, bspObject.FindTexDataWithTexture("tools/toolsclip"));
+											Vector3[] axes = TextureInfo.TextureAxisFromPlane(bspObject.planes[currentFace.plane]);
+											TextureInfo = new TextureInfo(axes[0], 0, 1, axes[1], 0, 1, 0, bspObject.FindTexDataWithTexture("tools/toolsclip"));
 										}
 									}
 								}
@@ -104,9 +104,9 @@ namespace BSPImporter {
 									}
 								} else {
 									if(textureDict.ContainsKey(bspObject.textures[textureIndex].name)) {
-										faceMesh = BSPUtils.LegacyBuildFaceMesh(meshCorners, triangles, texInfo, entity.origin, textureDict[bspObject.textures[textureIndex].name]);
+										faceMesh = BSPUtils.LegacyBuildFaceMesh(meshCorners, triangles, TextureInfo, entity.origin, textureDict[bspObject.textures[textureIndex].name]);
 									} else {
-										faceMesh = BSPUtils.LegacyBuildFaceMesh(meshCorners, triangles, texInfo, entity.origin, null);
+										faceMesh = BSPUtils.LegacyBuildFaceMesh(meshCorners, triangles, TextureInfo, entity.origin, null);
 									}
 								}
 								if (!faceMeshes.ContainsKey(bspObject.textures[textureIndex].name)) {

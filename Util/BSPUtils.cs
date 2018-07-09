@@ -139,17 +139,17 @@ namespace BSPImporter {
 					vertices[i] = BSPUtils.Swizzle(bspObject.vertices[face.firstVertex + i].Scale(BSPUtils.inch2meterScale))/*.Translate(translate)*/;
 				}
 			} else {
-				vertices = new UIVertex[face.numEdges + 1];
+				vertices = new UIVertex[face.numEdges];
 				triangles = new int[(vertices.Length - 2) * 3];
 				int firstSurfEdge = (int)bspObject.surfEdges[face.firstEdge];
 				if(firstSurfEdge > 0) {
 					vertices[0] = bspObject.vertices[bspObject.edges[firstSurfEdge].firstVertex];
 				} else {
-					vertices[0] = bspObject.vertices[bspObject.edges[firstSurfEdge * -1].secondVertex];
+					vertices[0] = bspObject.vertices[bspObject.edges[-firstSurfEdge].secondVertex];
 				}
 				int currtriangle = 0;
 				int currvert = 1;
-				for(int i = 1; i < face.numEdges; i++) {
+				for(int i = 1; i < face.numEdges - 1; i++) {
 					int currSurfEdge = (int)bspObject.surfEdges[face.firstEdge + i];
 					UIVertex first;
 					UIVertex second;
@@ -157,8 +157,8 @@ namespace BSPImporter {
 						first = bspObject.vertices[bspObject.edges[currSurfEdge].firstVertex];
 						second = bspObject.vertices[bspObject.edges[currSurfEdge].secondVertex];
 					} else {
-						first = bspObject.vertices[bspObject.edges[currSurfEdge * -1].secondVertex];
-						second = bspObject.vertices[bspObject.edges[currSurfEdge * -1].firstVertex];
+						first = bspObject.vertices[bspObject.edges[-currSurfEdge].secondVertex];
+						second = bspObject.vertices[bspObject.edges[-currSurfEdge].firstVertex];
 					}
 					if(first.position != vertices[0].position && second.position != vertices[0].position) { // All tris involve first vertex, so disregard edges referencing it
 						triangles[currtriangle * 3] = 0;
@@ -207,7 +207,7 @@ namespace BSPImporter {
 			return combinedMesh;
 		}
 
-		public static Mesh LegacyBuildFaceMesh(Vector3[] vertices, int[] triangles, TexInfo texinfo, Vector3 origin, Texture2D texture) {
+		public static Mesh LegacyBuildFaceMesh(Vector3[] vertices, int[] triangles, TextureInfo texinfo, Vector3 origin, Texture2D texture) {
 			Vector3 sAxis = Swizzle(texinfo.axes[0] / inch2meterScale); // Convert from Quake (left-handed, Z-up, inches) coordinate system to Unity (right-handed, Y-up, meters) coordinates
 			Vector3 tAxis = Swizzle(texinfo.axes[1] / inch2meterScale); // This is NOT a typo. The texture axis vectors need to be DIVIDED by the conversion.
 			//Vector2 originShifts = new Vector2(Vector3.Dot(origin, texinfo.SAxis.normalized) * texinfo.SAxis.magnitude, Vector3.Dot(origin, texinfo.TAxis.normalized) * texinfo.TAxis.magnitude);
@@ -357,6 +357,112 @@ namespace BSPImporter {
 				}
 			}
 			return -1;
+		}
+
+		public static Mesh BuildDisplacementMesh(Vector3[] faceCorners, int[] faceTriangles, TextureInfo texinfo, BSP bsp, DisplacementInfo disp, Texture2D texture) {
+			if (faceCorners.Length != 4 || faceTriangles.Length != 6) {
+				Debug.LogWarning("Cannot create displacement mesh because " + faceCorners.Length + " corners and " + faceTriangles.Length + " triangle indices!");
+				return null;
+			}
+			Vector3 sAxis = Swizzle(texinfo.axes[0] / inch2meterScale);
+			Vector3 tAxis = Swizzle(texinfo.axes[1] / inch2meterScale);
+			Matrix4x4 texmatinverse = BuildTexMatrix(sAxis, tAxis).inverse;
+
+			int power = disp.power;
+			int side = (int)Mathf.Pow(2, power);
+			int sideVertices = side + 1;
+
+			Mesh ret = new Mesh();
+			DisplacementVertex[] displacementVertices = bsp.dispVerts.GetVerticesInDisplacement(disp.dispVertStart, disp.power);
+			Vector3[] vertices = new Vector3[displacementVertices.Length];
+			int[] triangles = new int[side * side * 6];
+
+			Vector3[] corners = new Vector3[4];
+			Vector3 start = Swizzle(disp.startPosition) * inch2meterScale;
+			if ((faceCorners[faceTriangles[0]] - start).sqrMagnitude < .01f) {
+				corners[0] = faceCorners[faceTriangles[0]];
+				corners[1] = faceCorners[faceTriangles[1]];
+				corners[2] = faceCorners[faceTriangles[5]];
+				corners[3] = faceCorners[faceTriangles[4]];
+			} else if ((faceCorners[faceTriangles[1]] - start).sqrMagnitude < .01f) {
+				corners[0] = faceCorners[faceTriangles[1]];
+				corners[1] = faceCorners[faceTriangles[4]];
+				corners[2] = faceCorners[faceTriangles[0]];
+				corners[3] = faceCorners[faceTriangles[5]];
+			} else if ((faceCorners[faceTriangles[5]] - start).sqrMagnitude < .01f) {
+				corners[0] = faceCorners[faceTriangles[5]];
+				corners[1] = faceCorners[faceTriangles[0]];
+				corners[2] = faceCorners[faceTriangles[4]];
+				corners[3] = faceCorners[faceTriangles[1]];
+			} else if ((faceCorners[faceTriangles[4]] - start).sqrMagnitude < .01f) {
+				corners[0] = faceCorners[faceTriangles[4]];
+				corners[1] = faceCorners[faceTriangles[5]];
+				corners[2] = faceCorners[faceTriangles[1]];
+				corners[3] = faceCorners[faceTriangles[0]];
+			} else {
+				Debug.LogWarning("Cannot create displacement mesh because start position isn't one of the face corners!\n" +
+					"Start position: " + start + "\n" +
+					"Corners: " + faceCorners[faceTriangles[0]] + " " + faceCorners[faceTriangles[1]] + " " + faceCorners[faceTriangles[5]] + " " + faceCorners[faceTriangles[4]]);
+				return null;
+			}
+
+			// Calculate initial position of the vertices (interpolate between face corners)
+			for (int i = 0; i < sideVertices; ++i) { // row
+				Vector3 rowStart = Vector3.Lerp(corners[0], corners[1], i / (float)(sideVertices - 1));
+				Vector3 rowEnd = Vector3.Lerp(corners[2], corners[3], i / (float)(sideVertices - 1));
+				for (int j = 0; j < sideVertices; ++j) { // column
+					vertices[(i * sideVertices) + j] = Vector3.Lerp(rowStart, rowEnd, j / (float)(sideVertices - 1));
+				}
+			}
+			// Build triangles
+			// Loop for each QUAD being built out of this face. Since the face is a quadrilateral we will divide it into <2 ^ power> ^ 2
+			// quads that when added together will give the same surface as the face. Since our vertices are in lines, we will need to
+			// index them by row and column.
+			System.Text.StringBuilder sb = new System.Text.StringBuilder();
+			sb.Append("Tesselation triangulation:");
+			sb.Append("\npower " + power);
+			for (int i = 0; i < side; ++i) {
+				for (int j = 0; j < side; ++j) {
+					if ((i + j) % 2 == 0) {
+						triangles[(i * side * 6) + (j * 6)] = (i * sideVertices) + j;
+						triangles[(i * side * 6) + (j * 6) + 1] = ((i + 1) * sideVertices) + j + 1;
+						triangles[(i * side * 6) + (j * 6) + 2] = (i * sideVertices) + j + 1;
+						triangles[(i * side * 6) + (j * 6) + 3] = (i * sideVertices) + j;
+						triangles[(i * side * 6) + (j * 6) + 4] = ((i + 1) * sideVertices) + j;
+						triangles[(i * side * 6) + (j * 6) + 5] = ((i + 1) * sideVertices) + j + 1;
+					} else {
+						triangles[(i * side * 6) + (j * 6)] = (i * sideVertices) + j;
+						triangles[(i * side * 6) + (j * 6) + 1] = ((i + 1) * sideVertices) + j;
+						triangles[(i * side * 6) + (j * 6) + 2] = (i * sideVertices) + j + 1;
+						triangles[(i * side * 6) + (j * 6) + 3] = (i * sideVertices) + j + 1;
+						triangles[(i * side * 6) + (j * 6) + 4] = ((i + 1) * sideVertices) + j;
+						triangles[(i * side * 6) + (j * 6) + 5] = ((i + 1) * sideVertices) + j + 1;
+					}
+				}
+			}
+
+			// Calculate UVs for each vertex in the tesellated face
+			Vector2[] uvs = new Vector2[vertices.Length];
+			for (int l = 0; l < vertices.Length; l++) {
+				Vector3 textureCoord = texmatinverse.MultiplyPoint3x4(vertices[l]);
+				if (texture != null) {
+					uvs[l] = CalcUV(sAxis, tAxis, textureCoord, texinfo.shifts[0], texinfo.shifts[1], 0, 0, texture.width, texture.height);
+				} else {
+					uvs[l] = CalcUV(sAxis, tAxis, textureCoord, texinfo.shifts[0], texinfo.shifts[1], 0, 0, 64, 64);
+				}
+			}
+
+			// Apply displacement vectors to the vertices
+			for (int i = 0; i < vertices.Length; ++i) {
+				vertices[i] = vertices[i] + (Swizzle(displacementVertices[i].normal) * displacementVertices[i].dist * inch2meterScale);
+			}
+
+			ret.vertices = vertices;
+			ret.triangles = triangles;
+			ret.uv = uvs;
+			ret.RecalculateNormals();
+			numVertices += vertices.Length;
+			return ret;
 		}
 
 	}

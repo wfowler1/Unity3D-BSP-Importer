@@ -17,10 +17,12 @@ public class BSPImporterEditor : EditorWindow {
 	public static int tesselationLevel = 10;
 
 	public delegate void EntityGameObjectCreatedAction(GameObject gameObject, Entity entity);
-	public static EntityGameObjectCreatedAction EntityGameObjectCreated;
+	public EntityGameObjectCreatedAction EntityGameObjectCreated;
 	
 	private static Dictionary<string, Texture2D> textureDict = new Dictionary<string, Texture2D>();
 	private static Dictionary<string, Material> materialDict = new Dictionary<string, Material>();
+	private static Dictionary<string, GameObject> namedEntities = new Dictionary<string, GameObject>();
+	private static Dictionary<GameObject, string> children = new Dictionary<GameObject, string>();
 	
 	[MenuItem ("Window/BSP Import")]
 	public static void ShowWindow() {
@@ -29,7 +31,7 @@ public class BSPImporterEditor : EditorWindow {
 		UnityEngine.Object.DontDestroyOnLoad(main);
 	}
 	
-	public void OnGUI() {
+	public virtual void OnGUI() {
 		EditorGUILayout.BeginVertical(); {
 			path = EditorGUILayout.TextField(new GUIContent("Path", "Path to the BSP, starting from Assets"), path);
 			doomMapName = EditorGUILayout.TextField(new GUIContent("Map", "Map name within a WAD, for Doom/Doom2/Heretic/Hexen only"), doomMapName);
@@ -68,12 +70,17 @@ public class BSPImporterEditor : EditorWindow {
 			} else {
 				entityGameObject = new GameObject(entity["classname"]);
 			}
+			children.Add(entityGameObject, entity["parentname"]);
+			if (!string.IsNullOrEmpty(entity.name)) {
+				namedEntities[entity.name] = entityGameObject;
+			}
 			entityGameObject.transform.parent = bspGameObject.transform;
 			Vector3 origin = BSPUtils.Swizzle(entity.origin * BSPUtils.inch2meterScale);
 			Vector3 eulerangles = entity.angles;
 			eulerangles.x = -eulerangles.x;
 			int modelNumber = entity.modelNumber;
 			if(modelNumber > -1) {
+			//if (modelNumber == 0) {
 				BSPUtils.numVertices = 0;
 				List<Face> faces = BSPUtils.GetFacesInModel(bspObject, bspObject.models[modelNumber]);
 				if(faces != null && faces.Count > 0) {
@@ -81,7 +88,8 @@ public class BSPImporterEditor : EditorWindow {
 					Dictionary<string, Mesh> textureMeshes = new Dictionary<string, Mesh>();
 					foreach(Face currentFace in faces) {
 						if(currentFace.numVertices > 0 || currentFace.numEdges > 0) {
-							TexInfo texinfo = null;
+						//if ((currentFace.numVertices > 0 || currentFace.numEdges > 0) && currentFace.displacement >= 0) {
+							TextureInfo texinfo = null;
 							int textureIndex = BSPUtils.GetTextureIndex(bspObject, currentFace);
 							if(bspObject.textures[textureIndex].texAxes != null) {
 								texinfo = bspObject.textures[textureIndex].texAxes;
@@ -90,8 +98,8 @@ public class BSPImporterEditor : EditorWindow {
 									texinfo = bspObject.texInfo[currentFace.textureScale];
 								} else {
 									if(currentFace.plane >= 0) { // If not we've hit a Q3 wall. Never mind that, Q3 stores UVs directly.
-										Vector3[] axes = TexInfo.TextureAxisFromPlane(bspObject.planes[currentFace.plane]);
-										texinfo = new TexInfo(axes[0], 0, axes[1], 0, 0, bspObject.FindTexDataWithTexture("tools/toolsclip"));
+										Vector3[] axes = TextureInfo.TextureAxisFromPlane(bspObject.planes[currentFace.plane]);
+										texinfo = new TextureInfo(axes[0], 0, 1, axes[1], 0, 1, 0, bspObject.FindTexDataWithTexture("tools/toolsclip"));
 									}
 								}
 							}
@@ -130,22 +138,32 @@ public class BSPImporterEditor : EditorWindow {
 									faceMesh = BSPUtils.Q3BuildFaceMesh(meshCorners, triangles, uvs, entity.origin);
 								}
 							} else {
-								if(textureDict.ContainsKey(bspObject.textures[textureIndex].name)) {
-									faceMesh = BSPUtils.LegacyBuildFaceMesh(meshCorners, triangles, texinfo, entity.origin, textureDict[bspObject.textures[textureIndex].name]);
+								if (currentFace.displacement >= 0) {
+									if (textureDict.ContainsKey(bspObject.textures[textureIndex].name)) {
+										faceMesh = BSPUtils.BuildDisplacementMesh(meshCorners, triangles, texinfo, bspObject, bspObject.dispInfos[currentFace.displacement], textureDict[bspObject.textures[textureIndex].name]);
+									} else {
+										faceMesh = BSPUtils.BuildDisplacementMesh(meshCorners, triangles, texinfo, bspObject, bspObject.dispInfos[currentFace.displacement], null);
+									}
 								} else {
-									faceMesh = BSPUtils.LegacyBuildFaceMesh(meshCorners, triangles, texinfo, entity.origin, null);
+									if (textureDict.ContainsKey(bspObject.textures[textureIndex].name)) {
+										faceMesh = BSPUtils.LegacyBuildFaceMesh(meshCorners, triangles, texinfo, entity.origin, textureDict[bspObject.textures[textureIndex].name]);
+									} else {
+										faceMesh = BSPUtils.LegacyBuildFaceMesh(meshCorners, triangles, texinfo, entity.origin, null);
+									}
 								}
 							}
-							if(!faceMeshes.ContainsKey(bspObject.textures[textureIndex].name)) {
-								faceMeshes.Add(bspObject.textures[textureIndex].name, new List<Mesh>());
+							if (faceMesh != null) {
+								if (!faceMeshes.ContainsKey(bspObject.textures[textureIndex].name)) {
+									faceMeshes.Add(bspObject.textures[textureIndex].name, new List<Mesh>());
+								}
+								faceMeshes[bspObject.textures[textureIndex].name].Add(faceMesh);
 							}
-							faceMeshes[bspObject.textures[textureIndex].name].Add(faceMesh);
 						}
 					}
 					foreach(string key in faceMeshes.Keys) {
 						textureMeshes.Add(key, BSPUtils.CombineAllMeshes(faceMeshes[key].ToArray<Mesh>(), entityGameObject.transform, true, false));
 					}
-					/*if(BSPUtils.numVertices < 65535 && combineMeshes) { // If we can combine all the faces into one mesh and use a single game object
+					/**/if(BSPUtils.numVertices < 65535 && combineMeshes) { // If we can combine all the faces into one mesh and use a single game object
 						Mesh entityMesh = BSPUtils.CombineAllMeshes(textureMeshes.Values.ToArray<Mesh>(), entityGameObject.transform, false, false);
 						MeshFilter filter = entityGameObject.AddComponent<MeshFilter>();
 						filter.mesh = entityMesh;
@@ -156,7 +174,7 @@ public class BSPImporterEditor : EditorWindow {
 						entityGameObject.AddComponent<MeshRenderer>().sharedMaterials = sharedMaterials;
 						entityGameObject.AddComponent<MeshCollider>();
 						AssetDatabase.CreateAsset(filter.sharedMesh, "Assets/Models/" + bspObject.MapNameNoExtension + "/mesh" + (filter.sharedMesh.GetHashCode()) + ".asset");
-					} else {*/ // If there's too many vertices, we must treat each face as its own mesh
+					} else {//*/ // If there's too many vertices, we must treat each face as its own mesh
 						foreach(string key in textureMeshes.Keys) {
 							GameObject textureMeshGO = new GameObject(key);
 							textureMeshGO.transform.parent = entityGameObject.transform;
@@ -166,7 +184,7 @@ public class BSPImporterEditor : EditorWindow {
 							textureMeshGO.AddComponent<MeshCollider>();
 							AssetDatabase.CreateAsset(filter.sharedMesh, "Assets/Models/" + bspObject.MapNameNoExtension + "/mesh" + (filter.sharedMesh.GetHashCode()) + ".asset");
 						}
-					//}
+					}
 				}
 			} else {
 				entityGameObject.transform.eulerAngles = eulerangles;
@@ -175,7 +193,25 @@ public class BSPImporterEditor : EditorWindow {
 
 			entityGameObject.transform.position = origin;
 
-			if(EntityGameObjectCreated != null) {
+			foreach (var pair in children) {
+				if (namedEntities.ContainsKey(pair.Value)) {
+					try {
+						if (pair.Key == null) {
+							Debug.LogError("Child GameObject needs to be parented but it's null?");
+							continue;
+						}
+						if (namedEntities[pair.Value] == null) {
+							Debug.LogError("Orphaned GameObject names a parent but none exists!");
+							continue;
+						}
+						pair.Key.transform.parent = namedEntities[pair.Value].transform;
+					} catch (System.Exception e) {
+						Debug.LogError("Couldn't parent child to parent because " + e);
+					}
+				}
+			}
+
+			if (EntityGameObjectCreated != null) {
 				EntityGameObjectCreated(entityGameObject, entity);
 			}
 		}
@@ -208,7 +244,7 @@ public class BSPImporterEditor : EditorWindow {
 			materialDict[texture.name] = new Material(def);
 
 			if(!textureDict.ContainsKey(texture.name) || textureDict[texture.name] == null) {
-				Debug.LogWarning("Texture " + texture.name + " not found! Texture scaling will probably be wrong if imported later.");
+				Debug.LogWarning("Texture Assets/" + texturePath + "/" + texture.name + " not found! Texture scaling will probably be wrong if imported later.");
 			} else {
 				materialDict[texture.name].mainTexture = textureDict[texture.name];
 			}
