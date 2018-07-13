@@ -27,13 +27,11 @@ namespace Decompiler {
 				texture = bsp.textures.GetTextureAtOffset((uint)bsp.texTable[texData.stringTableIndex]);
 			} else {
 				Vector3d[] axes = TextureInfo.TextureAxisFromPlane(bsp.planes[face.plane]);
-				texInfo = new TextureInfo(axes[0], 0, axes[1], 0, 0, -1);
+				texInfo = new TextureInfo(axes[0], 0, 1, axes[1], 0, 1, 0, -1);
 				texture = "tools/toolsclip";
 			}
-
-			double xScale = 1;
-			double yScale = 1;
-			TextureInfo outputTexInfo = texInfo.BSP2MAPTexInfo(Vector3d.zero, out xScale, out yScale);
+			
+			TextureInfo outputTexInfo = texInfo.BSP2MAPTexInfo(Vector3d.zero);
 
 			// Turn vertices and edges into arrays of vectors
 			Vector3d[] froms = new Vector3d[face.numEdges];
@@ -48,7 +46,7 @@ namespace Decompiler {
 				}
 			}
 
-			return MAPBrushExtensions.CreateBrushFromWind(froms, tos, texture, "tools/toolsnodraw", outputTexInfo, xScale, yScale, depth);
+			return MAPBrushExtensions.CreateBrushFromWind(froms, tos, texture, "tools/toolsnodraw", outputTexInfo, depth);
 		}
 
 	}

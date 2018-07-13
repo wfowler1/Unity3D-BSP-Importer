@@ -33,7 +33,7 @@ namespace Decompiler {
 		/// <param name="yScale">The scale of the texture along the T axis.</param>
 		/// <param name="depth">The desired depth of the brush, how far the back should extend from the front.</param>
 		/// <returns>A <see cref="MAPBrush"/> object created using the passed vertices and texture information.</returns>
-		public static MAPBrush CreateBrushFromWind(IList<Vector3d> froms, IList<Vector3d> tos, string texture, string backtex, TextureInfo texInfo, double xScale, double yScale, float depth) {
+		public static MAPBrush CreateBrushFromWind(IList<Vector3d> froms, IList<Vector3d> tos, string texture, string backtex, TextureInfo texInfo, float depth) {
 			Vector3d[] planepts = new Vector3d[3];
 			List<MAPBrushSide> sides = new List<MAPBrushSide>(froms.Count + 2); // Each edge, plus a front and back side
 
@@ -50,8 +50,8 @@ namespace Decompiler {
 				textureT = texInfo.axes[1],
 				textureShiftT = texInfo.shifts[1],
 				texRot = 0,
-				texScaleX = xScale,
-				texScaleY = yScale,
+				texScaleX = texInfo.scales[0],
+				texScaleY = texInfo.scales[1],
 				flags = 0,
 				material = "wld_lightmap",
 				lgtScale = 16,

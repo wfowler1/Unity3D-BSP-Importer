@@ -268,19 +268,17 @@ namespace Decompiler {
 					}
 				} else {
 					Vector3d[] newAxes = TextureInfo.TextureAxisFromPlane(plane);
-					texInfo = new TextureInfo(newAxes[0], 0, newAxes[1], 0, 0, -1);
+					texInfo = new TextureInfo(newAxes[0], 0, 1, newAxes[1], 0, 1, 0, -1);
 					texture = "**cliptexture**";
 				}
 			}
 
 			TextureInfo outputTexInfo;
-			double sScale = 1.0;
-			double tScale = 1.0;
 			if (texInfo != null && !texture.Substring(0, "tools/".Length).Equals("tools/", StringComparison.InvariantCultureIgnoreCase)) {
-				outputTexInfo = texInfo.BSP2MAPTexInfo(worldPosition, out sScale, out tScale);
+				outputTexInfo = texInfo.BSP2MAPTexInfo(worldPosition);
 			} else {
 				Vector3d[] newAxes = TextureInfo.TextureAxisFromPlane(plane);
-				outputTexInfo = new TextureInfo(newAxes[0], 0, newAxes[1], 0, 0, -1);
+				outputTexInfo = new TextureInfo(newAxes[0], 0, 1, newAxes[1], 0, 1, 0, -1);
 			}
 
 			mapBrushSide = new MAPBrushSide() {
@@ -292,8 +290,8 @@ namespace Decompiler {
 				textureT = outputTexInfo.axes[1],
 				textureShiftT = outputTexInfo.shifts[1],
 				texRot = 0,
-				texScaleX = sScale,
-				texScaleY = tScale,
+				texScaleX = outputTexInfo.scales[0],
+				texScaleY = outputTexInfo.scales[1],
 				flags = flags,
 				material = material,
 				lgtScale = 16,
@@ -421,7 +419,10 @@ namespace Decompiler {
 		/// Changes the progress value of the master object.
 		/// </summary>
 		private void ReportProgress() {
-			int onePercent = _itemsToProcess % 100;
+			int onePercent = _itemsToProcess / 100;
+			if (onePercent == 0) {
+				onePercent = 1;
+			}
 			if (_itemsProcessed % onePercent == 0) {
 				_master.progress = _itemsProcessed / (double)_itemsToProcess;
 			}
