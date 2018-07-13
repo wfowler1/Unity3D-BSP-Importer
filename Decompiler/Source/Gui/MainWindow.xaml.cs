@@ -256,7 +256,7 @@ namespace Decompiler.GUI {
 		/// <param name="sender">Sender of this event.</param>
 		/// <param name="e"><see cref="MessageEventArgs"/> containing the <c>string</c> to append and an optional error flag.</param>
 		private void Print(object sender, MessageEventArgs e) {
-			this.Dispatcher.Invoke(() => {
+			Dispatcher.Invoke(() => {
 				txtConsole.AppendText(e.message + "\n");
 				if (txtConsole.SelectionLength == 0) {
 					txtConsole.ScrollToEnd();
@@ -273,7 +273,7 @@ namespace Decompiler.GUI {
 		/// <param name="sender">Sender of this event, should be the <see cref="Job"/> that was completed.</param>
 		/// <param name="e"><c>EventArgs</c> for this event. Can be <c>EventArgs.Empty</c>.</param>
 		private void JobFinished(object sender, EventArgs e) {
-			this.Dispatcher.Invoke(() => {
+			Dispatcher.Invoke(() => {
 				jobs.RemoveActive((Job)sender);
 				jobs.StartNextIfAble();
 			});
@@ -285,12 +285,17 @@ namespace Decompiler.GUI {
 		/// <param name="sender">Sender of this event.</param>
 		/// <param name="e"><c>EventArgs</c> for this event.</param>
 		private void UpdateTaskbar(object sender, EventArgs e) {
-			double cumulativeProgress = 0.0;
-			foreach (Job job in jobs) {
-				cumulativeProgress += job.progress;
-			}
-			this.Dispatcher.Invoke(() => {
-				taskBarItemInfo1.ProgressValue = (cumulativeProgress / (double)jobs.Count);
+			Dispatcher.Invoke(() => {
+				double cumulativeProgress = 0.0;
+				foreach (Job job in jobs) {
+					cumulativeProgress += job.progress;
+				}
+				double val = (cumulativeProgress / (double)jobs.Count);
+				if (val != 1) {
+					taskBarItemInfo1.ProgressValue = val;
+				} else {
+					taskBarItemInfo1.ProgressValue = 0;
+				}
 			});
 		}
 	}
