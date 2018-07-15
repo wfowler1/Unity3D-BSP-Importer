@@ -15,11 +15,10 @@ namespace Decompiler {
 		/// Determines if the <see cref="Brush.contents"/> of the passed <see cref="Brush"/> have the "detail" flag set.
 		/// </summary>
 		/// <param name="brush">This <see cref="Brush"/>.</param>
-		/// <param name="version">The type of <see cref="BSP"/> the <paramref name="brush"/> is from.</param>
+		/// <param name="bsp">The <see cref="BSP"/> the <paramref name="brush"/> is from.</param>
 		/// <returns><c>true</c> if the <see cref="Brush.contents"/> indicate detail, <c>false</c> otherwise.</returns>
-		public static bool IsDetail(this Brush brush, MapType version) {
-			if (brush.contents == -1) { return false; }
-			switch (version) {
+		public static bool IsDetail(this Brush brush, BSP bsp) {
+			switch (bsp.version) {
 				case MapType.Nightfire: {
 					return ((brush.contents & (1 << 9)) != 0);
 				}
@@ -31,7 +30,13 @@ namespace Decompiler {
 				case MapType.STEF2:
 				case MapType.STEF2Demo:
 				case MapType.MOHAA:
-				case MapType.FAKK:
+				case MapType.FAKK: {
+					int texture = brush.texture;
+					if (texture >= 0) {
+						return ((bsp.textures[texture].contents & (1 << 27)) != 0);
+					}
+					return false;
+				}
 				case MapType.Source17:
 				case MapType.Source18:
 				case MapType.Source19:
@@ -59,9 +64,8 @@ namespace Decompiler {
 		/// <param name="brush">This <see cref="Brush"/>.</param>
 		/// <param name="version">The type of <see cref="BSP"/> the <paramref name="brush"/> is from.</param>
 		/// <returns><c>true</c> if the <see cref="Brush.contents"/> indicate water, <c>false</c> otherwise.</returns>
-		public static bool IsWater(this Brush brush, MapType version) {
-			if (brush.contents == -1) { return false; }
-			switch (version) {
+		public static bool IsWater(this Brush brush, BSP bsp) {
+			switch (bsp.version) {
 				case MapType.Quake: {
 					return brush.contents == -3;
 				}
@@ -76,7 +80,13 @@ namespace Decompiler {
 				case MapType.STEF2:
 				case MapType.STEF2Demo:
 				case MapType.MOHAA:
-				case MapType.FAKK:
+				case MapType.FAKK: {
+					int texture = brush.texture;
+					if (texture >= 0) {
+						return ((bsp.textures[texture].contents & (1 << 5)) != 0);
+					}
+					return false;
+				}
 				case MapType.Source17:
 				case MapType.Source18:
 				case MapType.Source19:

@@ -132,17 +132,8 @@ namespace Decompiler {
 				sides = _bsp.GetReferencedObjects<BrushSide>(brush, "brushSides");
 			}
 			MAPBrush mapBrush = new MAPBrush();
-			if (brush.contents == -1) {
-				int brushTextureIndex = brush.texture;
-				if (brushTextureIndex > 0) {
-					int contents = _bsp.textures[brushTextureIndex].contents;
-					mapBrush.isDetail = brush.IsDetail(_bsp.version);
-					mapBrush.isWater = brush.IsWater(_bsp.version);
-				}
-			} else {
-				mapBrush.isDetail = brush.IsDetail(_bsp.version);
-				mapBrush.isWater = brush.IsWater(_bsp.version);
-			}
+			mapBrush.isDetail = brush.IsDetail(_bsp);
+			mapBrush.isWater = brush.IsWater(_bsp);
 			int sideNum = 0;
 			foreach (BrushSide side in sides) {
 				MAPBrushSide mapBrushSide = ProcessBrushSide(side, worldPosition, sideNum);
