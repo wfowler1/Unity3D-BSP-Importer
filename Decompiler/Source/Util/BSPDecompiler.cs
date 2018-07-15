@@ -180,7 +180,7 @@ namespace Decompiler {
 				// In Nightfire, faces with "256" flag set should be ignored
 				if ((face.flags & (1 << 8)) != 0) { return null; }
 				texture = (_master.settings.replace512WithNull && (face.flags & (1 << 9)) != 0) ? "**nulltexture**" : _bsp.textures[face.texture].name;
-				texInfo = _bsp.texInfo[face.textureScale];
+				texInfo = _bsp.texInfo[face.textureInfo];
 				threePoints = GetPointsForFace(face, brushSide);
 				if (face.plane >= 0 && face.plane < _bsp.planes.Count) {
 					plane = _bsp.planes[face.plane];

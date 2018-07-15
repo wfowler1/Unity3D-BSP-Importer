@@ -21,8 +21,8 @@ namespace Decompiler {
 		public static MAPBrush CreateBrush(this Face face, BSP bsp, float depth) {
 			TextureInfo texInfo;
 			string texture;
-			if (face.textureScale >= 0) {
-				texInfo = bsp.texInfo[face.textureScale];
+			if (face.textureInfo >= 0) {
+				texInfo = bsp.texInfo[face.textureInfo];
 				TextureData texData = bsp.texDatas[texInfo.texture];
 				texture = bsp.textures.GetTextureAtOffset((uint)bsp.texTable[texData.stringTableIndex]);
 			} else {
