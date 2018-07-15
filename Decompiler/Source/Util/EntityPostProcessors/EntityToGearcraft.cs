@@ -704,6 +704,10 @@ namespace Decompiler {
 					brushSide.texture = "special/clip";
 					break;
 				}
+				case "**nodrawtexture**": {
+					brushSide.texture = "special/nodraw";
+					break;
+				}
 			}
 		}
 

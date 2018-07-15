@@ -23,12 +23,17 @@ namespace Decompiler {
 			string texture;
 			if (face.textureInfo >= 0) {
 				texInfo = bsp.texInfo[face.textureInfo];
-				TextureData texData = bsp.texDatas[texInfo.texture];
-				texture = bsp.textures.GetTextureAtOffset((uint)bsp.texTable[texData.stringTableIndex]);
+				if (bsp.texDatas != null) {
+					TextureData texData = bsp.texDatas[texInfo.texture];
+					texture = bsp.textures.GetTextureAtOffset((uint)bsp.texTable[texData.stringTableIndex]);
+				} else {
+					Texture texData = bsp.textures[texInfo.texture];
+					texture = texData.name;
+				}
 			} else {
 				Vector3d[] axes = TextureInfo.TextureAxisFromPlane(bsp.planes[face.plane]);
 				texInfo = new TextureInfo(axes[0], 0, 1, axes[1], 0, 1, 0, -1);
-				texture = "tools/toolsclip";
+				texture = "**cliptexture**";
 			}
 			
 			TextureInfo outputTexInfo = texInfo.BSP2MAPTexInfo(Vector3d.zero);
@@ -46,7 +51,7 @@ namespace Decompiler {
 				}
 			}
 
-			return MAPBrushExtensions.CreateBrushFromWind(froms, tos, texture, "tools/toolsnodraw", outputTexInfo, depth);
+			return MAPBrushExtensions.CreateBrushFromWind(froms, tos, texture, "**nodrawtexture**", outputTexInfo, depth);
 		}
 
 	}

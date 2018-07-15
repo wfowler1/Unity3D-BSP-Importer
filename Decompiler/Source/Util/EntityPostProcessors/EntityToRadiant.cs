@@ -225,7 +225,8 @@ namespace Decompiler {
 		/// <param name="brushSide">The <see cref="MAPBrushSide"/> to have its texture parsed.</param>
 		private void PostProcessSpecialTexture(MAPBrushSide brushSide) {
 			switch (brushSide.texture.ToLower()) {
-				case "**nulltexture**": {
+				case "**nulltexture**":
+				case "**nodrawtexture**": {
 					brushSide.texture = "common/nodraw";
 					break;
 				}

@@ -122,7 +122,8 @@ namespace Decompiler {
 		private void PostProcessSpecialTexture(MAPBrushSide brushSide) {
 			switch (brushSide.texture.ToLower()) {
 				case "**skiptexture**":
-				case "**nulltexture**": {
+				case "**nulltexture**":
+				case "**nodrawtexture**": {
 					brushSide.texture = "textures/common/nodraw";
 					break;
 				}
