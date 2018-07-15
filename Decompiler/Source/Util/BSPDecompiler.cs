@@ -246,15 +246,7 @@ namespace Decompiler {
 						}
 					} else {
 						Texture textureDef = _bsp.textures[brushSide.texture];
-						if ((textureDef.flags & (1 << 2)) != 0) {
-							texture = "**skytexture**";
-						} else if ((textureDef.flags & (1 << 9)) != 0) {
-							texture = "**skiptexture**";
-						} else if ((textureDef.flags & (1 << 8)) != 0) {
-							texture = "**hinttexture**";
-						} else {
-							texture = textureDef.name;
-						}
+						texture = textureDef.name;
 						texInfo = textureDef.texAxes;
 					}
 				} else {
