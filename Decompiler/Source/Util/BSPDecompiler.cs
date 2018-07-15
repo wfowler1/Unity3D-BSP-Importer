@@ -26,7 +26,7 @@ namespace Decompiler {
 			this._bsp = bsp;
 			this._master = master;
 
-			if (bsp.brushes != null) { _itemsToProcess += bsp.entities.Count; }
+			if (bsp.entities != null) { _itemsToProcess += bsp.entities.Count; }
 			if (bsp.brushes != null) { _itemsToProcess += bsp.brushes.Count; }
 			if (bsp.staticProps != null) { _itemsToProcess += bsp.staticProps.Count; }
 			if (bsp.cubemaps != null) { _itemsToProcess += bsp.cubemaps.Count; }
