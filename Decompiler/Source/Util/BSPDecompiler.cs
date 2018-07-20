@@ -29,6 +29,7 @@ namespace Decompiler {
 			if (bsp.entities != null) { _itemsToProcess += bsp.entities.Count; }
 			if (bsp.brushes != null) { _itemsToProcess += bsp.brushes.Count; }
 			if (bsp.staticProps != null) { _itemsToProcess += bsp.staticProps.Count; }
+			if (bsp.staticModels != null) { _itemsToProcess += bsp.staticModels.Count; }
 			if (bsp.cubemaps != null) { _itemsToProcess += bsp.cubemaps.Count; }
 		}
 
@@ -47,6 +48,13 @@ namespace Decompiler {
 			if (_bsp.staticProps != null) {
 				foreach (StaticProp prop in _bsp.staticProps) {
 					entities.Add(prop.ToEntity(_bsp.staticProps.dictionary));
+					++_itemsProcessed;
+					ReportProgress();
+				}
+			}
+			if (_bsp.staticModels != null) {
+				foreach (StaticModel model in _bsp.staticModels) {
+					entities.Add(model.ToEntity());
 					++_itemsProcessed;
 					ReportProgress();
 				}
