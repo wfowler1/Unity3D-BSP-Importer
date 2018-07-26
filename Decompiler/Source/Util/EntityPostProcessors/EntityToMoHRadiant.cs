@@ -205,6 +205,9 @@ namespace Decompiler {
 				if (brush.patch != null) {
 					PostProcessQuake3Texture(brush.patch);
 				}
+				if (brush.mohTerrain != null) {
+					PostProcessQuake3Texture(brush.mohTerrain);
+				}
 			}
 		}
 
@@ -325,6 +328,18 @@ namespace Decompiler {
 		private void PostProcessQuake3Texture(MAPPatch patch) {
 			if (patch.texture.Length >= 9 && patch.texture.Substring(0, 9).Equals("textures/", StringComparison.InvariantCultureIgnoreCase)) {
 				patch.texture = patch.texture.Substring(9);
+			}
+		}
+
+		/// <summary>
+		/// Postprocesser to convert the texture referenced by <paramref name="terrain"/> into one used by MOHRadiant, if necessary.
+		/// </summary>
+		/// <param name="patch">The <see cref="MAPTerrainMoHAA"/> to have its texture parsed.</param>
+		private void PostProcessQuake3Texture(MAPTerrainMoHAA terrain) {
+			foreach (MAPTerrainMoHAA.Partition partition in terrain.partitions) {
+				if (partition.shader.StartsWith("textures/", StringComparison.InvariantCultureIgnoreCase)) {
+					partition.shader = partition.shader.Substring(9);
+				}
 			}
 		}
 

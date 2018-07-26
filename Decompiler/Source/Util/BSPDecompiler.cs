@@ -114,11 +114,20 @@ namespace Decompiler {
 							newBrush.patch = patch;
 							entity.brushes.Add(newBrush);
 						} else if ((_bsp.version == MapType.STEF2 || _bsp.version == MapType.STEF2Demo) && face.flags == 5) {
-							MAPTerrain terrain = ProcessTerrain(face);
+							MAPTerrainEF2 terrain = ProcessEF2Terrain(face);
 							MAPBrush newBrush = new MAPBrush();
-							newBrush.terrain = terrain;
+							newBrush.ef2Terrain = terrain;
 							entity.brushes.Add(newBrush);
 						}
+					}
+				}
+
+				if (_bsp.lodTerrains != null) {
+					foreach (LODTerrain lodTerrain in _bsp.lodTerrains) {
+						MAPTerrainMoHAA terrain = ProcessTerrainMoHAA(lodTerrain);
+						MAPBrush newBrush = new MAPBrush();
+						newBrush.mohTerrain = terrain;
+						entity.brushes.Add(newBrush);
 					}
 				}
 			}
@@ -315,7 +324,7 @@ namespace Decompiler {
 		/// </summary>
 		/// <param name="face">The <see cref="Face"/> object to process.</param>
 		/// <returns>A <see cref="MAPPatch"/> object to be added to a <see cref="MAPBrush"/> object.</returns>
-		private MAPTerrain ProcessTerrain(Face face) {
+		private MAPTerrainEF2 ProcessEF2Terrain(Face face) {
 			string texture = _bsp.textures[face.texture].name;
 			int flags = _bsp.textures[face.texture].flags;
 			List<UIVertex> vertices = _bsp.GetReferencedObjects<UIVertex>(face, "vertices");
@@ -354,7 +363,7 @@ namespace Decompiler {
 				}
 				heightMap[row][col] = (float)(v.position.z);
 			}
-			return new MAPTerrain() {
+			return new MAPTerrainEF2() {
 				side = side,
 				texture = texture,
 				textureShiftS = 0,
@@ -370,6 +379,38 @@ namespace Decompiler {
 				heightMap = heightMap,
 				alphaMap = alphaMap
 			};
+		}
+
+		/// <summary>
+		/// Processes a <see cref="LODTerrain"/> in a <see cref="MAPTerrainMoHAA"/>.
+		/// For MoHAA forks only.
+		/// </summary>
+		/// <param name="lodTerrain">The <see cref="LODTerrain"/> object to process.</param>
+		/// <returns>A <see cref="MAPTerrainMoHAA"/> object to be added to a <see cref="MAPBrush"/> object.</returns>
+		private MAPTerrainMoHAA ProcessTerrainMoHAA(LODTerrain lodTerrain) {
+			string shader = _bsp.textures[lodTerrain.texture].name;
+			MAPTerrainMoHAA.Partition partition = new MAPTerrainMoHAA.Partition() {
+				shader = shader,
+				textureScale = new double[] { 1, 1 },
+			};
+			MAPTerrainMoHAA terrain = new MAPTerrainMoHAA() {
+				size = new Vector2d(9, 9),
+				flags = ((lodTerrain.flags & (1 << 6)) > 0) ? 1 : 0,
+				origin = new Vector3d(lodTerrain.x * 64, lodTerrain.y * 64, lodTerrain.baseZ),
+			};
+			terrain.partitions.Add(partition);
+			terrain.partitions.Add(partition);
+			terrain.partitions.Add(partition);
+			terrain.partitions.Add(partition);
+			for (int i = 0; i < 9; ++i) {
+				for (int j = 0; j < 9; ++j) {
+					MAPTerrainMoHAA.Vertex vertex = new MAPTerrainMoHAA.Vertex() {
+						height = lodTerrain.heightmap[i][j] * 2,
+					};
+					terrain.vertices.Add(vertex);
+				}
+			}
+			return terrain;
 		}
 
 		/// <summary>

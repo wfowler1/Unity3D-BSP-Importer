@@ -186,8 +186,8 @@ namespace Decompiler {
 				if (brush.patch != null) {
 					PostProcessQuake3Texture(brush.patch);
 				}
-				if (brush.terrain != null) {
-					PostProcessQuake3Texture(brush.terrain);
+				if (brush.ef2Terrain != null) {
+					PostProcessQuake3Texture(brush.ef2Terrain);
 				}
 			}
 		}
@@ -315,8 +315,8 @@ namespace Decompiler {
 		/// <summary>
 		/// Postprocesser to convert the texture referenced by <paramref name="terrain"/> into one used by GTKRadiant, if necessary.
 		/// </summary>
-		/// <param name="terrain">The <see cref="MAPTerrain"/> to have its texture parsed.</param>
-		private void PostProcessQuake3Texture(MAPTerrain terrain) {
+		/// <param name="terrain">The <see cref="MAPTerrainEF2"/> to have its texture parsed.</param>
+		private void PostProcessQuake3Texture(MAPTerrainEF2 terrain) {
 			if (terrain.texture.Length >= 9 && terrain.texture.Substring(0, 9).Equals("textures/", StringComparison.InvariantCultureIgnoreCase)) {
 				terrain.texture = terrain.texture.Substring(9);
 			}

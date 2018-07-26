@@ -70,7 +70,11 @@ namespace Decompiler {
 		/// <param name="index">The index of <see cref="MAPBrush"/> entity in the <see cref="Entity"/>.</param>
 		/// <param name="sb">A <c>StringBuilder</c> object to append processed data from <paramref name="brush"/> to.</param>
 		private void ParseBrush(MAPBrush brush, int index, StringBuilder sb) {
-			if (brush.sides.Count < 4 && brush.patch == null && brush.terrain == null) {
+			// Unsupported features. Ignore these completely.
+			if (brush.mohTerrain != null) {
+				return;
+			}
+			if (brush.sides.Count < 4 && brush.patch == null && brush.ef2Terrain == null) {
 				// Can't create a brush with less than 4 sides
 				_master.Print("WARNING: Tried to create brush from " + brush.sides.Count + " sides!");
 				return;
@@ -80,8 +84,8 @@ namespace Decompiler {
 			.Append("\r\n{\r\n");
 			if (brush.patch != null) {
 				ParsePatch(brush.patch, sb);
-			} else if (brush.terrain != null) {
-				ParseTerrain(brush.terrain, sb);
+			} else if (brush.ef2Terrain != null) {
+				ParseTerrain(brush.ef2Terrain, sb);
 			} else {
 				foreach (MAPBrushSide brushSide in brush.sides) {
 					ParseBrushSide(brushSide, sb);
@@ -166,11 +170,11 @@ namespace Decompiler {
 		}
 
 		/// <summary>
-		/// Process the data in a <see cref="MAPTerrain"/> into the passed <c>StringBuilder</c>.
+		/// Process the data in a <see cref="MAPTerrainEF2"/> into the passed <c>StringBuilder</c>.
 		/// </summary>
-		/// <param name="terrain">The <see cref="MAPTerrain"/> to process.</param>
+		/// <param name="terrain">The <see cref="MAPTerrainEF2"/> to process.</param>
 		/// <param name="sb">A <c>StringBuilder</c> object to append processed data from <paramref name="terrain"/> to.</param>
-		private void ParseTerrain(MAPTerrain terrain, StringBuilder sb) {
+		private void ParseTerrain(MAPTerrainEF2 terrain, StringBuilder sb) {
 			sb.Append("  terrainDef\r\n  {\r\n    TEX( ")
 			.Append(terrain.texture)
 			.Append(" ")

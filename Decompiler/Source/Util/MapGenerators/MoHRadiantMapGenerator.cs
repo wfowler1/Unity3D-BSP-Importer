@@ -73,22 +73,29 @@ namespace Decompiler {
 		/// <param name="index">The index of <see cref="MAPBrush"/> entity in the <see cref="Entity"/>.</param>
 		/// <param name="sb">A <see cref="StringBuilder"/> object to append processed data from <paramref name="brush"/> to.</param>
 		private void ParseBrush(MAPBrush brush, int index, StringBuilder sb) {
-			if (brush.sides.Count < 4 && brush.patch == null && brush.terrain == null) {
+			// Unsupported features. Ignore these completely.
+			if (brush.ef2Terrain != null) {
+				return;
+			}
+			if (brush.sides.Count < 4 && brush.patch == null && brush.mohTerrain == null) {
 				// Can't create a brush with less than 4 sides
 				_master.Print("WARNING: Tried to create brush from " + brush.sides.Count + " sides!");
 				return;
 			}
 			sb.Append("// Brush ")
 			.Append(index.ToString())
-			.Append("\r\n{\r\n");
+			.Append("\r\n");
 			if (brush.patch != null) {
 				ParsePatch(brush.patch, sb);
+			} else if (brush.mohTerrain != null) {
+				ParseTerrain(brush.mohTerrain, sb);
 			} else {
+				sb.Append("{\r\n");
 				foreach (MAPBrushSide brushSide in brush.sides) {
 					ParseBrushSide(brushSide, brush.isDetail, sb);
 				}
+				sb.Append("}\r\n");
 			}
-			sb.Append("}\r\n");
 		}
 		
 		/// <summary>
@@ -142,7 +149,7 @@ namespace Decompiler {
 		/// <param name="patch">The <see cref="MAPPatch"/> to process.</param>
 		/// <param name="sb">A <see cref="StringBuilder"/> object to append processed data from <paramref name="patch"/> to.</param>
 		private void ParsePatch(MAPPatch patch, StringBuilder sb) {
-			sb.Append("patchDef2\r\n{\r\n")
+			sb.Append(" {\r\n  patchDef2\r\n  {\r\n")
 			.Append(patch.texture)
 			.Append("\r\n( ")
 			.Append((int)Math.Round(patch.dims.x))
@@ -167,8 +174,76 @@ namespace Decompiler {
 				}
 				sb.Append(")\r\n");
 			}
-			sb.Append(")\r\n}\r\n");
+			sb.Append(")\r\n  }\r\n }\r\n");
 		}
 
+		/// <summary>
+		/// Process the data in a <see cref="MAPTerrainMoHAA"/> into the passed <c>StringBuilder</c>.
+		/// </summary>
+		/// <param name="terrain">The <see cref="MAPTerrainMoHAA"/> to process.</param>
+		/// <param name="sb">A <c>StringBuilder</c> object to append processed data from <paramref name="terrain"/> to.</param>
+		private void ParseTerrain(MAPTerrainMoHAA terrain, StringBuilder sb) {
+			sb.Append(" {\r\n  terrainDef\r\n  {\r\n   ")
+			.Append(terrain.size[0])
+			.Append(" ")
+			.Append(terrain.size[1])
+			.Append(" ")
+			.Append(terrain.flags)
+			.Append("\r\n   ")
+			.Append(terrain.origin.x.ToString("###0.000000"))
+			.Append(" ")
+			.Append(terrain.origin.y.ToString("###0.000000"))
+			.Append(" ")
+			.Append(terrain.origin.z.ToString("###0.000000"))
+			.Append("\r\n\t\t{\r\n");
+			foreach (MAPTerrainMoHAA.Partition partition in terrain.partitions) {
+				sb.Append("\t\t\t")
+				.Append(partition.unknown1)
+				.Append(" ")
+				.Append(partition.unknown2)
+				.Append(" ( ")
+				.Append(partition.shader)
+				.Append(" ")
+				.Append(partition.textureShift[0])
+				.Append(" ")
+				.Append(partition.textureShift[1])
+				.Append(" ")
+				.Append(partition.rotation.ToString("###0.00"))
+				.Append(" ")
+				.Append(partition.unknown3)
+				.Append(" ")
+				.Append(partition.textureScale[0])
+				.Append(" ")
+				.Append(partition.textureScale[1])
+				.Append(" ")
+				.Append(partition.unknown4)
+				.Append(" ")
+				.Append(partition.flags)
+				.Append(" ")
+				.Append(partition.unknown5);
+				if (!string.IsNullOrEmpty(partition.properties)) {
+					sb.Append(" ")
+					.Append(partition.properties);
+				}
+				sb.Append(" )\r\n");
+			}
+			sb.Append("\t\t}\r\n\t\t{\r\n");
+			foreach (MAPTerrainMoHAA.Vertex vertex in terrain.vertices) {
+				sb.Append("\t\t\t")
+				.Append(vertex.height.ToString("###0.000000"))
+				.Append(" ( ");
+				if (!string.IsNullOrEmpty(vertex.unknown1)) {
+					sb.Append(vertex.unknown1)
+					.Append(" ");
+				}
+				sb.Append(") ( ");
+				if (!string.IsNullOrEmpty(vertex.unknown2)) {
+					sb.Append(vertex.unknown2)
+					.Append(" ");
+				}
+				sb.Append(")\r\n");
+			}
+			sb.Append("\t\t}\r\n  }\r\n }\r\n");
+		}
 	}
 }
