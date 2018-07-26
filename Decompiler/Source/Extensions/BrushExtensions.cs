@@ -108,5 +108,24 @@ namespace Decompiler {
 			return false;
 		}
 
+		/// <summary>
+		/// Determines if the surface flags of the passed <see cref="Brush"/> specify a manual vis brush.
+		/// </summary>
+		/// <param name="brush">This <see cref="Brush"/>.</param>
+		/// <param name="version">The type of <see cref="BSP"/> the <paramref name="brush"/> is from.</param>
+		/// <returns><c>true</c> if the surface flags indicate manual vis, <c>false</c> otherwise.</returns>
+		public static bool IsManVis(this Brush brush, BSP bsp) {
+			switch (bsp.version) {
+				case MapType.MOHAA: {
+					int texture = brush.texture;
+					if (texture >= 0) {
+						return bsp.textures[texture].flags == 0x40010990;
+					}
+					return false;
+				}
+			}
+			return false;
+		}
+
 	}
 }

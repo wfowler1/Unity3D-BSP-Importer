@@ -14,6 +14,7 @@ namespace Decompiler {
 
 		private Entities _entities;
 		private MapType _version;
+		private int _numLeafGroups = 0;
 
 		/// <summary>
 		/// Creates a new instance of an <see cref="EntityToMOHRadiant"/> object which will operate on the passed <see cref="Entities"/>.
@@ -50,6 +51,20 @@ namespace Decompiler {
 					foreach (Entity water in waters) {
 						ParseWaterIntoWorld(worldspawns[0], water);
 						_entities.Remove(water);
+					}
+				}
+			} else {
+				foreach (Entity worldspawn in worldspawns) {
+					for (int i = 0; i < worldspawn.brushes.Count; ++i) {
+						MAPBrush brush = worldspawn.brushes[i];
+						if (brush.isManVis) {
+							Entity newVisEntity = new Entity("vis_leafgroup");
+							newVisEntity.name = "leafgroup" + (++_numLeafGroups).ToString();
+							newVisEntity.brushes.Add(brush);
+							_entities.Add(newVisEntity);
+							worldspawn.brushes.RemoveAt(i);
+							--i;
+						}
 					}
 				}
 			}
