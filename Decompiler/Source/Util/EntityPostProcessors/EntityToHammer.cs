@@ -84,6 +84,65 @@ namespace Decompiler {
 					lodControl["cheapwaterstartdistance"] = "1000";
 					lodControl.origin = origin;
 				}
+
+				if (_version == MapType.MOHAA) {
+					foreach (Entity worldspawn in worldspawns) {
+						for (int i = 0; i < worldspawn.brushes.Count; ++i) {
+							MAPBrush brush = worldspawn.brushes[i];
+							MAPTerrainMoHAA terrain = brush.mohTerrain;
+							if (terrain != null && terrain.size == new Vector2d(9, 9)) {
+								MAPTerrainMoHAA.Partition partition = terrain.partitions[0];
+								Plane p = new Plane(new Vector3d(0, 0, 1), terrain.origin.z);
+								Vector3d[] froms = new Vector3d[] {
+									terrain.origin,
+									new Vector3d(terrain.origin.x, terrain.origin.y + 512, terrain.origin.z),
+									new Vector3d(terrain.origin.x + 512, terrain.origin.y + 512, terrain.origin.z),
+									new Vector3d(terrain.origin.x + 512, terrain.origin.y, terrain.origin.z),
+								};
+								Vector3d[] tos = new Vector3d[] {
+									new Vector3d(terrain.origin.x, terrain.origin.y + 512, terrain.origin.z),
+									new Vector3d(terrain.origin.x + 512, terrain.origin.y + 512, terrain.origin.z),
+									new Vector3d(terrain.origin.x + 512, terrain.origin.y, terrain.origin.z),
+									terrain.origin,
+								};
+								if (terrain.flags > 0) {
+									p.Flip();
+									Vector3d temp = froms[1];
+									froms[1] = froms[3];
+									froms[3] = temp;
+									temp = tos[1];
+									tos[1] = tos[3];
+									tos[3] = temp;
+								}
+								Vector3d[] axes = TextureInfo.TextureAxisFromPlane(p);
+								TextureInfo newTextureInfo = new TextureInfo(axes[0], partition.textureShift[0], (float)partition.textureScale[0],
+								                                             axes[1], partition.textureShift[1], (float)partition.textureScale[1],
+								                                             0, 0);
+								MAPBrush newBrush = MAPBrushExtensions.CreateBrushFromWind(froms, tos, partition.shader, "tools/toolsnodraw", newTextureInfo, 32);
+								MAPBrushSide newSide = newBrush.sides[0];
+								MAPDisplacement newDisplacement = new MAPDisplacement() {
+									power = 3,
+									start = terrain.origin,
+									normals = new Vector3d[9][],
+									distances = new float[9][],
+									alphas = new float[9][],
+								};
+								for (int y = 0; y < terrain.size.y; ++y) {
+									newDisplacement.normals[y] = new Vector3d[9];
+									newDisplacement.distances[y] = new float[9];
+									newDisplacement.alphas[y] = new float[9];
+									for (int x = 0; x < terrain.size.x; ++x) {
+										newDisplacement.normals[y][x] = Vector3d.up;
+										newDisplacement.distances[y][x] = terrain.vertices[(y * (int)terrain.size.y) + x].height;
+									}
+								}
+								newSide.displacement = newDisplacement;
+								worldspawn.brushes.RemoveAt(i--);
+								worldspawn.brushes.Add(newBrush);
+							}
+						}
+					}
+				}
 			}
 
 			foreach (Entity worldspawn in worldspawns) {
