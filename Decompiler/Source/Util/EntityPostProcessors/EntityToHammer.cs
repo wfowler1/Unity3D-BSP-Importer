@@ -52,7 +52,7 @@ namespace Decompiler {
 				 _version != MapType.Vindictus &&
 				 _version != MapType.TacticalInterventionEncrypted) {
 				bool hasWater = false;
-				// Make sure all water brushes currently in the worldspawn get converted to Source.
+				// Make sure all water brushes currently in the world get converted to Source.
 				foreach (Entity worldspawn in worldspawns) {
 					for (int i = 0; i < worldspawn.brushes.Count; ++i) {
 						MAPBrush brush = worldspawn.brushes[i];

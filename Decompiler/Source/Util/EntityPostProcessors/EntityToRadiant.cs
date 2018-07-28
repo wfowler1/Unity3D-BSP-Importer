@@ -44,11 +44,15 @@ namespace Decompiler {
 				 _version != MapType.CoD &&
 				 _version != MapType.CoD2 &&
 				 _version != MapType.CoD4) {
-				// Make sure all water brushes currently in the worldspawn get converted to Radiant.
 				foreach (Entity worldspawn in worldspawns) {
 					foreach (MAPBrush brush in worldspawn.brushes) {
 						if (brush.isWater) {
+							// Make sure all water brushes currently in the world get converted to Radiant.
 							ConvertToWater(brush);
+						} else if (brush.mohTerrain != null) {
+							// Convert MoHAA terrain to an EF2 terrain
+							brush.ef2Terrain = ConvertToEF2Terrain(brush.mohTerrain);
+							brush.mohTerrain = null;
 						}
 					}
 				}
@@ -59,17 +63,6 @@ namespace Decompiler {
 					foreach (Entity water in waters) {
 						ParseWaterIntoWorld(worldspawns[0], water);
 						_entities.Remove(water);
-					}
-				}
-			}
-			if (_version == MapType.MOHAA) {
-				foreach (Entity worldspawn in worldspawns) {
-					foreach (MAPBrush brush in worldspawn.brushes) {
-						MAPTerrainMoHAA mohTerrain = brush.mohTerrain;
-						if (mohTerrain != null) {
-							brush.ef2Terrain = ConvertToEF2Terrain(brush.mohTerrain);
-							brush.mohTerrain = null;
-						}
 					}
 				}
 			}
