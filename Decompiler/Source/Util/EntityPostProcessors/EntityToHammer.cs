@@ -89,6 +89,9 @@ namespace Decompiler {
 					foreach (Entity worldspawn in worldspawns) {
 						for (int i = 0; i < worldspawn.brushes.Count; ++i) {
 							MAPBrush brush = worldspawn.brushes[i];
+							if (brush.isManVis) {
+								worldspawn.brushes.RemoveAt(i--);
+							}
 							MAPTerrainMoHAA terrain = brush.mohTerrain;
 							if (terrain != null && terrain.size == new Vector2d(9, 9)) {
 								MAPTerrainMoHAA.Partition partition = terrain.partitions[0];
@@ -256,7 +259,7 @@ namespace Decompiler {
 				case MapType.CoD:
 				case MapType.CoD2:
 				case MapType.CoD4: {
-					// TODO
+					PostProcessQuake3Entity(entity);
 					break;
 				}
 			}
@@ -521,13 +524,6 @@ namespace Decompiler {
 				Vector3d origin = entity.origin;
 				entity.Remove("origin");
 				entity.Remove("model");
-				if (entity.ValueIs("classname", "func_door_rotating")) {
-					// TODO: What entities require origin brushes?
-					if (origin != Vector3d.zero) {
-						MAPBrush neworiginBrush = MAPBrushExtensions.CreateCube(new Vector3d(-16, -16, -16), new Vector3d(16, 16, 16), "special/origin");
-						entity.brushes.Add(neworiginBrush);
-					}
-				}
 				foreach (MAPBrush brush in entity.brushes) {
 					brush.Translate(origin);
 				}
@@ -548,12 +544,6 @@ namespace Decompiler {
 			if (entity.brushBased) {
 				Vector3d origin = entity.origin;
 				entity.Remove("model");
-				if (entity.ValueIs("classname", "func_rotating")) {
-					if (origin != Vector3d.zero) {
-						MAPBrush neworiginBrush = MAPBrushExtensions.CreateCube(new Vector3d(-16, -16, -16), new Vector3d(16, 16, 16), "special/origin");
-						entity.brushes.Add(neworiginBrush);
-					}
-				}
 				foreach (MAPBrush brush in entity.brushes) {
 					brush.Translate(origin);
 				}
@@ -601,6 +591,45 @@ namespace Decompiler {
 				}
 				case "misc_teleporter_dest": {
 					entity["classname"] = "info_target";
+					break;
+				}
+			}
+		}
+
+		/// <summary>
+		/// Postprocesser to convert an <see cref="Entity"/> from a Quake 3-based BSP to one for Hammer.
+		/// </summary>
+		/// <param name="entity">The <see cref="Entity"/> to parse.</param>
+		private void PostProcessQuake3Entity(Entity entity) {
+			if (!entity["angle"].Equals("")) {
+				entity["angles"] = "0 " + entity["angle"] + " 0";
+				entity.Remove("angle");
+			}
+			if (entity.brushBased) {
+				Vector3d origin = entity.origin;
+				entity.Remove("model");
+				foreach (MAPBrush brush in entity.brushes) {
+					brush.Translate(origin);
+				}
+			}
+
+			switch (entity["classname"].ToLower()) {
+				case "light": {
+					Vector3d color;
+					if (entity.ContainsKey("_color")) {
+						color = entity.GetVector("_color");
+					} else {
+						color = Vector3d.one;
+					}
+					color *= 255;
+					float intensity = entity.GetFloat("light", 1);
+					entity.Remove("_color");
+					entity.Remove("light");
+					entity["_light"] = color.x + " " + color.y + " " + color.z + " " + intensity;
+					break;
+				}
+				case "func_rotatingdoor": {
+					entity.className = "func_door_rotating";
 					break;
 				}
 			}
