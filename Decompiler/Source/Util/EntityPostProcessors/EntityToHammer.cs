@@ -106,7 +106,14 @@ namespace Decompiler {
 			foreach (Entity worldspawn in worldspawns) {
 				for (int i = 0; i < worldspawn.brushes.Count; ++i) {
 					MAPBrush brush = worldspawn.brushes[i];
-					if (brush.isDetail) {
+					bool isDisplacement = false;
+					foreach (MAPBrushSide side in brush.sides) {
+						if (side.displacement != null) {
+							isDisplacement = true;
+							break;
+						}
+					}
+					if (brush.isDetail && !isDisplacement) {
 						Entity newEntity = new Entity("func_detail");
 						newEntity.brushes.Add(brush);
 						_entities.Add(newEntity);
@@ -292,6 +299,13 @@ namespace Decompiler {
 		/// </summary>
 		/// <param name="entity"><see cref="Entity"/> to postprocess.</param>
 		private void PostProcessEntity(Entity entity) {
+			if (entity.brushBased) {
+				Vector3d origin = entity.origin;
+				entity.Remove("model");
+				foreach (MAPBrush brush in entity.brushes) {
+					brush.Translate(origin);
+				}
+			}
 			switch (_version) {
 				case MapType.Quake2:
 				case MapType.SiN:
@@ -337,13 +351,6 @@ namespace Decompiler {
 		/// </summary>
 		/// <param name="entity">The <see cref="Entity"/> to parse.</param>
 		private void PostProcessNightfireEntity(Entity entity) {
-			if (entity.brushBased) {
-				Vector3d origin = entity.origin;
-				entity.Remove("model");
-				foreach (MAPBrush brush in entity.brushes) {
-					brush.Translate(origin);
-				}
-			}
 			if (entity.angles.x != 0) {
 				entity.angles = new Vector3d(-entity.angles.x, entity.angles.y, entity.angles.z);
 			}
@@ -587,14 +594,6 @@ namespace Decompiler {
 		/// </summary>
 		/// <param name="entity">The <see cref="Entity"/> to parse.</param>
 		private void PostProcessSourceEntity(Entity entity) {
-			if (entity.brushBased) {
-				Vector3d origin = entity.origin;
-				entity.Remove("origin");
-				entity.Remove("model");
-				foreach (MAPBrush brush in entity.brushes) {
-					brush.Translate(origin);
-				}
-			}
 			entity.Remove("hammerid");
 
 		}
@@ -607,13 +606,6 @@ namespace Decompiler {
 			if (!entity["angle"].Equals("")) {
 				entity["angles"] = "0 " + entity["angle"] + " 0";
 				entity.Remove("angle");
-			}
-			if (entity.brushBased) {
-				Vector3d origin = entity.origin;
-				entity.Remove("model");
-				foreach (MAPBrush brush in entity.brushes) {
-					brush.Translate(origin);
-				}
 			}
 
 			switch (entity["classname"].ToLower()) {
@@ -671,13 +663,6 @@ namespace Decompiler {
 			if (!entity["angle"].Equals("")) {
 				entity["angles"] = "0 " + entity["angle"] + " 0";
 				entity.Remove("angle");
-			}
-			if (entity.brushBased) {
-				Vector3d origin = entity.origin;
-				entity.Remove("model");
-				foreach (MAPBrush brush in entity.brushes) {
-					brush.Translate(origin);
-				}
 			}
 
 			switch (entity["classname"].ToLower()) {
