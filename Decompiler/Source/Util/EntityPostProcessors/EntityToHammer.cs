@@ -59,6 +59,23 @@ namespace Decompiler {
 						if (brush.isWater) {
 							hasWater = true;
 							ConvertToWater(brush);
+						} else if (brush.isManVis) {
+							// Remove "manual vis" brushes
+							worldspawn.brushes.RemoveAt(i--);
+						} else if (brush.mohTerrain != null) {
+							// Convert MoHAA terrain to a displacement
+							MAPBrush newBrush = ConvertToDisplacement(brush.mohTerrain);
+							worldspawn.brushes.RemoveAt(i--);
+							if (newBrush != null) {
+								worldspawn.brushes.Add(newBrush);
+							}
+						} else if (brush.ef2Terrain != null) {
+							// Convert EF2 terrain to a displacement
+							MAPBrush newBrush = ConvertToDisplacement(brush.ef2Terrain);
+							worldspawn.brushes.RemoveAt(i--);
+							if (newBrush != null) {
+								worldspawn.brushes.Add(newBrush);
+							}
 						}
 					}
 				}
@@ -83,68 +100,6 @@ namespace Decompiler {
 					lodControl["cheapwaterenddistance"] = "2000";
 					lodControl["cheapwaterstartdistance"] = "1000";
 					lodControl.origin = origin;
-				}
-
-				if (_version == MapType.MOHAA) {
-					foreach (Entity worldspawn in worldspawns) {
-						for (int i = 0; i < worldspawn.brushes.Count; ++i) {
-							MAPBrush brush = worldspawn.brushes[i];
-							if (brush.isManVis) {
-								worldspawn.brushes.RemoveAt(i--);
-							}
-							MAPTerrainMoHAA terrain = brush.mohTerrain;
-							if (terrain != null && terrain.size == new Vector2d(9, 9)) {
-								MAPTerrainMoHAA.Partition partition = terrain.partitions[0];
-								Plane p = new Plane(new Vector3d(0, 0, 1), terrain.origin.z);
-								Vector3d[] froms = new Vector3d[] {
-									terrain.origin,
-									new Vector3d(terrain.origin.x, terrain.origin.y + 512, terrain.origin.z),
-									new Vector3d(terrain.origin.x + 512, terrain.origin.y + 512, terrain.origin.z),
-									new Vector3d(terrain.origin.x + 512, terrain.origin.y, terrain.origin.z),
-								};
-								Vector3d[] tos = new Vector3d[] {
-									new Vector3d(terrain.origin.x, terrain.origin.y + 512, terrain.origin.z),
-									new Vector3d(terrain.origin.x + 512, terrain.origin.y + 512, terrain.origin.z),
-									new Vector3d(terrain.origin.x + 512, terrain.origin.y, terrain.origin.z),
-									terrain.origin,
-								};
-								if (terrain.flags > 0) {
-									p.Flip();
-									Vector3d temp = froms[1];
-									froms[1] = froms[3];
-									froms[3] = temp;
-									temp = tos[1];
-									tos[1] = tos[3];
-									tos[3] = temp;
-								}
-								Vector3d[] axes = TextureInfo.TextureAxisFromPlane(p);
-								TextureInfo newTextureInfo = new TextureInfo(axes[0], partition.textureShift[0], (float)partition.textureScale[0],
-								                                             axes[1], partition.textureShift[1], (float)partition.textureScale[1],
-								                                             0, 0);
-								MAPBrush newBrush = MAPBrushExtensions.CreateBrushFromWind(froms, tos, partition.shader, "tools/toolsnodraw", newTextureInfo, 32);
-								MAPBrushSide newSide = newBrush.sides[0];
-								MAPDisplacement newDisplacement = new MAPDisplacement() {
-									power = 3,
-									start = terrain.origin,
-									normals = new Vector3d[9][],
-									distances = new float[9][],
-									alphas = new float[9][],
-								};
-								for (int y = 0; y < terrain.size.y; ++y) {
-									newDisplacement.normals[y] = new Vector3d[9];
-									newDisplacement.distances[y] = new float[9];
-									newDisplacement.alphas[y] = new float[9];
-									for (int x = 0; x < terrain.size.x; ++x) {
-										newDisplacement.normals[y][x] = Vector3d.up;
-										newDisplacement.distances[y][x] = terrain.vertices[(y * (int)terrain.size.y) + x].height;
-									}
-								}
-								newSide.displacement = newDisplacement;
-								worldspawn.brushes.RemoveAt(i--);
-								worldspawn.brushes.Add(newBrush);
-							}
-						}
-					}
 				}
 			}
 
@@ -218,6 +173,118 @@ namespace Decompiler {
 					side.texture = "TOOLS/TOOLSNODRAW";
 				}
 			}
+		}
+
+		/// <summary>
+		/// Converts the passed <see cref="MAPTerrainMoHAA"/> to a <see cref="MAPDisplacement"/>
+		/// contained within the returned <see cref="MAPBrush"/>.
+		/// </summary>
+		/// <param name="mohTerrain">The <see cref="MAPTerrainMoHAA"/> to convert.</param>
+		/// <returns><see cref="MAPBrush"/> containing a <see cref="MAPDisplacement"/> imitating the heightmap of <paramref name="terrain"/>.</returns>
+		private MAPBrush ConvertToDisplacement(MAPTerrainMoHAA terrain) {
+			if (terrain.size == new Vector2d(9, 9)) {
+				MAPTerrainMoHAA.Partition partition = terrain.partitions[0];
+				MAPBrush newBrush = CreateBrushForTerrain(terrain.origin, 512, terrain.flags > 0, partition.shader, partition.rotation,
+				                                          new float[] { (float)partition.textureScale[0], (float)partition.textureScale[1] },
+				                                          new float[] { partition.textureShift[0], partition.textureShift[1] });
+				MAPBrushSide newSide = newBrush.sides[0];
+				MAPDisplacement newDisplacement = new MAPDisplacement() {
+					power = 3,
+					start = terrain.origin,
+					normals = new Vector3d[9][],
+					distances = new float[9][],
+					alphas = new float[9][],
+				};
+				for (int y = 0; y < terrain.size.y; ++y) {
+					newDisplacement.normals[y] = new Vector3d[9];
+					newDisplacement.distances[y] = new float[9];
+					newDisplacement.alphas[y] = new float[9];
+					for (int x = 0; x < terrain.size.x; ++x) {
+						newDisplacement.normals[y][x] = Vector3d.up;
+						if (terrain.flags > 0) {
+							newDisplacement.distances[y][x] = terrain.vertices[(x * (int)terrain.size.y) + y].height;
+						} else {
+							newDisplacement.distances[y][x] = terrain.vertices[(y * (int)terrain.size.y) + x].height;
+						}
+					}
+				}
+				newSide.displacement = newDisplacement;
+				return newBrush;
+			}
+			return null;
+		}
+
+		/// <summary>
+		/// Converts the passed <see cref="MAPTerrainEF2"/> to a <see cref="MAPDisplacement"/>
+		/// contained within the returned <see cref="MAPBrush"/>.
+		/// </summary>
+		/// <param name="mohTerrain">The <see cref="MAPTerrainEF2"/> to convert.</param>
+		/// <returns><see cref="MAPBrush"/> containing a <see cref="MAPDisplacement"/> imitating the heightmap of <paramref name="terrain"/>.</returns>
+		private MAPBrush ConvertToDisplacement(MAPTerrainEF2 terrain) {
+			if (terrain.side == 9) {
+				MAPBrush newBrush = CreateBrushForTerrain(terrain.start, terrain.sideLength, false, terrain.texture, terrain.texRot,
+														  new float[] { (float)terrain.texScaleX, (float)terrain.texScaleY },
+														  new float[] { (float)terrain.textureShiftS, (float)terrain.textureShiftT });
+				MAPBrushSide newSide = newBrush.sides[0];
+				MAPDisplacement newDisplacement = new MAPDisplacement() {
+					power = 3,
+					start = terrain.start,
+					normals = new Vector3d[9][],
+					distances = new float[9][],
+					alphas = new float[9][],
+				};
+				for (int y = 0; y < terrain.side; ++y) {
+					newDisplacement.normals[y] = new Vector3d[9];
+					newDisplacement.distances[y] = new float[9];
+					newDisplacement.alphas[y] = new float[9];
+					for (int x = 0; x < terrain.side; ++x) {
+						newDisplacement.normals[y][x] = Vector3d.up;
+						newDisplacement.distances[y][x] = terrain.heightMap[y][x];
+					}
+				}
+				newSide.displacement = newDisplacement;
+				return newBrush;
+			}
+			return null;
+		}
+
+		/// <summary>
+		/// Creates a square <see cref="MAPBrush"/> with side length <see cref="side"/> using <paramref name="origin"/> as a starting point.
+		/// </summary>
+		/// <param name="origin">The minimum X and Y extents of the new <see cref="MAPBrush"/>, Z will be the height of the face with <paramref name="texture"/> on it.</param>
+		/// <param name="side">Length of the side of the brush.</param>
+		/// <param name="inverted">Should the first side be on the bottom of the returned <see cref="MAPBrush"/> (If <c>false</c>, the first side will be on top)?</param>
+		/// <param name="texture">The texture to use for the first side.</param>
+		/// <param name="rotation">The rotation of the texture on the first side.</param>
+		/// <param name="textureScale">The scale of the texture on the first side.</param>
+		/// <param name="textureShift">The position of the texture on the first side.</param>
+		/// <returns>A <see cref="MAPBrush"/> with <paramref name="texture"/> applied to the first face with the passed attributes.</returns>
+		private MAPBrush CreateBrushForTerrain(Vector3d origin, double side, bool inverted, string texture, double rotation, float[] textureScale, float[] textureShift) {
+			Vector3d[] froms = new Vector3d[] {
+				origin,
+				new Vector3d(origin.x, origin.y + side, origin.z),
+				new Vector3d(origin.x + side, origin.y + side, origin.z),
+				new Vector3d(origin.x + side, origin.y, origin.z),
+			};
+			Vector3d[] tos = new Vector3d[] {
+				new Vector3d(origin.x, origin.y + side, origin.z),
+				new Vector3d(origin.x + side, origin.y + side, origin.z),
+				new Vector3d(origin.x + side, origin.y, origin.z),
+				origin,
+			};
+			if (inverted) {
+				Vector3d temp = froms[1];
+				froms[1] = froms[3];
+				froms[3] = temp;
+				temp = tos[0];
+				tos[0] = tos[2];
+				tos[2] = temp;
+			}
+			Vector3d[] axes = TextureInfo.TextureAxisFromPlane(new Plane(froms));
+			TextureInfo newTextureInfo = new TextureInfo(axes[0], textureShift[0], textureScale[0],
+			                                             axes[1], textureShift[1], textureScale[1],
+			                                             0, 0);
+			return MAPBrushExtensions.CreateBrushFromWind(froms, tos, texture, "tools/toolsnodraw", newTextureInfo, 32);
 		}
 
 		/// <summary>
