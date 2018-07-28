@@ -62,6 +62,17 @@ namespace Decompiler {
 					}
 				}
 			}
+			if (_version == MapType.MOHAA) {
+				foreach (Entity worldspawn in worldspawns) {
+					foreach (MAPBrush brush in worldspawn.brushes) {
+						MAPTerrainMoHAA mohTerrain = brush.mohTerrain;
+						if (mohTerrain != null) {
+							brush.ef2Terrain = ConvertToEF2Terrain(brush.mohTerrain);
+							brush.mohTerrain = null;
+						}
+					}
+				}
+			}
 
 			// We might modify the collection as we iterate over it. Can't use foreach.
 			for (int i = 0; i < _entities.Count; ++i) {
@@ -103,6 +114,43 @@ namespace Decompiler {
 			foreach (MAPBrushSide side in brush.sides) {
 				side.texture = "Shaders/liquids/clear_calm1";
 			}
+		}
+
+		/// <summary>
+		/// Converts the passed <see cref="MAPTerrainMoHAA"/> into a <see cref="MAPTerrainEF2"/>
+		/// with the same heightmap.
+		/// </summary>
+		/// <param name="mohTerrain">The <see cref="MAPTerrainMoHAA"/> to convert.</param>
+		/// <returns><see cref="MAPTerrainEF2"/> with the same shader and heightmap as <paramref name="mohTerrain"/>.</returns>
+		private MAPTerrainEF2 ConvertToEF2Terrain(MAPTerrainMoHAA mohTerrain) {
+			if (mohTerrain.size == new Vector2d(9, 9)) {
+				MAPTerrainMoHAA.Partition partition = mohTerrain.partitions[0];
+				MAPTerrainEF2 ef2Terrain = new MAPTerrainEF2() {
+					side = 9,
+					texture = partition.shader,
+					textureShiftS = partition.textureShift[0],
+					textureShiftT = partition.textureShift[1],
+					texRot = (float)partition.rotation,
+					texScaleX = partition.textureScale[0],
+					texScaleY = partition.textureScale[1],
+					flags = 1024, // maybe don't hardcode this?
+					sideLength = 512,
+					start = new Vector3d(mohTerrain.origin.x, mohTerrain.origin.y, 0),
+					IF = Vector4d.zero,
+					LF = Vector4d.zero,
+					heightMap = new float[9][],
+					alphaMap = new float[9][]
+				};
+				for (int y = 0; y < ef2Terrain.heightMap.Length; ++y) {
+					ef2Terrain.heightMap[y] = new float[9];
+					ef2Terrain.alphaMap[y] = new float[9];
+					for (int x = 0; x < ef2Terrain.heightMap[y].Length; ++x) {
+						ef2Terrain.heightMap[y][x] = mohTerrain.vertices[(y * (int)mohTerrain.size.y) + x].height + (float)mohTerrain.origin.z;
+					}
+				}
+				return ef2Terrain;
+			}
+			return null;
 		}
 
 		/// <summary>
