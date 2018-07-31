@@ -43,11 +43,13 @@ namespace Decompiler.GUI {
 			taskBarItemInfo1.ProgressState = TaskbarItemProgressState.Normal;
 			Job.MessageEvent += Print;
 			Job.JobFinishedEvent += JobFinished;
-			if (Revision.version == "") {
+#pragma warning disable 0162
+			if (Revision.version == "To be replaced on build") {
 				this.Title = "BSP Decompiler v5 by 005";
 			} else {
 				this.Title = "BSP Decompiler v5." + Revision.version + " by 005";
 			}
+#pragma warning restore 0162
 		}
 
 		/// <summary>
