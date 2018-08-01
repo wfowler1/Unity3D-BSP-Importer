@@ -49,10 +49,6 @@ namespace Decompiler {
 						if (brush.isWater) {
 							// Make sure all water brushes currently in the world get converted to Radiant.
 							ConvertToWater(brush);
-						} else if (brush.mohTerrain != null) {
-							// Convert MoHAA terrain to an EF2 terrain
-							brush.ef2Terrain = ConvertToEF2Terrain(brush.mohTerrain);
-							brush.mohTerrain = null;
 						}
 					}
 				}
@@ -63,6 +59,16 @@ namespace Decompiler {
 					foreach (Entity water in waters) {
 						ParseWaterIntoWorld(worldspawns[0], water);
 						_entities.Remove(water);
+					}
+				}
+			} else if (_version == MapType.MOHAA) {
+				foreach (Entity worldspawn in worldspawns) {
+					foreach (MAPBrush brush in worldspawn.brushes) {
+						if (brush.mohTerrain != null) {
+							// Convert MoHAA terrain to an EF2 terrain
+							brush.ef2Terrain = ConvertToEF2Terrain(brush.mohTerrain);
+							brush.mohTerrain = null;
+						}
 					}
 				}
 			}
@@ -152,8 +158,16 @@ namespace Decompiler {
 		/// <param name="entity"><see cref="Entity"/> to postprocess.</param>
 		private void PostProcessEntity(Entity entity) {
 			if (entity.brushBased) {
+				Vector3d origin = entity.origin;
+				entity.Remove("origin");
+				entity.Remove("model");
+				if (origin != Vector3d.zero) {
+					// If this brush has an origin
+					MAPBrush neworiginBrush = MAPBrushExtensions.CreateCube(new Vector3d(-16, -16, -16), new Vector3d(16, 16, 16), "common/origin");
+					entity.brushes.Add(neworiginBrush);
+				}
 				foreach (MAPBrush brush in entity.brushes) {
-					brush.Translate(entity.origin);
+					brush.Translate(origin);
 				}
 			}
 			switch (_version) {

@@ -109,11 +109,20 @@ namespace Decompiler {
 		/// </summary>
 		/// <param name="entity"><see cref="Entity"/> to postprocess.</param>
 		private void PostProcessEntity(Entity entity) {
-			switch (_version) {
-				case MapType.MOHAA: {
-					PostProcessMoHAAEntity(entity);
-					break;
+			if (entity.brushBased) {
+				Vector3d origin = entity.origin;
+				entity.Remove("origin");
+				entity.Remove("model");
+				if (origin != Vector3d.zero) {
+					// If this brush has an origin
+					MAPBrush neworiginBrush = MAPBrushExtensions.CreateCube(new Vector3d(-16, -16, -16), new Vector3d(16, 16, 16), "common/origin");
+					entity.brushes.Add(neworiginBrush);
 				}
+				foreach (MAPBrush brush in entity.brushes) {
+					brush.Translate(origin);
+				}
+			}
+			switch (_version) {
 				case MapType.Nightfire: {
 					PostProcessNightfireEntity(entity);
 					break;
@@ -149,26 +158,6 @@ namespace Decompiler {
 				}
 				foreach (MAPBrush brush in entity.brushes)
 				{
-					brush.Translate(origin);
-				}
-			}
-		}
-
-		/// <summary>
-		/// Postprocesser to convert an <see cref="Entity"/> from a MoHAA BSP to one for MOHRadiant.
-		/// </summary>
-		/// <param name="entity">The <see cref="Entity"/> to parse.</param>
-		private void PostProcessMoHAAEntity(Entity entity) {
-			if (entity.brushBased) {
-				Vector3d origin = entity.origin;
-				entity.Remove("origin");
-				entity.Remove("model");
-				if (origin != Vector3d.zero) {
-					// If this brush has an origin
-					MAPBrush neworiginBrush = MAPBrushExtensions.CreateCube(new Vector3d(-16, -16, -16), new Vector3d(16, 16, 16), "common/origin");
-					entity.brushes.Add(neworiginBrush);
-				}
-				foreach (MAPBrush brush in entity.brushes) {
 					brush.Translate(origin);
 				}
 			}
