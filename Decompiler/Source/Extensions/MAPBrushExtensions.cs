@@ -16,8 +16,20 @@ namespace Decompiler {
 		/// <param name="mapBrush">This <see cref="MAPBrush"/>.</param>
 		/// <param name="v">Translation vector.</param>
 		public static void Translate(this MAPBrush mapBrush, Vector3d v) {
+			if (v == Vector3d.zero) {
+				return;
+			}
 			foreach (MAPBrushSide side in mapBrush.sides) {
 				side.Translate(v);
+				if (side.displacement != null) {
+					side.displacement.start += v;
+				}
+			}
+			if (mapBrush.patch != null) {
+				mapBrush.patch.Translate(v);
+			}
+			if (mapBrush.ef2Terrain != null) {
+				mapBrush.ef2Terrain.start += v;
 			}
 		}
 

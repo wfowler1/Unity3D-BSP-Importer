@@ -11,6 +11,23 @@ namespace Decompiler {
 	public static class BSPExtensions {
 
 		/// <summary>
+		/// Gets all the <see cref="Face"/> objects associated with the given <paramref name="model"/>.
+		/// </summary>
+		/// <param name="bsp">This <see cref="BSP"/> object.</param>
+		/// <param name="model">The <see cref="Model"/> object to get all <see cref="Face"/> objects for.</param>
+		/// <returns>
+		/// A <see cref="List"/>&lt;<see cref="Face"/>&gt; containing all the <see cref="Face"/> objects occurring
+		/// within the passed <see cref="Model"/> object, or <c>null</c> if the BSP doesn't have faces.
+		/// </returns>
+		public static List<Face> GetFacesInModel(this BSP bsp, Model model) {
+			if (model.firstFace >= 0) {
+				return bsp.GetReferencedObjects<Face>(model, "faces");
+			}
+
+			return new List<Face>(0);
+		}
+
+		/// <summary>
 		/// Gets all the <see cref="Brush"/> objects associated with the given <paramref name="model"/>.
 		/// </summary>
 		/// <param name="bsp">This <see cref="BSP"/> object.</param>

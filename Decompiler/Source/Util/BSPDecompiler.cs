@@ -80,28 +80,30 @@ namespace Decompiler {
 			// If this Entity has no modelNumber, then this is a no-op. No processing is needed.
 			// A modelnumber of 0 indicates the world entity.
 			if (modelNumber >= 0) {
-				List<Brush> brushes = _bsp.GetBrushesInModel(_bsp.models[modelNumber]);
-				// If GetBrushesInModel returns null, this probably is a Quake or Half-Life map.
-				if (brushes != null) {
-					foreach (Brush brush in brushes) {
-						MAPBrush result = ProcessBrush(brush, entity.origin);
-						result.isWater |= (entity.className == "func_water");
-						if (_master.settings.brushesToWorld) {
-							_bsp.entities.GetWithAttribute("classname", "worldspawn").brushes.Add(result);
-						} else {
-							entity.brushes.Add(result);
+				Model model = _bsp.models[modelNumber];
+				if (_bsp.brushes != null) {
+					List<Brush> brushes = _bsp.GetBrushesInModel(model);
+					if (brushes != null) {
+						foreach (Brush brush in brushes) {
+							MAPBrush result = ProcessBrush(brush, entity.origin);
+							result.isWater |= (entity.className == "func_water");
+							if (_master.settings.brushesToWorld) {
+								_bsp.entities.GetWithAttribute("classname", "worldspawn").brushes.Add(result);
+							} else {
+								entity.brushes.Add(result);
+							}
+							++_itemsProcessed;
+							ReportProgress();
 						}
-						++_itemsProcessed;
-						ReportProgress();
 					}
 				}
-				entity.Remove("model");
-			}
-			// If this is model 0 (worldspawn) there are other things that need to be taken into account.
-			if (modelNumber == 0) {
 				if (_bsp.faces != null) {
-					foreach (Face face in _bsp.faces) {
+					List<Face> surfaces = _bsp.GetFacesInModel(model);
+					foreach (Face face in surfaces) {
 						if (face.displacement >= 0) {
+							if (modelNumber != 0) {
+								_master.Print("WARNING: Displacement not part of world in " + _bsp.MapNameNoExtension);
+							}
 							MAPDisplacement displacement = ProcessDisplacement(_bsp.dispInfos[face.displacement]);
 							MAPBrush newBrush = face.CreateBrush(_bsp, 32);
 							newBrush.sides[0].displacement = displacement;
@@ -122,14 +124,18 @@ namespace Decompiler {
 					}
 				}
 
-				if (_bsp.lodTerrains != null) {
-					foreach (LODTerrain lodTerrain in _bsp.lodTerrains) {
-						MAPTerrainMoHAA terrain = ProcessTerrainMoHAA(lodTerrain);
-						MAPBrush newBrush = new MAPBrush();
-						newBrush.mohTerrain = terrain;
-						entity.brushes.Add(newBrush);
+				// If this is model 0 (worldspawn) there are other things that need to be taken into account.
+				if (modelNumber == 0) {
+					if (_bsp.lodTerrains != null) {
+						foreach (LODTerrain lodTerrain in _bsp.lodTerrains) {
+							MAPTerrainMoHAA terrain = ProcessTerrainMoHAA(lodTerrain);
+							MAPBrush newBrush = new MAPBrush();
+							newBrush.mohTerrain = terrain;
+							entity.brushes.Add(newBrush);
+						}
 					}
 				}
+				entity.Remove("model");
 			}
 		}
 

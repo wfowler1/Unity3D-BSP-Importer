@@ -93,6 +93,7 @@
     <Compile Include="Source\Extensions\MAPBrushExtensions.cs" />
     <Compile Include="Source\Extensions\MAPBrushSideExtensions.cs" />
     <Compile Include="Source\Extensions\CubemapExtensions.cs" />
+    <Compile Include="Source\Extensions\MAPPatchExtensions.cs" />
     <Compile Include="Source\Extensions\StaticModelExtensions.cs" />
     <Compile Include="Source\Extensions\StaticPropExtensions.cs" />
     <Compile Include="Source\Extensions\TexInfoExtensions.cs" />
