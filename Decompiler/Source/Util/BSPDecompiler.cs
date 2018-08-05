@@ -97,6 +97,23 @@ namespace Decompiler {
 						}
 					}
 				}
+				if (model.numLeafPatches > 0 && _bsp.markSurfaces != null && _bsp.patches != null) {
+					HashSet<Patch> patches = new HashSet<Patch>();
+					List<long> leafPatchesInModel = _bsp.GetReferencedObjects<long>(model, "markSurfaces");
+					foreach (long leafPatch in leafPatchesInModel) {
+						if (leafPatch >= 0) {
+							patches.Add(_bsp.patches[(int)leafPatch]);
+						}
+					}
+					foreach (Patch patch in patches) {
+						if (patch.type == 0) {
+							MAPPatch mappatch = ProcessPatch(patch);
+							MAPBrush newBrush = new MAPBrush();
+							newBrush.patch = mappatch;
+							entity.brushes.Add(newBrush);
+						}
+					}
+				}
 				if (_bsp.faces != null) {
 					List<Face> surfaces = _bsp.GetFacesInModel(model);
 					foreach (Face face in surfaces) {
@@ -116,6 +133,9 @@ namespace Decompiler {
 							newBrush.patch = patch;
 							entity.brushes.Add(newBrush);
 						} else if ((_bsp.version == MapType.STEF2 || _bsp.version == MapType.STEF2Demo) && face.flags == 5) {
+							if (modelNumber != 0) {
+								_master.Print("WARNING: Terrain not part of world in " + _bsp.MapNameNoExtension);
+							}
 							MAPTerrainEF2 terrain = ProcessEF2Terrain(face);
 							MAPBrush newBrush = new MAPBrush();
 							newBrush.ef2Terrain = terrain;
@@ -318,8 +338,24 @@ namespace Decompiler {
 		private MAPPatch ProcessPatch(Face face) {
 			List<UIVertex> vertices = _bsp.GetReferencedObjects<UIVertex>(face, "vertices");
 			return new MAPPatch() {
-				dims = new Vector2d(face.patchSize.x, face.patchSize.y),
+				dims = face.patchSize,
 				texture = _bsp.textures[face.texture].name,
+				points = vertices.ToArray<UIVertex>()
+			};
+		}
+
+		/// <summary>
+		/// Processes a <see cref="Patch"/> into a <see cref="MAPPatch"/>. The vertices of the <see cref="Patch"/> are interpreted
+		/// as control points for multiple spline curves, which are then interpolated and rendered at an arbitrary quality value.
+		/// For Call of Duty engine forks only.
+		/// </summary>
+		/// <param name="face">The <see cref="Patch"/> object to process.</param>
+		/// <returns>A <see cref="MAPPatch"/> object to be added to a <see cref="MAPBrush"/> object.</returns>
+		private MAPPatch ProcessPatch(Patch patch) {
+			List<UIVertex> vertices = _bsp.GetReferencedObjects<UIVertex>(patch, "patchVerts");
+			return new MAPPatch() {
+				dims = patch.dimensions,
+				texture = _bsp.textures[patch.shader].name,
 				points = vertices.ToArray<UIVertex>()
 			};
 		}
