@@ -97,8 +97,10 @@
     <Compile Include="Source\Extensions\StaticModelExtensions.cs" />
     <Compile Include="Source\Extensions\StaticPropExtensions.cs" />
     <Compile Include="Source\Extensions\TexInfoExtensions.cs" />
+    <Compile Include="Source\Util\EntityPostProcessors\EntityToCoDRadiant.cs" />
     <Compile Include="Source\Util\Job.cs" />
     <Compile Include="Source\Util\JobQueueManager.cs" />
+    <Compile Include="Source\Util\MapGenerators\CoDRadiantMapGenerator.cs" />
     <Compile Include="Source\Util\MAPWriter.cs" />
     <Compile Include="Source\Util\MapGenerators\DoomEditMapGenerator.cs" />
     <Compile Include="Source\Util\EntityPostProcessors\EntityToDoomEdit.cs" />

@@ -58,6 +58,7 @@
 					<MenuItem Header="_Hammer VMF" IsCheckable="True" Click="OutputSpecific_Click" x:Name="miSaveAsVMF" />
 					<MenuItem Header="_Gearcraft MAP" IsCheckable="True" Click="OutputSpecific_Click" x:Name="miSaveAsGC" />
 					<MenuItem Header="_MOHRadiant MAP" IsCheckable="True" Click="OutputSpecific_Click" x:Name="miSaveAsMOH" />
+					<MenuItem Header="_CoDRadiant MAP" IsCheckable="True" Click="OutputSpecific_Click" x:Name="miSaveAsCoD" />
 					<MenuItem Header="_GTKRadiant MAP" IsCheckable="True" Click="OutputSpecific_Click" x:Name="miSaveAsGTK" />
 					<MenuItem Header="_DOOMEdit MAP" IsCheckable="True" Click="OutputSpecific_Click" x:Name="miSaveAsDE" />
 				</MenuItem>

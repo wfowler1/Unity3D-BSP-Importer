@@ -89,6 +89,7 @@ namespace Decompiler.GUI {
 			miSaveAsAuto.IsChecked = true;
 			miSaveAsVMF.IsChecked = false;
 			miSaveAsMOH.IsChecked = false;
+			miSaveAsCoD.IsChecked = false;
 			miSaveAsGC.IsChecked = false;
 			miSaveAsGTK.IsChecked = false;
 			miSaveAsDE.IsChecked = false;
@@ -142,7 +143,8 @@ namespace Decompiler.GUI {
 						toVMF = miSaveAsVMF.IsChecked,
 						toGTK = miSaveAsGTK.IsChecked,
 						toDoomEdit = miSaveAsDE.IsChecked,
-						toMoH = miSaveAsMOH.IsChecked
+						toMoH = miSaveAsMOH.IsChecked,
+						toCoD = miSaveAsCoD.IsChecked
 					};
 					Job theJob = new Job(jobs.Count, filesToOpen[i], settings);
 					theJob.PropertyChanged += new PropertyChangedEventHandler(UpdateTaskbar);
@@ -158,7 +160,7 @@ namespace Decompiler.GUI {
 		/// <param name="sender">Sender of this event.</param>
 		/// <param name="e"><c>RoutedEventArgs</c> for this event.</param>
 		private void OutputSpecific_Click(object sender, RoutedEventArgs e) {
-			if (!miSaveAsAuto.IsChecked && !miSaveAsVMF.IsChecked && !miSaveAsMOH.IsChecked && !miSaveAsGC.IsChecked && !miSaveAsGTK.IsChecked && !miSaveAsDE.IsChecked) {
+			if (!miSaveAsAuto.IsChecked && !miSaveAsVMF.IsChecked && !miSaveAsMOH.IsChecked && !miSaveAsGC.IsChecked && !miSaveAsGTK.IsChecked && !miSaveAsDE.IsChecked && !miSaveAsCoD.IsChecked) {
 				miSaveAsAuto.IsChecked = true;
 			} else {
 				miSaveAsAuto.IsChecked = false;

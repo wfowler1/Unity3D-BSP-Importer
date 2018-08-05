@@ -60,11 +60,14 @@ namespace Decompiler {
 					case MapType.Quake2:
 					case MapType.Daikatana:
 					case MapType.Quake3:
-					case MapType.CoD:
 					case MapType.CoD2:
 					case MapType.CoD4:
 					case MapType.FAKK: {
 						WriteRadiant();
+						break;
+					}
+					case MapType.CoD: {
+						WriteCoDRadiant();
 						break;
 					}
 					case MapType.Source17:
@@ -85,16 +88,19 @@ namespace Decompiler {
 				}
 			} else {
 				if (_master.settings.toM510) {
-					WriteGearcraft(_master.settings.toDoomEdit || _master.settings.toGTK || _master.settings.toMoH || _master.settings.toVMF);
+					WriteGearcraft(_master.settings.toDoomEdit || _master.settings.toGTK || _master.settings.toMoH || _master.settings.toVMF || _master.settings.toCoD);
 				}
 				if (_master.settings.toMoH) {
-					WriteMoHRadiant(_master.settings.toDoomEdit || _master.settings.toGTK || _master.settings.toVMF);
+					WriteMoHRadiant(_master.settings.toDoomEdit || _master.settings.toGTK || _master.settings.toVMF || _master.settings.toCoD);
 				}
 				if (_master.settings.toGTK) {
-					WriteRadiant(_master.settings.toDoomEdit || _master.settings.toVMF);
+					WriteRadiant(_master.settings.toDoomEdit || _master.settings.toVMF || _master.settings.toCoD);
 				}
 				if (_master.settings.toDoomEdit) {
-					WriteDoomEdit(_master.settings.toVMF);
+					WriteDoomEdit(_master.settings.toVMF || _master.settings.toCoD);
+				}
+				if (_master.settings.toCoD) {
+					WriteCoDRadiant(_master.settings.toVMF);
 				}
 				if (_master.settings.toVMF) {
 					WriteHammer();
@@ -135,6 +141,27 @@ namespace Decompiler {
 			string output = mapMaker.ParseMap();
 
 			string extension = deepCopy ? "_moh.map" : ".map";
+			if (string.IsNullOrEmpty(_master.settings.outputFolder)) {
+				_master.Print("Writing file " + _mapDirectory + _mapName + extension);
+				File.WriteAllText(_mapDirectory + _mapName + extension, output);
+			} else {
+				_master.Print("Writing file " + _master.settings.outputFolder + _mapName + extension);
+				File.WriteAllText(_master.settings.outputFolder + _mapName + extension, output);
+			}
+		}
+
+		/// <summary>
+		/// Writes a CoDRadiant map using the provided <see cref="Entities"/>.
+		/// </summary>
+		/// <param name="deepCopy">If <c>true</c>, the <see cref="Entities"/> will be deep copied to preserve the original ones, so postprocessing for this format won't interfere with others.</param>
+		public void WriteCoDRadiant(bool deepCopy = false) {
+			Entities myEntities = deepCopy ? DeepCopy<Entities>(_entities) : _entities;
+			EntityToCoDRadiant entityPostProcessor = new EntityToCoDRadiant(myEntities, _version, _master);
+			entityPostProcessor.PostProcessEntities();
+			CoDRadiantMapGenerator mapMaker = new CoDRadiantMapGenerator(myEntities, _master);
+			string output = mapMaker.ParseMap();
+
+			string extension = deepCopy ? "_cod.map" : ".map";
 			if (string.IsNullOrEmpty(_master.settings.outputFolder)) {
 				_master.Print("Writing file " + _mapDirectory + _mapName + extension);
 				File.WriteAllText(_mapDirectory + _mapName + extension, output);

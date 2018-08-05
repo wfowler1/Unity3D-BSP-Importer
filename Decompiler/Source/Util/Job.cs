@@ -48,6 +48,7 @@ namespace Decompiler {
 			public bool toGTK = false;
 			public bool toDoomEdit = false;
 			public bool toMoH = false;
+			public bool toCoD = false;
 		}
 
 		/// <summary>
