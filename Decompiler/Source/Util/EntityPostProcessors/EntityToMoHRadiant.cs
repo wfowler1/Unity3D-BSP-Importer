@@ -145,22 +145,6 @@ namespace Decompiler {
 					break;
 				}
 			}
-			if (entity.brushBased)
-			{
-				Vector3d origin = entity.origin;
-				entity.Remove("origin");
-				entity.Remove("model");
-				if (origin != Vector3d.zero)
-				{
-					// If this brush has an origin
-					MAPBrush neworiginBrush = MAPBrushExtensions.CreateCube(new Vector3d(-16, -16, -16), new Vector3d(16, 16, 16), "common/origin");
-					entity.brushes.Add(neworiginBrush);
-				}
-				foreach (MAPBrush brush in entity.brushes)
-				{
-					brush.Translate(origin);
-				}
-			}
 		}
 
 		/// <summary>
