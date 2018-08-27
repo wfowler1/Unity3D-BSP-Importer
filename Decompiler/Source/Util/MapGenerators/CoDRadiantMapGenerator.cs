@@ -74,7 +74,7 @@ namespace Decompiler {
 		/// <param name="sb">A <c>StringBuilder</c> object to append processed data from <paramref name="brush"/> to.</param>
 		private void ParseBrush(MAPBrush brush, int index, StringBuilder sb) {
 			// Unsupported features. Ignore these completely.
-			if (brush.mohTerrain != null) {
+			if (brush.mohTerrain != null || brush.ef2Terrain != null) {
 				return;
 			}
 			if (brush.sides.Count < 4 && brush.patch == null) {
@@ -123,17 +123,17 @@ namespace Decompiler {
 			.Append(" ) ")
 			.Append(brushside.texture)
 			.Append(" ")
-			.Append(brushside.textureShiftS.ToString("###0.##########", format))
+			.Append(brushside.textureInfo.translation.x.ToString("###0.##########", format))
 			.Append(" ")
-			.Append(brushside.textureShiftT.ToString("###0.##########", format))
+			.Append(brushside.textureInfo.translation.y.ToString("###0.##########", format))
 			.Append(" ")
-			.Append(brushside.texRot.ToString("###0.##########", format))
+			.Append(brushside.textureInfo.rotation.ToString("###0.##########", format))
 			.Append(" ")
-			.Append(brushside.texScaleX.ToString("###0.##########", format))
+			.Append(brushside.textureInfo.scale.x.ToString("###0.##########", format))
 			.Append(" ")
-			.Append(brushside.texScaleY.ToString("###0.##########", format))
+			.Append(brushside.textureInfo.scale.y.ToString("###0.##########", format))
 			.Append(" ")
-			.Append(brushside.flags)
+			.Append(brushside.textureInfo.flags)
 			.Append(" 0 0 0\r\n");
 		}
 
@@ -153,7 +153,7 @@ namespace Decompiler {
 			for (int i = 0; i < patch.dims.x; ++i) {
 				sb.Append("( ");
 				for (int j = 0; j < patch.dims.y; ++j) {
-					UIVertex vertex = patch.points[((int)Math.Round(patch.dims.x) * j) + i];
+					Vertex vertex = patch.points[((int)Math.Round(patch.dims.x) * j) + i];
 					sb.Append("( ")
 					.Append(vertex.position.x.ToString("###0.#####", format))
 					.Append(" ")

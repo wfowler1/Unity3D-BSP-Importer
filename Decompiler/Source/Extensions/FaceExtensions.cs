@@ -32,7 +32,7 @@ namespace Decompiler {
 				}
 			} else {
 				Vector3d[] axes = TextureInfo.TextureAxisFromPlane(bsp.planes[face.plane]);
-				texInfo = new TextureInfo(axes[0], 0, 1, axes[1], 0, 1, 0, -1);
+				texInfo = new TextureInfo(axes[0], axes[1], Vector2d.zero, Vector2d.one, 0, -1, 0);
 				texture = "**cliptexture**";
 			}
 			

@@ -121,17 +121,17 @@ namespace Decompiler {
 			.Append(" ) ")
 			.Append(brushside.texture)
 			.Append(" ")
-			.Append(brushside.textureShiftS.ToString("###0.##########", format))
+			.Append(brushside.textureInfo.translation.x.ToString("###0.##########", format))
 			.Append(" ")
-			.Append(brushside.textureShiftT.ToString("###0.##########", format))
+			.Append(brushside.textureInfo.translation.y.ToString("###0.##########", format))
 			.Append(" ")
-			.Append(brushside.texRot.ToString("###0.##########", format))
+			.Append(brushside.textureInfo.rotation.ToString("###0.##########", format))
 			.Append(" ")
-			.Append(brushside.texScaleX.ToString("###0.##########", format))
+			.Append(brushside.textureInfo.scale.x.ToString("###0.##########", format))
 			.Append(" ")
-			.Append(brushside.texScaleY.ToString("###0.##########", format))
+			.Append(brushside.textureInfo.scale.y.ToString("###0.##########", format))
 			.Append(" ")
-			.Append(brushside.flags)
+			.Append(brushside.textureInfo.flags)
 			.Append(" 0 0\r\n");
 		}
 
@@ -151,7 +151,7 @@ namespace Decompiler {
 			for (int i = 0; i < patch.dims.x; ++i) {
 				sb.Append("( ");
 				for (int j = 0; j < patch.dims.y; ++j) {
-					UIVertex vertex = patch.points[((int)Math.Round(patch.dims.x) * j) + i];
+					Vertex vertex = patch.points[((int)Math.Round(patch.dims.x) * j) + i];
 					sb.Append("( ")
 					.Append(vertex.position.x.ToString("###0.#####", format))
 					.Append(" ")
@@ -214,19 +214,19 @@ namespace Decompiler {
 			.Append(" ")
 			.Append(terrain.LF.w.ToString("###0.##########", format))
 			.Append(" )\r\n    V(\r\n");
-			for (int i = 0; i < terrain.heightMap.Length; ++i) {
+			for (int i = 0; i < terrain.heightMap.GetLength(0); ++i) {
 				sb.Append("      ");
-				for (int j = 0; j < terrain.heightMap[i].Length; ++j) {
-					sb.Append(terrain.heightMap[i][j].ToString("###0.##########", format))
+				for (int j = 0; j < terrain.heightMap.GetLength(1); ++j) {
+					sb.Append(terrain.heightMap[i, j].ToString("###0.##########", format))
 					.Append(" ");
 				}
 				sb.Append("\r\n");
 			}
 			sb.Append("    )\r\n    A(\r\n");
-			for (int i = 0; i < terrain.alphaMap.Length; ++i) {
+			for (int i = 0; i < terrain.alphaMap.GetLength(0); ++i) {
 				sb.Append("      ");
-				for (int j = 0; j < terrain.alphaMap[i].Length; ++j) {
-					sb.Append(terrain.alphaMap[i][j].ToString("###0.##########", format))
+				for (int j = 0; j < terrain.alphaMap.GetLength(1); ++j) {
+					sb.Append(terrain.alphaMap[i, j].ToString("###0.##########", format))
 					.Append(" ");
 				}
 				sb.Append("\r\n");

@@ -78,7 +78,7 @@ namespace Decompiler {
 				foreach (MAPBrush brush in _entities[i].brushes) {
 					if (brush.isDetail) {
 						foreach (MAPBrushSide side in brush.sides) {
-							side.flags = side.flags | 134217728;
+							side.textureInfo.flags = side.textureInfo.flags | 134217728;
 						}
 					}
 				}
@@ -137,14 +137,12 @@ namespace Decompiler {
 					start = new Vector3d(mohTerrain.origin.x, mohTerrain.origin.y, 0),
 					IF = Vector4d.zero,
 					LF = Vector4d.zero,
-					heightMap = new float[9][],
-					alphaMap = new float[9][]
+					heightMap = new float[9, 9],
+					alphaMap = new float[9, 9]
 				};
-				for (int y = 0; y < ef2Terrain.heightMap.Length; ++y) {
-					ef2Terrain.heightMap[y] = new float[9];
-					ef2Terrain.alphaMap[y] = new float[9];
-					for (int x = 0; x < ef2Terrain.heightMap[y].Length; ++x) {
-						ef2Terrain.heightMap[y][x] = mohTerrain.vertices[(y * (int)mohTerrain.size.y) + x].height + (float)mohTerrain.origin.z;
+				for (int y = 0; y < ef2Terrain.heightMap.GetLength(0); ++y) {
+					for (int x = 0; x < ef2Terrain.heightMap.GetLength(1); ++x) {
+						ef2Terrain.heightMap[y, x] = mohTerrain.vertices[(y * (int)mohTerrain.size.y) + x].height + (float)mohTerrain.origin.z;
 					}
 				}
 				return ef2Terrain;
@@ -204,7 +202,7 @@ namespace Decompiler {
 		private void PostProcessTextures(IEnumerable<MAPBrush> brushes) {
 			foreach (MAPBrush brush in brushes) {
 				foreach (MAPBrushSide brushSide in brush.sides) {
-					ValidateTexInfo(brushSide);
+					brushSide.textureInfo.Validate(brushSide.plane);
 					PostProcessSpecialTexture(brushSide);
 					switch (_version) {
 						case MapType.Nightfire: {
@@ -244,32 +242,6 @@ namespace Decompiler {
 				if (brush.ef2Terrain != null) {
 					PostProcessQuake3Texture(brush.ef2Terrain);
 				}
-			}
-		}
-
-		/// <summary>
-		/// Validates the texture information in <paramref name="brushSide"/>. This will replace any <c>infinity</c> or <c>NaN</c>
-		/// values with valid values to use.
-		/// </summary>
-		/// <param name="brushSide">The <see cref="MAPBrushSide"/> to validate texture information for.</param>
-		private void ValidateTexInfo(MAPBrushSide brushSide) {
-			if (Double.IsInfinity(brushSide.texScaleX) || Double.IsNaN(brushSide.texScaleX) || brushSide.texScaleX == 0) {
-				brushSide.texScaleX = 1;
-			}
-			if (Double.IsInfinity(brushSide.texScaleY) || Double.IsNaN(brushSide.texScaleY) || brushSide.texScaleY == 0) {
-				brushSide.texScaleY = 1;
-			}
-			if (Double.IsInfinity(brushSide.textureShiftS) || Double.IsNaN(brushSide.textureShiftS)) {
-				brushSide.textureShiftS = 0;
-			}
-			if (Double.IsInfinity(brushSide.textureShiftT) || Double.IsNaN(brushSide.textureShiftT)) {
-				brushSide.textureShiftT = 0;
-			}
-			if (Double.IsInfinity(brushSide.textureS.x) || Double.IsNaN(brushSide.textureS.x) || Double.IsInfinity(brushSide.textureS.y) || Double.IsNaN(brushSide.textureS.y) || Double.IsInfinity(brushSide.textureS.z) || Double.IsNaN(brushSide.textureS.z) || brushSide.textureS == Vector3d.zero) {
-				brushSide.textureS = TextureInfo.TextureAxisFromPlane(brushSide.plane)[0];
-			}
-			if (Double.IsInfinity(brushSide.textureT.x) || Double.IsNaN(brushSide.textureT.x) || Double.IsInfinity(brushSide.textureT.y) || Double.IsNaN(brushSide.textureT.y) || Double.IsInfinity(brushSide.textureT.z) || Double.IsNaN(brushSide.textureT.z) || brushSide.textureT == Vector3d.zero) {
-				brushSide.textureT = TextureInfo.TextureAxisFromPlane(brushSide.plane)[1];
 			}
 		}
 

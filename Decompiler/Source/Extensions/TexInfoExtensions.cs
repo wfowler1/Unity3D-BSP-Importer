@@ -24,9 +24,36 @@ namespace Decompiler {
 			double TScale = 1.0 / texInfo.axes[1].magnitude;
 			Vector3d sAxis = texInfo.axes[0].normalized;
 			Vector3d tAxis = texInfo.axes[1].normalized;
-			double sShift = texInfo.shifts[0] - (texInfo.axes[0] * worldPosition);
-			double tShift = texInfo.shifts[1] - (texInfo.axes[1] * worldPosition);
-			return new TextureInfo(sAxis, (float)sShift, (float)SScale, tAxis, (float)tShift, (float)TScale, 0, -1);
+			double sShift = texInfo.translation.x - (texInfo.axes[0] * worldPosition);
+			double tShift = texInfo.translation.y - (texInfo.axes[1] * worldPosition);
+			return new TextureInfo(sAxis, tAxis, new Vector2d(sShift, tShift), new Vector2d(SScale, TScale), 0, -1, 0);
+		}
+
+		/// <summary>
+		/// Validates this <see cref="TextureInfo"/>. This will replace any <c>infinity</c> or <c>NaN</c>
+		/// values with valid values to use.
+		/// </summary>
+		/// <param name="texInfo">The <see cref="TextureInfo"/> to validate.</param>
+		/// <param name="plane">The <see cref="Plane"/> of the surface this <see cref="TextureInfo"/> is applied to.</param>
+		public static void Validate(this TextureInfo texInfo, Plane plane) {
+			if (Double.IsInfinity(texInfo.scale.x) || Double.IsNaN(texInfo.scale.x) || texInfo.scale.x == 0) {
+				texInfo.scale = new Vector2d(1, texInfo.scale.y);
+			}
+			if (Double.IsInfinity(texInfo.scale.y) || Double.IsNaN(texInfo.scale.y) || texInfo.scale.y == 0) {
+				texInfo.scale = new Vector2d(texInfo.scale.y, 1);
+			}
+			if (Double.IsInfinity(texInfo.translation.x) || Double.IsNaN(texInfo.translation.x)) {
+				texInfo.translation = new Vector2d(0, texInfo.translation.y);
+			}
+			if (Double.IsInfinity(texInfo.translation.y) || Double.IsNaN(texInfo.translation.y)) {
+				texInfo.translation = new Vector2d(texInfo.translation.x, 0);
+			}
+			if (Double.IsInfinity(texInfo.axes[0].x) || Double.IsNaN(texInfo.axes[0].x) || Double.IsInfinity(texInfo.axes[0].y) || Double.IsNaN(texInfo.axes[0].y) || Double.IsInfinity(texInfo.axes[0].z) || Double.IsNaN(texInfo.axes[0].z) || texInfo.axes[0] == Vector3d.zero) {
+				texInfo.axes[0] = TextureInfo.TextureAxisFromPlane(plane)[0];
+			}
+			if (Double.IsInfinity(texInfo.axes[1].x) || Double.IsNaN(texInfo.axes[1].x) || Double.IsInfinity(texInfo.axes[1].y) || Double.IsNaN(texInfo.axes[1].y) || Double.IsInfinity(texInfo.axes[1].z) || Double.IsNaN(texInfo.axes[1].z) || texInfo.axes[1] == Vector3d.zero) {
+				texInfo.axes[1] = TextureInfo.TextureAxisFromPlane(plane)[1];
+			}
 		}
 
 	}

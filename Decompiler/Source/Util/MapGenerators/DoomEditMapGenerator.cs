@@ -110,9 +110,9 @@ namespace Decompiler {
 			.Append(" ")
 			.Append(brushside.plane.distance.ToString("###0.##########", format))
 			.Append(" ) ( ( 1 0 ")
-			.Append(brushside.textureShiftS.ToString("###0.##########", format))
+			.Append(brushside.textureInfo.translation.x.ToString("###0.##########", format))
 			.Append(" ) ( 0 1 ")
-			.Append(brushside.textureShiftT.ToString("###0.##########", format))
+			.Append(brushside.textureInfo.translation.y.ToString("###0.##########", format))
 			.Append(" ) ) \"")
 			.Append(brushside.texture)
 			.Append("\" 0 0 0\r\n");
@@ -134,7 +134,7 @@ namespace Decompiler {
 			for (int i = 0; i < patch.dims.x; ++i) {
 				sb.Append("   (  ");
 				for (int j = 0; j < patch.dims.y; ++j) {
-					UIVertex vertex = patch.points[((int)Math.Round(patch.dims.x) * j) + i];
+					Vertex vertex = patch.points[((int)Math.Round(patch.dims.x) * j) + i];
 					sb.Append("( ")
 					.Append(vertex.position.x.ToString("###0.#####", format))
 					.Append(" ")

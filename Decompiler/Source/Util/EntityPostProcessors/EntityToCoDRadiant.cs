@@ -138,7 +138,7 @@ namespace Decompiler {
 		private void PostProcessTextures(IEnumerable<MAPBrush> brushes) {
 			foreach (MAPBrush brush in brushes) {
 				foreach (MAPBrushSide brushSide in brush.sides) {
-					ValidateTexInfo(brushSide);
+					brushSide.textureInfo.Validate(brushSide.plane);
 					PostProcessSpecialTexture(brushSide);
 					switch (_version) {
 						case MapType.Nightfire: {
@@ -175,32 +175,6 @@ namespace Decompiler {
 				if (brush.patch != null) {
 					PostProcessQuake3Texture(brush.patch);
 				}
-			}
-		}
-
-		/// <summary>
-		/// Validates the texture information in <paramref name="brushSide"/>. This will replace any <c>infinity</c> or <c>NaN</c>
-		/// values with valid values to use.
-		/// </summary>
-		/// <param name="brushSide">The <see cref="MAPBrushSide"/> to validate texture information for.</param>
-		private void ValidateTexInfo(MAPBrushSide brushSide) {
-			if (Double.IsInfinity(brushSide.texScaleX) || Double.IsNaN(brushSide.texScaleX) || brushSide.texScaleX == 0) {
-				brushSide.texScaleX = 1;
-			}
-			if (Double.IsInfinity(brushSide.texScaleY) || Double.IsNaN(brushSide.texScaleY) || brushSide.texScaleY == 0) {
-				brushSide.texScaleY = 1;
-			}
-			if (Double.IsInfinity(brushSide.textureShiftS) || Double.IsNaN(brushSide.textureShiftS)) {
-				brushSide.textureShiftS = 0;
-			}
-			if (Double.IsInfinity(brushSide.textureShiftT) || Double.IsNaN(brushSide.textureShiftT)) {
-				brushSide.textureShiftT = 0;
-			}
-			if (Double.IsInfinity(brushSide.textureS.x) || Double.IsNaN(brushSide.textureS.x) || Double.IsInfinity(brushSide.textureS.y) || Double.IsNaN(brushSide.textureS.y) || Double.IsInfinity(brushSide.textureS.z) || Double.IsNaN(brushSide.textureS.z) || brushSide.textureS == Vector3d.zero) {
-				brushSide.textureS = TextureInfo.TextureAxisFromPlane(brushSide.plane)[0];
-			}
-			if (Double.IsInfinity(brushSide.textureT.x) || Double.IsNaN(brushSide.textureT.x) || Double.IsInfinity(brushSide.textureT.y) || Double.IsNaN(brushSide.textureT.y) || Double.IsInfinity(brushSide.textureT.z) || Double.IsNaN(brushSide.textureT.z) || brushSide.textureT == Vector3d.zero) {
-				brushSide.textureT = TextureInfo.TextureAxisFromPlane(brushSide.plane)[1];
 			}
 		}
 

@@ -198,20 +198,17 @@ namespace Decompiler {
 				MAPDisplacement newDisplacement = new MAPDisplacement() {
 					power = 3,
 					start = terrain.origin,
-					normals = new Vector3d[9][],
-					distances = new float[9][],
-					alphas = new float[9][],
+					normals = new Vector3d[9, 9],
+					distances = new float[9, 9],
+					alphas = new float[9, 9],
 				};
 				for (int y = 0; y < terrain.size.y; ++y) {
-					newDisplacement.normals[y] = new Vector3d[9];
-					newDisplacement.distances[y] = new float[9];
-					newDisplacement.alphas[y] = new float[9];
 					for (int x = 0; x < terrain.size.x; ++x) {
-						newDisplacement.normals[y][x] = Vector3d.up;
+						newDisplacement.normals[y, x] = Vector3d.up;
 						if (terrain.flags > 0) {
-							newDisplacement.distances[y][x] = terrain.vertices[(x * (int)terrain.size.y) + y].height;
+							newDisplacement.distances[y, x] = terrain.vertices[(x * (int)terrain.size.y) + y].height;
 						} else {
-							newDisplacement.distances[y][x] = terrain.vertices[(y * (int)terrain.size.y) + x].height;
+							newDisplacement.distances[y, x] = terrain.vertices[(y * (int)terrain.size.y) + x].height;
 						}
 					}
 				}
@@ -230,23 +227,20 @@ namespace Decompiler {
 		private MAPBrush ConvertToDisplacement(MAPTerrainEF2 terrain) {
 			if (terrain.side == 9) {
 				MAPBrush newBrush = CreateBrushForTerrain(terrain.start, terrain.sideLength, false, terrain.texture, terrain.texRot,
-														  new float[] { (float)terrain.texScaleX, (float)terrain.texScaleY },
-														  new float[] { (float)terrain.textureShiftS, (float)terrain.textureShiftT });
+				                                          new float[] { (float)terrain.texScaleX, (float)terrain.texScaleY },
+				                                          new float[] { (float)terrain.textureShiftS, (float)terrain.textureShiftT });
 				MAPBrushSide newSide = newBrush.sides[0];
 				MAPDisplacement newDisplacement = new MAPDisplacement() {
 					power = 3,
 					start = terrain.start,
-					normals = new Vector3d[9][],
-					distances = new float[9][],
-					alphas = new float[9][],
+					normals = new Vector3d[9, 9],
+					distances = new float[9, 9],
+					alphas = new float[9, 9],
 				};
 				for (int y = 0; y < terrain.side; ++y) {
-					newDisplacement.normals[y] = new Vector3d[9];
-					newDisplacement.distances[y] = new float[9];
-					newDisplacement.alphas[y] = new float[9];
 					for (int x = 0; x < terrain.side; ++x) {
-						newDisplacement.normals[y][x] = Vector3d.up;
-						newDisplacement.distances[y][x] = terrain.heightMap[y][x];
+						newDisplacement.normals[y, x] = Vector3d.up;
+						newDisplacement.distances[y, x] = terrain.heightMap[y, x];
 					}
 				}
 				newSide.displacement = newDisplacement;
@@ -288,9 +282,10 @@ namespace Decompiler {
 				tos[2] = temp;
 			}
 			Vector3d[] axes = TextureInfo.TextureAxisFromPlane(new Plane(froms));
-			TextureInfo newTextureInfo = new TextureInfo(axes[0], textureShift[0], textureScale[0],
-			                                             axes[1], textureShift[1], textureScale[1],
-			                                             0, 0);
+			TextureInfo newTextureInfo = new TextureInfo(axes[0], axes[1],
+			                                             new Vector2d(textureShift[0], textureShift[1]),
+			                                             new Vector2d(textureScale[0], textureScale[1]),
+			                                             0, 0, 0);
 			return MAPBrushExtensions.CreateBrushFromWind(froms, tos, texture, "tools/toolsnodraw", newTextureInfo, 32);
 		}
 
@@ -879,7 +874,7 @@ namespace Decompiler {
 		private void PostProcessTextures(IEnumerable<MAPBrush> brushes) {
 			foreach (MAPBrush brush in brushes) {
 				foreach (MAPBrushSide brushSide in brush.sides) {
-					ValidateTexInfo(brushSide);
+					brushSide.textureInfo.Validate(brushSide.plane);
 					PostProcessSpecialTexture(brushSide);
 					switch (_version) {
 						case MapType.Nightfire: {
@@ -917,32 +912,6 @@ namespace Decompiler {
 						}
 					}
 				}
-			}
-		}
-
-		/// <summary>
-		/// Validates the texture information in <paramref name="brushSide"/>. This will replace any <c>infinity</c> or <c>NaN</c>
-		/// values with valid values to use.
-		/// </summary>
-		/// <param name="brushSide">The <see cref="MAPBrushSide"/> to validate texture information for.</param>
-		private void ValidateTexInfo(MAPBrushSide brushSide) {
-			if (Double.IsInfinity(brushSide.texScaleX) || Double.IsNaN(brushSide.texScaleX) || brushSide.texScaleX == 0) {
-				brushSide.texScaleX = 1;
-			}
-			if (Double.IsInfinity(brushSide.texScaleY) || Double.IsNaN(brushSide.texScaleY) || brushSide.texScaleY == 0) {
-				brushSide.texScaleY = 1;
-			}
-			if (Double.IsInfinity(brushSide.textureShiftS) || Double.IsNaN(brushSide.textureShiftS)) {
-				brushSide.textureShiftS = 0;
-			}
-			if (Double.IsInfinity(brushSide.textureShiftT) || Double.IsNaN(brushSide.textureShiftT)) {
-				brushSide.textureShiftT = 0;
-			}
-			if (Double.IsInfinity(brushSide.textureS.x) || Double.IsNaN(brushSide.textureS.x) || Double.IsInfinity(brushSide.textureS.y) || Double.IsNaN(brushSide.textureS.y) || Double.IsInfinity(brushSide.textureS.z) || Double.IsNaN(brushSide.textureS.z) || brushSide.textureS == Vector3d.zero) {
-				brushSide.textureS = TextureInfo.TextureAxisFromPlane(brushSide.plane)[0];
-			}
-			if (Double.IsInfinity(brushSide.textureT.x) || Double.IsNaN(brushSide.textureT.x) || Double.IsInfinity(brushSide.textureT.y) || Double.IsNaN(brushSide.textureT.y) || Double.IsInfinity(brushSide.textureT.z) || Double.IsNaN(brushSide.textureT.z) || brushSide.textureT == Vector3d.zero) {
-				brushSide.textureT = TextureInfo.TextureAxisFromPlane(brushSide.plane)[1];
 			}
 		}
 

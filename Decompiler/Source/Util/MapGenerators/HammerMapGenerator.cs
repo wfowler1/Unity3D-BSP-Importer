@@ -151,27 +151,27 @@ namespace Decompiler {
 			.Append(")\"\r\n\t\t\t\"material\" \"")
 			.Append(brushside.texture)
 			.Append("\"\r\n\t\t\t\"uaxis\" \"[")
-			.Append(brushside.textureS.x.ToString("###0.######", format))
+			.Append(brushside.textureInfo.axes[0].x.ToString("###0.######", format))
 			.Append(" ")
-			.Append(brushside.textureS.y.ToString("###0.######", format))
+			.Append(brushside.textureInfo.axes[0].y.ToString("###0.######", format))
 			.Append(" ")
-			.Append(brushside.textureS.z.ToString("###0.######", format))
+			.Append(brushside.textureInfo.axes[0].z.ToString("###0.######", format))
 			.Append(" ")
-			.Append(brushside.textureShiftS.ToString("###0.######", format))
+			.Append(brushside.textureInfo.translation.x.ToString("###0.######", format))
 			.Append("] ")
-			.Append(brushside.texScaleX.ToString("###0.####", format))
+			.Append(brushside.textureInfo.scale.x.ToString("###0.####", format))
 			.Append("\"\r\n\t\t\t\"vaxis\" \"[")
-			.Append(brushside.textureT.x.ToString("###0.######", format))
+			.Append(brushside.textureInfo.axes[1].x.ToString("###0.######", format))
 			.Append(" ")
-			.Append(brushside.textureT.y.ToString("###0.######", format))
+			.Append(brushside.textureInfo.axes[1].y.ToString("###0.######", format))
 			.Append(" ")
-			.Append(brushside.textureT.z.ToString("###0.######", format))
+			.Append(brushside.textureInfo.axes[1].z.ToString("###0.######", format))
 			.Append(" ")
-			.Append(brushside.textureShiftT.ToString("###0.######", format))
+			.Append(brushside.textureInfo.translation.y.ToString("###0.######", format))
 			.Append("] ")
-			.Append(brushside.texScaleY.ToString("###0.####", format))
+			.Append(brushside.textureInfo.scale.y.ToString("###0.####", format))
 			.Append("\"\r\n\t\t\t\"rotation\" \"")
-			.Append(brushside.texRot.ToString("###0.####", format))
+			.Append(brushside.textureInfo.rotation.ToString("###0.####", format))
 			.Append("\"\r\n\t\t\t\"lightmapscale\" \"")
 			.Append(brushside.lgtScale.ToString("###0.####", format))
 			.Append("\"\r\n\t\t\t\"smoothing_groups\" \"0\"\r\n");
@@ -182,6 +182,7 @@ namespace Decompiler {
 		}
 
 		private void ParseDisplacement(MAPDisplacement displacement, StringBuilder sb) {
+			int numVertices = displacement.power * displacement.power;
 			sb.Append("\t\t\tdispinfo\r\n\t\t\t{\r\n\t\t\t\t\"power\" \"")
 			.Append(displacement.power)
 			.Append("\"\r\n\t\t\t\t\"startposition\" \"[")
@@ -191,45 +192,45 @@ namespace Decompiler {
 			.Append(" ")
 			.Append(displacement.start.z.ToString("###0.######", format))
 			.Append("]\"\r\n\t\t\t\t\"elevation\" \"0\"\r\n\t\t\t\t\"subdiv\" \"0\"\r\n\t\t\t\tnormals\r\n\t\t\t\t{\r\n");
-			for (int i = 0; i < System.Math.Pow(2, displacement.power) + 1; ++i) {
+			for (int i = 0; i < displacement.normals.GetLength(0); ++i) {
 				sb.Append("\t\t\t\t\t\"row")
 				.Append(i)
 				.Append("\" \"");
-				for (int j = 0; j < System.Math.Pow(2, displacement.power) + 1; ++j) {
+				for (int j = 0; j < displacement.normals.GetLength(1); ++j) {
 					if (j > 0) {
 						sb.Append(" ");
 					}
-					sb.Append(displacement.normals[i][j].x.ToString("###0.######", format));
+					sb.Append(displacement.normals[i, j].x.ToString("###0.######", format));
 					sb.Append(" ");
-					sb.Append(displacement.normals[i][j].y.ToString("###0.######", format));
+					sb.Append(displacement.normals[i, j].y.ToString("###0.######", format));
 					sb.Append(" ");
-					sb.Append(displacement.normals[i][j].z.ToString("###0.######", format));
+					sb.Append(displacement.normals[i, j].z.ToString("###0.######", format));
 				}
 				sb.Append("\"\r\n");
 			}
 			sb.Append("\t\t\t\t}\r\n\t\t\t\tdistances\r\n\t\t\t\t{\r\n");
-			for (int i = 0; i < System.Math.Pow(2, displacement.power) + 1; ++i) {
+			for (int i = 0; i < displacement.distances.GetLength(0); ++i) {
 				sb.Append("\t\t\t\t\t\"row")
 				.Append(i)
 				.Append("\" \"");
-				for (int j = 0; j < System.Math.Pow(2, displacement.power) + 1; ++j) {
+				for (int j = 0; j < displacement.distances.GetLength(1); ++j) {
 					if (j > 0) {
 						sb.Append(" ");
 					}
-					sb.Append(displacement.distances[i][j].ToString("###0.####", format));
+					sb.Append(displacement.distances[i, j].ToString("###0.####", format));
 				}
 				sb.Append("\"\r\n");
 			}
 			sb.Append("\t\t\t\t}\r\n\t\t\t\talphas\r\n\t\t\t\t{\r\n");
-			for (int i = 0; i < System.Math.Pow(2, displacement.power) + 1; ++i) {
+			for (int i = 0; i < displacement.alphas.GetLength(0); ++i) {
 				sb.Append("\t\t\t\t\t\"row")
 				.Append(i)
 				.Append("\" \"");
-				for (int j = 0; j < System.Math.Pow(2, displacement.power) + 1; ++j) {
+				for (int j = 0; j < displacement.alphas.GetLength(1); ++j) {
 					if (j > 0) {
 						sb.Append(" ");
 					}
-					sb.Append(displacement.alphas[i][j].ToString(format));
+					sb.Append(displacement.alphas[i, j].ToString(format));
 				}
 				sb.Append("\"\r\n");
 			}

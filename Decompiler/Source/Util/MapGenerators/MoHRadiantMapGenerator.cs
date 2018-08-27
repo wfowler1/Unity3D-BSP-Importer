@@ -125,17 +125,17 @@ namespace Decompiler {
 			.Append(" ) ")
 			.Append(brushside.texture)
 			.Append(" ")
-			.Append(brushside.textureShiftS.ToString("###0.######", format))
+			.Append(brushside.textureInfo.translation.x.ToString("###0.######", format))
 			.Append(" ")
-			.Append(brushside.textureShiftT.ToString("###0.######", format))
+			.Append(brushside.textureInfo.translation.y.ToString("###0.######", format))
 			.Append(" ")
-			.Append(brushside.texRot.ToString("###0.00", format))
+			.Append(brushside.textureInfo.rotation.ToString("###0.00", format))
 			.Append(" ")
-			.Append(brushside.texScaleX.ToString("###0.######", format))
+			.Append(brushside.textureInfo.scale.x.ToString("###0.######", format))
 			.Append(" ")
-			.Append(brushside.texScaleY.ToString("###0.######", format))
+			.Append(brushside.textureInfo.scale.y.ToString("###0.######", format))
 			.Append(" ")
-			.Append(brushside.flags)
+			.Append(brushside.textureInfo.flags)
 			.Append(" 0 0");
 			if (isDetail) {
 				sb.Append(" +surfaceparm detail");
@@ -159,7 +159,7 @@ namespace Decompiler {
 			for (int i = 0; i < patch.dims.x; ++i) {
 				sb.Append("( ");
 				for (int j = 0; j < patch.dims.y; ++j) {
-					UIVertex vertex = patch.points[((int)Math.Round(patch.dims.x) * j) + i];
+					Vertex vertex = patch.points[((int)Math.Round(patch.dims.x) * j) + i];
 					sb.Append("( ")
 					.Append(vertex.position.x.ToString("###0.#####", format))
 					.Append(" ")

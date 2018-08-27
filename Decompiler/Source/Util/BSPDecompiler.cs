@@ -295,7 +295,7 @@ namespace Decompiler {
 					}
 				} else {
 					Vector3d[] newAxes = TextureInfo.TextureAxisFromPlane(plane);
-					texInfo = new TextureInfo(newAxes[0], 0, 1, newAxes[1], 0, 1, 0, -1);
+					texInfo = new TextureInfo(newAxes[0], newAxes[1], Vector2d.zero, Vector2d.one, flags, -1, 0);
 					texture = "**cliptexture**";
 				}
 			}
@@ -305,21 +305,14 @@ namespace Decompiler {
 				outputTexInfo = texInfo.BSP2MAPTexInfo(worldPosition);
 			} else {
 				Vector3d[] newAxes = TextureInfo.TextureAxisFromPlane(plane);
-				outputTexInfo = new TextureInfo(newAxes[0], 0, 1, newAxes[1], 0, 1, 0, -1);
+				outputTexInfo = new TextureInfo(newAxes[0], newAxes[1], Vector2d.zero, Vector2d.one, 0, -1, 0);
 			}
 
 			mapBrushSide = new MAPBrushSide() {
 				vertices = threePoints,
 				plane = plane,
 				texture = texture,
-				textureS = outputTexInfo.axes[0],
-				textureShiftS = outputTexInfo.shifts[0],
-				textureT = outputTexInfo.axes[1],
-				textureShiftT = outputTexInfo.shifts[1],
-				texRot = 0,
-				texScaleX = outputTexInfo.scales[0],
-				texScaleY = outputTexInfo.scales[1],
-				flags = flags,
+				textureInfo = outputTexInfo,
 				material = material,
 				lgtScale = 16,
 				lgtRot = 0
@@ -336,11 +329,11 @@ namespace Decompiler {
 		/// <param name="face">The <see cref="Face"/> object to process.</param>
 		/// <returns>A <see cref="MAPPatch"/> object to be added to a <see cref="MAPBrush"/> object.</returns>
 		private MAPPatch ProcessPatch(Face face) {
-			List<UIVertex> vertices = _bsp.GetReferencedObjects<UIVertex>(face, "vertices");
+			List<Vertex> vertices = _bsp.GetReferencedObjects<Vertex>(face, "vertices");
 			return new MAPPatch() {
 				dims = face.patchSize,
 				texture = _bsp.textures[face.texture].name,
-				points = vertices.ToArray<UIVertex>()
+				points = vertices.ToArray<Vertex>()
 			};
 		}
 
@@ -352,11 +345,11 @@ namespace Decompiler {
 		/// <param name="face">The <see cref="Patch"/> object to process.</param>
 		/// <returns>A <see cref="MAPPatch"/> object to be added to a <see cref="MAPBrush"/> object.</returns>
 		private MAPPatch ProcessPatch(Patch patch) {
-			List<UIVertex> vertices = _bsp.GetReferencedObjects<UIVertex>(patch, "patchVerts");
+			List<Vertex> vertices = _bsp.GetReferencedObjects<Vertex>(patch, "patchVerts");
 			return new MAPPatch() {
 				dims = patch.dimensions,
 				texture = _bsp.textures[patch.shader].name,
-				points = vertices.ToArray<UIVertex>()
+				points = vertices.ToArray<Vertex>()
 			};
 		}
 
@@ -370,12 +363,12 @@ namespace Decompiler {
 		private MAPTerrainEF2 ProcessEF2Terrain(Face face) {
 			string texture = _bsp.textures[face.texture].name;
 			int flags = _bsp.textures[face.texture].flags;
-			List<UIVertex> vertices = _bsp.GetReferencedObjects<UIVertex>(face, "vertices");
+			List<Vertex> vertices = _bsp.GetReferencedObjects<Vertex>(face, "vertices");
 			int side = (int)Math.Sqrt(vertices.Count);
 			Vector2d mins = new Vector2d(Double.PositiveInfinity, Double.PositiveInfinity);
 			Vector2d maxs = new Vector2d(Double.NegativeInfinity, Double.NegativeInfinity);
 			Vector3d start = Vector3d.undefined;
-			foreach (UIVertex v in vertices) {
+			foreach (Vertex v in vertices) {
 				if (v.position.x < mins.x) {
 					mins.x = v.position.x;
 				}
@@ -395,16 +388,12 @@ namespace Decompiler {
 			start.z = 0;
 			double sideLength = maxs.x - mins.x;
 			double gridUnit = sideLength / (side - 1);
-			float[][] heightMap = new float[side][];
-			float[][] alphaMap = new float[side][];
-			foreach (UIVertex v in vertices) {
+			float[,] heightMap = new float[side, side];
+			float[,] alphaMap = new float[side, side];
+			foreach (Vertex v in vertices) {
 				int col = (int)Math.Round((v.position.x - mins.x) / gridUnit);
 				int row = (int)Math.Round((v.position.y - mins.y) / gridUnit);
-				if (heightMap[row] == null) {
-					heightMap[row] = new float[side];
-					alphaMap[row] = new float[side];
-				}
-				heightMap[row][col] = (float)(v.position.z);
+				heightMap[row, col] = (float)(v.position.z);
 			}
 			return new MAPTerrainEF2() {
 				side = side,
@@ -467,17 +456,14 @@ namespace Decompiler {
 			int first = displacement.dispVertStart;
 			Vector3d start = displacement.startPosition;
 			int numVertsInRow = (int)Math.Pow(2, power) + 1;
-			Vector3d[][] normals = new Vector3d[numVertsInRow][];
-			float[][] distances = new float[numVertsInRow][];
-			float[][] alphas = new float[numVertsInRow][];
+			Vector3d[,] normals = new Vector3d[numVertsInRow, numVertsInRow];
+			float[,] distances = new float[numVertsInRow, numVertsInRow];
+			float[,] alphas = new float[numVertsInRow, numVertsInRow];
 			for (int i = 0; i < numVertsInRow; ++i) {
-				normals[i] = new Vector3d[numVertsInRow];
-				distances[i] = new float[numVertsInRow];
-				alphas[i] = new float[numVertsInRow];
 				for (int j = 0; j < numVertsInRow; ++j) {
-					normals[i][j] = _bsp.dispVerts[first + (i * numVertsInRow) + j].normal;
-					distances[i][j] = _bsp.dispVerts[first + (i * numVertsInRow) + j].dist;
-					alphas[i][j] = _bsp.dispVerts[first + (i * numVertsInRow) + j].alpha;
+					normals[i, j] = _bsp.dispVerts[first + (i * numVertsInRow) + j].normal;
+					distances[i, j] = _bsp.dispVerts[first + (i * numVertsInRow) + j].dist;
+					alphas[i, j] = _bsp.dispVerts[first + (i * numVertsInRow) + j].alpha;
 				}
 			}
 
