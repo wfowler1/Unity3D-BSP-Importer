@@ -94,12 +94,12 @@ public class BSPImporterEditor : EditorWindow {
 							if(bspObject.textures[textureIndex].texAxes != null) {
 								texinfo = bspObject.textures[textureIndex].texAxes;
 							} else {
-								if(currentFace.textureScale > -1) {
-									texinfo = bspObject.texInfo[currentFace.textureScale];
+								if(currentFace.textureInfo > -1) {
+									texinfo = bspObject.texInfo[currentFace.textureInfo];
 								} else {
 									if(currentFace.plane >= 0) { // If not we've hit a Q3 wall. Never mind that, Q3 stores UVs directly.
 										Vector3[] axes = TextureInfo.TextureAxisFromPlane(bspObject.planes[currentFace.plane]);
-										texinfo = new TextureInfo(axes[0], 0, 1, axes[1], 0, 1, 0, bspObject.FindTexDataWithTexture("tools/toolsclip"));
+										texinfo = new TextureInfo(axes[0], axes[1], Vector2.zero, Vector2.one, 0, bspObject.FindTexDataWithTexture("tools/toolsclip"), 0);
 									}
 								}
 							}

@@ -13,8 +13,8 @@ namespace BSPImporter {
 			if(face.texture >= 0) {
 				return face.texture;
 			} else {
-				if(face.textureScale > 0) {
-					return bspObject.texDatas[bspObject.texInfo[face.textureScale].texture].stringTableIndex;
+				if(face.textureInfo > 0) {
+					return bspObject.texDatas[bspObject.texInfo[face.textureInfo].texture].stringTableIndex;
 				}
 			}
 			return 0;
@@ -219,9 +219,9 @@ namespace BSPImporter {
 			for(int l = 0; l < vertices.Length; l++) {
 				Vector3 textureCoord = texmatinverse.MultiplyPoint3x4(vertices[l]);
 				if(texture != null) {
-					uvs[l] = CalcUV(sAxis, tAxis, textureCoord, texinfo.shifts[0], texinfo.shifts[1], originShifts.x, originShifts.y, texture.width, texture.height);
+					uvs[l] = CalcUV(sAxis, tAxis, textureCoord, texinfo.translation[0], texinfo.translation[1], originShifts.x, originShifts.y, texture.width, texture.height);
 				} else {
-					uvs[l] = CalcUV(sAxis, tAxis, textureCoord, texinfo.shifts[0], texinfo.shifts[1], originShifts.x, originShifts.y, 64, 64);
+					uvs[l] = CalcUV(sAxis, tAxis, textureCoord, texinfo.translation[0], texinfo.translation[1], originShifts.x, originShifts.y, 64, 64);
 				}
 			}
 			mesh.vertices = vertices;
@@ -446,9 +446,9 @@ namespace BSPImporter {
 			for (int l = 0; l < vertices.Length; l++) {
 				Vector3 textureCoord = texmatinverse.MultiplyPoint3x4(vertices[l]);
 				if (texture != null) {
-					uvs[l] = CalcUV(sAxis, tAxis, textureCoord, texinfo.shifts[0], texinfo.shifts[1], 0, 0, texture.width, texture.height);
+					uvs[l] = CalcUV(sAxis, tAxis, textureCoord, texinfo.translation[0], texinfo.translation[1], 0, 0, texture.width, texture.height);
 				} else {
-					uvs[l] = CalcUV(sAxis, tAxis, textureCoord, texinfo.shifts[0], texinfo.shifts[1], 0, 0, 64, 64);
+					uvs[l] = CalcUV(sAxis, tAxis, textureCoord, texinfo.translation[0], texinfo.translation[1], 0, 0, 64, 64);
 				}
 			}
 
