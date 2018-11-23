@@ -20,13 +20,13 @@ namespace Decompiler {
 		public static TextureInfo BSP2MAPTexInfo(this TextureInfo texInfo, Vector3d worldPosition) {
 			// There's a lot of weird vector math going on here, don't try to understand it.
 			// Suffice it to say, this is the tried-and-true method of getting what we need.
-			double SScale = 1.0 / texInfo.axes[0].magnitude;
-			double TScale = 1.0 / texInfo.axes[1].magnitude;
-			Vector3d sAxis = texInfo.axes[0].normalized;
-			Vector3d tAxis = texInfo.axes[1].normalized;
-			double sShift = texInfo.translation.x - (texInfo.axes[0] * worldPosition);
-			double tShift = texInfo.translation.y - (texInfo.axes[1] * worldPosition);
-			return new TextureInfo(sAxis, tAxis, new Vector2d(sShift, tShift), new Vector2d(SScale, TScale), 0, -1, 0);
+			double uScale = 1.0 / texInfo.uAxis.magnitude;
+			double vScale = 1.0 / texInfo.vAxis.magnitude;
+			Vector3d uAxis = texInfo.uAxis.normalized;
+			Vector3d vAxis = texInfo.vAxis.normalized;
+			double uTranslate = texInfo.translation.x - (texInfo.uAxis * worldPosition);
+			double vTranslate = texInfo.translation.y - (texInfo.vAxis * worldPosition);
+			return new TextureInfo(uAxis, vAxis, new Vector2d(uTranslate, vTranslate), new Vector2d(uScale, vScale), 0, -1, 0);
 		}
 
 		/// <summary>
@@ -36,23 +36,26 @@ namespace Decompiler {
 		/// <param name="texInfo">The <see cref="TextureInfo"/> to validate.</param>
 		/// <param name="plane">The <see cref="Plane"/> of the surface this <see cref="TextureInfo"/> is applied to.</param>
 		public static void Validate(this TextureInfo texInfo, Plane plane) {
-			if (Double.IsInfinity(texInfo.scale.x) || Double.IsNaN(texInfo.scale.x) || texInfo.scale.x == 0) {
+			// Validate texture scaling
+			if (double.IsInfinity(texInfo.scale.x) || double.IsNaN(texInfo.scale.x) || texInfo.scale.x == 0) {
 				texInfo.scale = new Vector2d(1, texInfo.scale.y);
 			}
-			if (Double.IsInfinity(texInfo.scale.y) || Double.IsNaN(texInfo.scale.y) || texInfo.scale.y == 0) {
-				texInfo.scale = new Vector2d(texInfo.scale.y, 1);
+			if (double.IsInfinity(texInfo.scale.y) || double.IsNaN(texInfo.scale.y) || texInfo.scale.y == 0) {
+				texInfo.scale = new Vector2d(texInfo.scale.x, 1);
 			}
-			if (Double.IsInfinity(texInfo.translation.x) || Double.IsNaN(texInfo.translation.x)) {
+			// Validate translations
+			if (double.IsInfinity(texInfo.translation.x) || double.IsNaN(texInfo.translation.x)) {
 				texInfo.translation = new Vector2d(0, texInfo.translation.y);
 			}
-			if (Double.IsInfinity(texInfo.translation.y) || Double.IsNaN(texInfo.translation.y)) {
+			if (double.IsInfinity(texInfo.translation.y) || double.IsNaN(texInfo.translation.y)) {
 				texInfo.translation = new Vector2d(texInfo.translation.x, 0);
 			}
-			if (Double.IsInfinity(texInfo.axes[0].x) || Double.IsNaN(texInfo.axes[0].x) || Double.IsInfinity(texInfo.axes[0].y) || Double.IsNaN(texInfo.axes[0].y) || Double.IsInfinity(texInfo.axes[0].z) || Double.IsNaN(texInfo.axes[0].z) || texInfo.axes[0] == Vector3d.zero) {
-				texInfo.axes[0] = TextureInfo.TextureAxisFromPlane(plane)[0];
+			// Validate axis components
+			if (double.IsInfinity(texInfo.uAxis.x) || double.IsNaN(texInfo.uAxis.x) || double.IsInfinity(texInfo.uAxis.y) || double.IsNaN(texInfo.uAxis.y) || double.IsInfinity(texInfo.uAxis.z) || double.IsNaN(texInfo.uAxis.z) || texInfo.uAxis == Vector3d.zero) {
+				texInfo.uAxis = TextureInfo.TextureAxisFromPlane(plane)[0];
 			}
-			if (Double.IsInfinity(texInfo.axes[1].x) || Double.IsNaN(texInfo.axes[1].x) || Double.IsInfinity(texInfo.axes[1].y) || Double.IsNaN(texInfo.axes[1].y) || Double.IsInfinity(texInfo.axes[1].z) || Double.IsNaN(texInfo.axes[1].z) || texInfo.axes[1] == Vector3d.zero) {
-				texInfo.axes[1] = TextureInfo.TextureAxisFromPlane(plane)[1];
+			if (double.IsInfinity(texInfo.vAxis.x) || double.IsNaN(texInfo.vAxis.x) || double.IsInfinity(texInfo.vAxis.y) || double.IsNaN(texInfo.vAxis.y) || double.IsInfinity(texInfo.vAxis.z) || double.IsNaN(texInfo.vAxis.z) || texInfo.vAxis == Vector3d.zero) {
+				texInfo.vAxis = TextureInfo.TextureAxisFromPlane(plane)[1];
 			}
 		}
 

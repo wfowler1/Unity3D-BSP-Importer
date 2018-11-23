@@ -437,7 +437,7 @@ namespace Decompiler {
 			for (int i = 0; i < 9; ++i) {
 				for (int j = 0; j < 9; ++j) {
 					MAPTerrainMoHAA.Vertex vertex = new MAPTerrainMoHAA.Vertex() {
-						height = lodTerrain.heightmap[i][j] * 2,
+						height = lodTerrain.heightmap[i, j] * 2,
 					};
 					terrain.vertices.Add(vertex);
 				}
