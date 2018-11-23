@@ -106,7 +106,7 @@ namespace Decompiler {
 						}
 					}
 					foreach (Patch patch in patches) {
-						if (patch.type == 0) {
+						if (_bsp.version != MapType.CoD || patch.patchType == 0) {
 							MAPPatch mappatch = ProcessPatch(patch);
 							MAPBrush newBrush = new MAPBrush();
 							newBrush.patch = mappatch;
@@ -215,7 +215,6 @@ namespace Decompiler {
 				// In Nightfire, faces with "256" flag set should be ignored
 				if ((face.flags & (1 << 8)) != 0) { return null; }
 				texture = (_master.settings.replace512WithNull && (face.flags & (1 << 9)) != 0) ? "**nulltexture**" : _bsp.textures[face.texture].name;
-				texInfo = _bsp.texInfo[face.textureInfo];
 				threePoints = GetPointsForFace(face, brushSide);
 				if (face.plane >= 0 && face.plane < _bsp.planes.Count) {
 					plane = _bsp.planes[face.plane];
@@ -223,6 +222,12 @@ namespace Decompiler {
 					plane = _bsp.planes[brushSide.plane];
 				} else {
 					plane = new Plane(0, 0, 0, 0);
+				}
+				if (_bsp.texInfo != null) {
+					texInfo = _bsp.texInfo[face.textureInfo];
+				} else {
+					Vector3d[] newAxes = TextureInfo.TextureAxisFromPlane(plane);
+					texInfo = new TextureInfo(newAxes[0], newAxes[1], Vector2d.zero, Vector2d.one, flags, -1, 0);
 				}
 				flags = _master.settings.noFaceFlags ? 0 : face.flags;
 				if (face.material >= 0) {
