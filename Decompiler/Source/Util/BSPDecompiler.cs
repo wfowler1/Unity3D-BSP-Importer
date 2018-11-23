@@ -306,7 +306,7 @@ namespace Decompiler {
 			}
 
 			TextureInfo outputTexInfo;
-			if (texInfo != null && !texture.Substring(0, "tools/".Length).Equals("tools/", StringComparison.InvariantCultureIgnoreCase)) {
+			if (texInfo != null) {
 				outputTexInfo = texInfo.BSP2MAPTexInfo(worldPosition);
 			} else {
 				Vector3d[] newAxes = TextureInfo.TextureAxisFromPlane(plane);

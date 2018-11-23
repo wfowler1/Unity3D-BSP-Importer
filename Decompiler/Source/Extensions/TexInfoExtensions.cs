@@ -57,6 +57,12 @@ namespace Decompiler {
 			if (double.IsInfinity(texInfo.vAxis.x) || double.IsNaN(texInfo.vAxis.x) || double.IsInfinity(texInfo.vAxis.y) || double.IsNaN(texInfo.vAxis.y) || double.IsInfinity(texInfo.vAxis.z) || double.IsNaN(texInfo.vAxis.z) || texInfo.vAxis == Vector3d.zero) {
 				texInfo.vAxis = TextureInfo.TextureAxisFromPlane(plane)[1];
 			}
+			// Validate axes relative to plane ("Texture axis perpendicular to face")
+			if (Math.Abs((texInfo.uAxis ^ texInfo.vAxis) * plane.normal) < 0.01) {
+				Vector3d[] newAxes = TextureInfo.TextureAxisFromPlane(plane);
+				texInfo.uAxis = newAxes[0];
+				texInfo.vAxis = newAxes[1];
+			}
 		}
 
 	}
