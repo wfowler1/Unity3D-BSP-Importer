@@ -50,7 +50,7 @@ namespace Decompiler {
 				List<Leaf> leavesInModel = bsp.GetReferencedObjects<Leaf>(model, "leaves");
 				return bsp.GetBrushesInLeafList(leavesInModel);
 			}
-			
+
 			if (model.headNode >= 0) {
 				return bsp.GetBrushesInLeafList(bsp.GetLeavesInTree(bsp.nodes[model.headNode]));
 			}
@@ -84,20 +84,20 @@ namespace Decompiler {
 		/// reference a set of leaves. This is an iterative preorder traversal algorithm modified
 		/// from the Wikipedia page at: http://en.wikipedia.org/wiki/Tree_traversal on April 19, 2012.
 		/// The cited example has since been removed but can still be found at
-		/// http://en.wikipedia.org/w/index.php?title=Tree_traversal&oldid=488219889#Inorder_Traversal
-		/// A recursive algorithm would overflow the stack, so a <see cref="Stack"/> object in memory is
+		/// http://en.wikipedia.org/w/index.php?title=Tree_traversal&amp;oldid=488219889#Iterative_Traversal
+		/// A recursive algorithm would overflow the stack, so a <c>Stack</c> object in memory is
 		/// used instead.
-		/// </summary>
+		/// </remarks>
 		/// <param name="bsp">This <see cref="BSP"/> object.</param>
 		/// <param name="node">The <see cref="Node"/> object at the head of this tree.</param>
-		/// <returns>A <see cref="List"/>&lt;<see cref="Leaf"/>&gt; from the tree starting from <paramref name="node"/>.</returns>
+		/// <returns>A <c>List&lt;<see cref="Leaf"/>&gt;</c> from the tree starting from <paramref name="node"/>.</returns>
 		public static List<Leaf> GetLeavesInTree(this BSP bsp, Node node) {
 			List<Leaf> leaves = new List<Leaf>();
-			
+
 			Stack<Node> nodestack = new Stack<Node>();
 			nodestack.Push(node);
 			Node currentNode;
-		
+
 			while (!(nodestack.Count == 0)) {
 				currentNode = nodestack.Pop();
 				int right = currentNode.child2;

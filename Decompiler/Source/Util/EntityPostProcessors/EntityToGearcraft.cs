@@ -18,7 +18,7 @@ namespace Decompiler {
 		/// <summary>
 		/// Creates a new instance of an <see cref="EntityToGrarcraft"/> object which will operate on the passed <see cref="Entities"/>.
 		/// </summary>
-		/// <param name="entities"The <see cref="Entities"/> to postprocess.</param>
+		/// <param name="entities">The <see cref="Entities"/> to postprocess.</param>
 		/// <param name="version">The <see cref="MapType"/> of the BSP the entities are from.</param>
 		/// <param name="master">The parent <see cref="Job"/> object for this instance.</param>
 		public EntityToGearcraft(Entities entities, MapType version, Job master) {
