@@ -283,7 +283,8 @@ namespace Decompiler {
 						 _bsp.version == MapType.Vindictus ||
 						 _bsp.version == MapType.DMoMaM ||
 						 _bsp.version == MapType.L4D2 ||
-					    _bsp.version == MapType.TacticalInterventionEncrypted) {
+					    _bsp.version == MapType.TacticalInterventionEncrypted ||
+						_bsp.version == MapType.Titanfall) {
 						texInfo = _bsp.texInfo[brushSide.texture];
 						TextureData currentTexData;
 						// I've only found one case where this is bad: c2a3a in HL Source. Don't know why.

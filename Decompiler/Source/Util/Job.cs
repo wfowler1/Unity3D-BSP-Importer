@@ -41,7 +41,6 @@ namespace Decompiler {
 			public string outputFolder = "";
 
 			public MapType openAs = MapType.Undefined;
-			public bool fromUncompiled = false;
 			public bool toAuto = true;
 			public bool toM510 = false;
 			public bool toVMF = false;
@@ -154,21 +153,13 @@ namespace Decompiler {
 				string mapDirectory = "";
 				string mapName = "";
 				MapType version = MapType.Undefined;
-				if (settings.fromUncompiled) {
-					FileInfo file = new FileInfo(_path);
-					version = settings.openAs;
-					output = new Entities(file, settings.openAs);
-					mapDirectory = file.DirectoryName + "\\";
-					mapName = file.Name;
-				} else {
-					bsp = new BSP(_path);
-					bsp.version = settings.openAs;
-					BSPDecompiler decompiler = new BSPDecompiler(bsp, this);
-					output = decompiler.Decompile();
-					mapDirectory = bsp.Folder;
-					mapName = bsp.MapNameNoExtension;
-					version = bsp.version;
-				}
+				bsp = new BSP(_path);
+				bsp.version = settings.openAs;
+				BSPDecompiler decompiler = new BSPDecompiler(bsp, this);
+				output = decompiler.Decompile();
+				mapDirectory = bsp.Folder;
+				mapName = bsp.MapNameNoExtension;
+				version = bsp.version;
 				MAPWriter writer = new MAPWriter(output, mapDirectory, mapName, version, this);
 				writer.WriteAll();
 				DateTime end = DateTime.Now;

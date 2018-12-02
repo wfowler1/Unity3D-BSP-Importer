@@ -81,8 +81,13 @@ namespace Decompiler {
 					case MapType.Vindictus:
 					case MapType.DMoMaM:
 					case MapType.L4D2:
-					case MapType.TacticalInterventionEncrypted: {
+					case MapType.TacticalInterventionEncrypted:
+					case MapType.Titanfall: {
 						WriteHammer();
+						break;
+					}
+					default: {
+						throw new NotImplementedException("No default output format specified for map type " + _version.ToString());
 						break;
 					}
 				}

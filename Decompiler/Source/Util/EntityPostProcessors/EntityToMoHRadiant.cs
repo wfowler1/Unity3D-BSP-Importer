@@ -174,7 +174,8 @@ namespace Decompiler {
 						case MapType.DMoMaM:
 						case MapType.L4D2:
 						case MapType.Vindictus:
-						case MapType.TacticalInterventionEncrypted: {
+						case MapType.TacticalInterventionEncrypted:
+						case MapType.Titanfall: {
 							PostProcessSourceTexture(brushSide);
 							break;
 						}

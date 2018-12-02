@@ -146,7 +146,8 @@ namespace Decompiler {
 					 _version != MapType.L4D2 &&
 					 _version != MapType.DMoMaM &&
 					 _version != MapType.Vindictus &&
-					 _version != MapType.TacticalInterventionEncrypted) {
+					 _version != MapType.TacticalInterventionEncrypted &&
+					 _version != MapType.Titanfall) {
 					for (int i = 0; i < _entities.Count; ++i) {
 						ParseEntityIO(_entities[i]);
 					}
@@ -322,7 +323,8 @@ namespace Decompiler {
 				case MapType.L4D2:
 				case MapType.DMoMaM:
 				case MapType.Vindictus:
-				case MapType.TacticalInterventionEncrypted: {
+				case MapType.TacticalInterventionEncrypted:
+				case MapType.Titanfall: {
 					PostProcessSourceEntity(entity);
 					break;
 				}
@@ -896,7 +898,8 @@ namespace Decompiler {
 						case MapType.L4D2:
 						case MapType.DMoMaM:
 						case MapType.Vindictus:
-						case MapType.TacticalInterventionEncrypted: {
+						case MapType.TacticalInterventionEncrypted:
+						case MapType.Titanfall: {
 							PostProcessSourceTexture(brushSide);
 							break;
 						}
