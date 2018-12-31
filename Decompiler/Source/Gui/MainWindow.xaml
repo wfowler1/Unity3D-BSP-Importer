@@ -84,6 +84,10 @@
 				<MenuItem Header="Save log..." Click="SaveLog_Click" ToolTip="Save all text in output log to a file." />
 				<MenuItem Header="Clear log" Click="ClearLog_Click" />
 			</MenuItem>
+			<MenuItem Header="_Help">
+				<MenuItem Header="About" Click="About_Click" />
+				<MenuItem Header="About LibBSP" Click="AboutLibBSP_Click" />
+			</MenuItem>
 		</Menu>
 		<TextBox x:Name="txtConsole" Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" IsReadOnly="True" TextWrapping="NoWrap" />
 		<GridSplitter Grid.Row="2" ResizeDirection="Rows" ResizeBehavior="PreviousAndNext" Background="LightGray" Height="5" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" />

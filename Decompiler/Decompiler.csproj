@@ -203,6 +203,11 @@ echo namespace Decompiler {&gt;&gt; Revision.cs
 echo 	public class Revision {&gt;&gt; Revision.cs
 echo 		public const string version = "%25revision%25";&gt;&gt; Revision.cs
 echo 		public const string head = "%25head%25";&gt;&gt; Revision.cs
+echo #if DEBUG&gt;&gt; Revision.cs
+echo 		public const string configuration = "Debug";&gt;&gt; Revision.cs
+echo #else&gt;&gt; Revision.cs
+echo 		public const string configuration = "Release";&gt;&gt; Revision.cs
+echo #endif&gt;&gt; Revision.cs
 echo 	}&gt;&gt; Revision.cs
 echo }&gt;&gt; Revision.cs</PreBuildEvent>
   </PropertyGroup>
@@ -210,14 +215,7 @@ echo }&gt;&gt; Revision.cs</PreBuildEvent>
     <PostBuildEvent>cd..
 cd..
 cd Source\Util
-del /Q Revision.cs
-type nul&gt; Revision.cs
-echo namespace Decompiler {&gt;&gt; Revision.cs
-echo 	public class Revision {&gt;&gt; Revision.cs
-echo 		public const string version = "To be replaced on build";&gt;&gt; Revision.cs
-echo 		public const string head = "To be replaced on build";&gt;&gt; Revision.cs
-echo 	}&gt;&gt; Revision.cs
-echo }&gt;&gt; Revision.cs</PostBuildEvent>
+git checkout Revision.cs</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
