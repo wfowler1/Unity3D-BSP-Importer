@@ -9,7 +9,7 @@ namespace BSPImporter {
 
 		public static string path = "";
 		public static string texturePath = "";
-		public static int tesselationLevel = 10;
+		public static int tesselationLevel = 12;
 
 		public delegate void EntityGameObjectCreatedAction(GameObject gameObject, Entity entity);
 		public static EntityGameObjectCreatedAction EntityGameObjectCreated;
@@ -161,23 +161,17 @@ namespace BSPImporter {
 				} else {
 					globalTexturePath = Application.dataPath + "/" + texturePath + "/" + texture.name;
 				}
-				if(!File.Exists(globalTexturePath + ".png")) {
-					if(!File.Exists(globalTexturePath + ".jpg")) {
-						if(!File.Exists(globalTexturePath + ".tga")) {
-							Debug.Log(globalTexturePath + " does not exist or is not in JPG, PNG or TGA format!");
-						} else {
-							textureDict[texture.name] = Paloma.TargaImage.LoadTargaImage(globalTexturePath + ".tga");
-						}
-					} else {
-						textureDict[texture.name] = new Texture2D(0, 0);
-						textureDict[texture.name].LoadImage(File.ReadAllBytes(globalTexturePath + ".jpg"));
-					}
-				} else {
+				if (File.Exists(globalTexturePath + ".png")) {
 					textureDict[texture.name] = new Texture2D(0, 0);
 					textureDict[texture.name].LoadImage(File.ReadAllBytes(globalTexturePath + ".png"));
+				} else if (File.Exists(globalTexturePath + ".jpg")) {
+					textureDict[texture.name] = new Texture2D(0, 0);
+					textureDict[texture.name].LoadImage(File.ReadAllBytes(globalTexturePath + ".jpg"));
+				} else if (File.Exists(globalTexturePath + ".tga")) {
+					textureDict[texture.name] = Paloma.TargaImage.LoadTargaImage(globalTexturePath + ".tga");
 				}
 				if (!textureDict.ContainsKey(texture.name) || textureDict[texture.name] == null) {
-					Debug.LogWarning("Texture " + texture.name + " not found! Texture scaling will probably be wrong if imported later.");
+					Debug.LogWarning("Texture " + texture.name + " not found!");
 				}
 				materialDict[texture.name] = new Material(def);
 				if (textureDict.ContainsKey(texture.name) && textureDict[texture.name] != null) {

@@ -9,12 +9,11 @@ using LibBSP;
 
 public class BSPImporterEditor : EditorWindow {
 	private string path = "path";
-	private string doomMapName = "map name (Doom only)";
 	private string texturePath = "Textures/";
 	private bool loadIntoScene = true;
 	private bool saveAsPrefab = true;
 	private bool combineMeshes = true;
-	public static int tesselationLevel = 10;
+	public static int tesselationLevel = 12;
 
 	public delegate void EntityGameObjectCreatedAction(GameObject gameObject, Entity entity);
 	public EntityGameObjectCreatedAction EntityGameObjectCreated;
@@ -33,12 +32,12 @@ public class BSPImporterEditor : EditorWindow {
 	
 	public virtual void OnGUI() {
 		EditorGUILayout.BeginVertical(); {
-			path = EditorGUILayout.TextField(new GUIContent("Path", "Path to the BSP, starting from Assets"), path);
-			doomMapName = EditorGUILayout.TextField(new GUIContent("Map", "Map name within a WAD, for Doom/Doom2/Heretic/Hexen only"), doomMapName);
+			path = EditorGUILayout.TextField(new GUIContent("Path", "Path to the BSP"), path);
 			texturePath = EditorGUILayout.TextField(new GUIContent("Texture path", "Path to textures, starting from Assets."), texturePath);
 			loadIntoScene = EditorGUILayout.Toggle(new GUIContent("Load into scene", "Load the BSP directly into the current scene"), loadIntoScene);
 			saveAsPrefab = EditorGUILayout.Toggle(new GUIContent("Save as prefab", "Save the BSP as a prefab"), saveAsPrefab);
-			combineMeshes = EditorGUILayout.Toggle(new GUIContent("Combine all meshes in an entity if possible"), combineMeshes);
+			combineMeshes = EditorGUILayout.Toggle(new GUIContent("One mesh per entity", "If unchecked, there will be one mesh for each texture used. Uncheck this if you get warnings about too many verts."), combineMeshes);
+			tesselationLevel = EditorGUILayout.IntSlider(new GUIContent("Curve detail", "Number of tesselations for curves. 12 is reasonable. Use higher values for smoother curves."), tesselationLevel, 1, 50);
 			if(GUILayout.Button("Import")) {
 				ReadBSP(path);
 			}
@@ -216,6 +215,7 @@ public class BSPImporterEditor : EditorWindow {
 			}
 		}
 		if(saveAsPrefab) {
+			Directory.CreateDirectory(Path.Combine(Application.dataPath, "Objects"));
 			PrefabUtility.CreatePrefab("Assets/Objects/" + bspObject.MapNameNoExtension + ".prefab", bspGameObject);
 		}
 		if(!loadIntoScene) {
@@ -226,25 +226,21 @@ public class BSPImporterEditor : EditorWindow {
 	public static void LoadTextures(BSP bspObject, string texturePath) {
 		Shader def = Shader.Find("Standard");
 		foreach(LibBSP.Texture texture in bspObject.textures) {
-			string globalTexturePath = Application.dataPath + "/" + texturePath + "/" + texture.name;
-			if(!File.Exists(globalTexturePath + ".png")) {
-				if(!File.Exists(globalTexturePath + ".jpg")) {
-					if(!File.Exists(globalTexturePath + ".tga")) {
-						Debug.Log(globalTexturePath + " does not exist or is not in JPG, PNG or TGA format!");
-					} else {
-						textureDict[texture.name] = AssetDatabase.LoadAssetAtPath("Assets/" + texturePath + "/" + texture.name + ".tga", typeof(Texture2D)) as Texture2D;
-					}
-				} else {
-					textureDict[texture.name] = AssetDatabase.LoadAssetAtPath("Assets/" + texturePath + "/" + texture.name + ".jpg", typeof(Texture2D)) as Texture2D;
-				}
-			} else {
-				textureDict[texture.name] = AssetDatabase.LoadAssetAtPath("Assets/" + texturePath + "/" + texture.name + ".png", typeof(Texture2D)) as Texture2D;
+			string relativeTexturePath = Path.Combine("Assets", texturePath, texture.name);
+			if (File.Exists(relativeTexturePath + ".png")) {
+				textureDict[texture.name] = AssetDatabase.LoadAssetAtPath(relativeTexturePath + ".png", typeof(Texture2D)) as Texture2D;
+			}
+			else if(File.Exists(relativeTexturePath + ".jpg")) {
+				textureDict[texture.name] = AssetDatabase.LoadAssetAtPath(relativeTexturePath + ".jpg", typeof(Texture2D)) as Texture2D;
+			}
+			else if (File.Exists(relativeTexturePath + ".tga")) {
+				textureDict[texture.name] = AssetDatabase.LoadAssetAtPath(relativeTexturePath + ".tga", typeof(Texture2D)) as Texture2D;
 			}
 
 			materialDict[texture.name] = new Material(def);
 
 			if(!textureDict.ContainsKey(texture.name) || textureDict[texture.name] == null) {
-				Debug.LogWarning("Texture Assets/" + texturePath + "/" + texture.name + " not found! Texture scaling will probably be wrong if imported later.");
+				Debug.LogWarning("Texture " + relativeTexturePath + " not found! Texture UVs will probably be wrong if imported later.");
 			} else {
 				materialDict[texture.name].mainTexture = textureDict[texture.name];
 			}
