@@ -104,6 +104,7 @@ namespace BSPImporter {
 			Vector2[] uvs = new Vector2[vertex.Length];
 			for(int i = 0; i < uvs.Length; i++) {
 				uvs[i] = vertex[i].uv0;
+				uvs[i].y *= -1;
 			}
 			mesh.uv = uvs;
 			return mesh;

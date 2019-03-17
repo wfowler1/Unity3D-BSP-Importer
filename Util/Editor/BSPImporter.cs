@@ -115,6 +115,7 @@ public class BSPImporterEditor : EditorWindow {
 							for(int k = 0; k < vertices.Length; k++) {
 								meshCorners[k] = vertices[k].position;
 								uvs[k] = vertices[k].uv0; // On anything but Q3-based engines these will all be zeroes
+								uvs[k].y *= -1;
 							}
 							Mesh faceMesh = null;
 							if(bspObject.version == MapType.CoD ||
