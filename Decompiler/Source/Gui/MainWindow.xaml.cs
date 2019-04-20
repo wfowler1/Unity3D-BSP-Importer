@@ -264,7 +264,7 @@ namespace Decompiler.GUI {
 		/// <param name="e"><c>RoutedEventArgs</c> for this event.</param>
 		private void About_Click(object sender, RoutedEventArgs e) {
 			if (MessageBox.Show(this,
-				"BSP Decompiler v5 revision " + Revision.version + " " + Revision.configuration + "\nWritten by William Fowler\n\nFull source code available on GitHub at https://github.com/wfowler1/bsp-decompiler\nWould you like to go there now?",
+				"BSP Decompiler v5 revision " + Revision.version + " " + Revision.configuration + "\nBuilt on " + LibBSP.Revision.dateTime + "\nWritten by William Fowler\n\nFull source code available on GitHub at https://github.com/wfowler1/bsp-decompiler\nWould you like to go there now?",
 				"About BSP Decompiler",
 				MessageBoxButton.YesNo,
 				MessageBoxImage.Information,
@@ -280,7 +280,7 @@ namespace Decompiler.GUI {
 		/// <param name="e"><c>RoutedEventArgs</c> for this event.</param>
 		private void AboutLibBSP_Click(object sender, RoutedEventArgs e) {
 			if (MessageBox.Show(this,
-				"LibBSP revision " + LibBSP.Revision.version + " " + LibBSP.Revision.configuration + "\nWritten by William Fowler\n\nFull source code available on GitHub at https://github.com/wfowler1/LibBSP\nWould you like to go there now?",
+				"LibBSP revision " + LibBSP.Revision.version + " " + LibBSP.Revision.configuration + "\nBuilt on " + LibBSP.Revision.dateTime + "\nWritten by William Fowler\n\nFull source code available on GitHub at https://github.com/wfowler1/LibBSP\nWould you like to go there now?",
 				"About LibBSP",
 				MessageBoxButton.YesNo,
 				MessageBoxImage.Information,
