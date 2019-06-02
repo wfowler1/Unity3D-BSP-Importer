@@ -9,7 +9,8 @@ using BSPImporter;
 using LibBSP;
 
 /// <summary>
-/// Editor window for importing BSPs. Can be inheretited for more control.
+/// Example editor window for importing BSPs. Shows a simple example of how to provide a GUI
+/// for importing a BSP. This class can be deleted without causing any problems.
 /// </summary>
 public class BSPImporterWindow : EditorWindow {
 

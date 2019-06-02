@@ -38,7 +38,7 @@ namespace BSPImporter {
 			}
 			if (mesh != null) {
 				TextureInfo textureInfo = bsp.GetTextureInfo(face);
-				if (textureInfo != null) {
+				if (textureInfo.data != null && textureInfo.data.Length > 0) {
 					mesh.CalculateUVs(textureInfo, dims);
 				}
 				mesh.NegateVs();
@@ -189,11 +189,11 @@ namespace BSPImporter {
 		}
 
 		/// <summary>
-		/// Rotates the vertices in this <see cref="Mesh"/> using the passed 
+		/// Transforms the vertices in this <see cref="Mesh"/> using the passed <see cref="Matrix4x4"/> as the basis.
 		/// </summary>
-		/// <param name="mesh"></param>
-		/// <param name="transform"></param>
-		public static void RotateVertices(this Mesh mesh, Matrix4x4 transform) {
+		/// <param name="mesh">This <see cref="Mesh"/>.</param>
+		/// <param name="transform">The matrix to use to transform the versices in this <see cref="Mesh"/>.</param>
+		public static void TransformVertices(this Mesh mesh, Matrix4x4 transform) {
 			Vector3[] vertices = mesh.vertices;
 			Vector3[] normals = mesh.normals;
 			for (int i = 0; i < vertices.Length; ++i) {

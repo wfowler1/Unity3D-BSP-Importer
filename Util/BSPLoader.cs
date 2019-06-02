@@ -221,7 +221,6 @@ namespace BSPImporter {
 					UnityEngine.Object newPrefab = EditorUtility.CreateEmptyPrefab(prefabPath);
 					EditorUtility.ReplacePrefab(root, newPrefab, ReplacePrefabOptions.ConnectToPrefab);
 #endif
-
 				}
 				AssetDatabase.Refresh();
 			}
@@ -403,7 +402,7 @@ namespace BSPImporter {
 				if (face.numEdges <= 0 && face.numVertices <= 0) {
 					continue;
 				}
-
+				
 				int textureIndex = bsp.GetTextureIndex(face);
 				string textureName = "";
 				if (textureIndex >= 0) {
@@ -415,42 +414,21 @@ namespace BSPImporter {
 					textureMeshMap[textureName] = new List<Mesh>();
 				}
 
-				Vector2 dims;
-				if (!materialDirectory.ContainsKey(textureName)) {
-					LoadMaterial(textureName);
-				}
-				if (materialDirectory[textureName].HasProperty("_MainTex") && materialDirectory[textureName].mainTexture != null) {
-					dims = new Vector2(materialDirectory[textureName].mainTexture.width, materialDirectory[textureName].mainTexture.height);
-				} else {
-					dims = new Vector2(128, 128);
-				}
-
-				Mesh mesh;
-				if (face.displacement >= 0) {
-					mesh = MeshUtils.CreateDisplacementMesh(bsp, face, dims);
-				} else {
-					mesh = MeshUtils.CreateFaceMesh(bsp, face, dims, settings.curveTessellationLevel);
-				}
-				textureMeshMap[textureName].Add(mesh);
+				textureMeshMap[textureName].Add(CreateFaceMesh(face, textureName));
 			}
 
 			if (modelNumber == 0) {
 				if (bsp.lodTerrains != null) {
 					foreach (LODTerrain lodTerrain in bsp.lodTerrains) {
-						string textureName = "";
 						if (lodTerrain.texture >= 0) {
 							LibBSP.Texture texture = bsp.textures[lodTerrain.texture];
-							textureName = texture.name;
+							string textureName = texture.name;
 
 							if (!textureMeshMap.ContainsKey(textureName) || textureMeshMap[textureName] == null) {
 								textureMeshMap[textureName] = new List<Mesh>();
 							}
-							
-							if (!materialDirectory.ContainsKey(textureName)) {
-								LoadMaterial(textureName);
-							}
 
-							textureMeshMap[textureName].Add(MeshUtils.CreateMoHAATerrainMesh(bsp, lodTerrain));
+							textureMeshMap[textureName].Add(CreateLoDTerrainMesh(lodTerrain, textureName));
 						}
 					}
 				}
@@ -486,7 +464,7 @@ namespace BSPImporter {
 
 				if (settings.meshCombineOptions != MeshCombineOptions.PerMaterial) {
 					Mesh mesh = MeshUtils.CombineAllMeshes(textureMeshes, false, false);
-					mesh.RotateVertices(gameObject.transform.localToWorldMatrix);
+					mesh.TransformVertices(gameObject.transform.localToWorldMatrix);
 					if (mesh.normals.Length == 0 || mesh.normals[0] == Vector3.zero) {
 						mesh.RecalculateNormals();
 					}
@@ -528,5 +506,45 @@ namespace BSPImporter {
 
 		}
 
+		/// <summary>
+		/// Creates a <see cref="Mesh"/> appropriate for <paramref name="face"/>.
+		/// </summary>
+		/// <param name="face">The <see cref="Face"/> to create a <see cref="Mesh"/> for.</param>
+		/// <param name="textureName">The name of the texture/shader applied to the <see cref="Face"/>.</param>
+		/// <returns>The <see cref="Mesh"/> generated for <paramref name="face"/>.</returns>
+		protected Mesh CreateFaceMesh(Face face, string textureName) {
+			Vector2 dims;
+			if (!materialDirectory.ContainsKey(textureName)) {
+				LoadMaterial(textureName);
+			}
+			if (materialDirectory[textureName].HasProperty("_MainTex") && materialDirectory[textureName].mainTexture != null) {
+				dims = new Vector2(materialDirectory[textureName].mainTexture.width, materialDirectory[textureName].mainTexture.height);
+			} else {
+				dims = new Vector2(128, 128);
+			}
+
+			Mesh mesh;
+			if (face.displacement >= 0) {
+				mesh = MeshUtils.CreateDisplacementMesh(bsp, face, dims);
+			} else {
+				mesh = MeshUtils.CreateFaceMesh(bsp, face, dims, settings.curveTessellationLevel);
+			}
+
+			return mesh;
+		}
+
+		/// <summary>
+		/// Creates a <see cref="Mesh"/> appropriate for <paramref name="lodTerrain"/>.
+		/// </summary>
+		/// <param name="lodTerrain">The <see cref="LODTerrain"/> to create a <see cref="Mesh"/> for.</param>
+		/// <param name="textureName">The name of the texture/shader applied to the <see cref="LODTerrain"/>.</param>
+		/// <returns>The <see cref="Mesh"/> generated for <paramref name="lodTerrain"/>.</returns>
+		protected Mesh CreateLoDTerrainMesh(LODTerrain lodTerrain, string textureName) {
+			if (!materialDirectory.ContainsKey(textureName)) {
+				LoadMaterial(textureName);
+			}
+
+			return MeshUtils.CreateMoHAATerrainMesh(bsp, lodTerrain);
+		}
 	}
 }
