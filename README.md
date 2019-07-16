@@ -8,7 +8,7 @@ There are several settings for importing a BSP into Unity:
 - Path: The path to the BSP file in the filesystem. This can be anywhere on the hard drive.
 - Texture path: The path to the textures folder containing textures to use on the imported BSPs. This can point to a folder anywhere in the filesystem, or to a folder in the project's /Assets folder.
 	- If it points to a folder in Assets, it will use the textures in the project in PNG, JPG or TGA formats.
-	- If it points to a folder elsewhere in the filesystem (this is the only option at runtime), it can load images of format PNG, JPG or TGA but Materials cannot be saved into the project.
+	- If it points to a folder elsewhere in the filesystem (this is the only option at runtime), it can load images of format PNG, JPG or TGA but Material instances cannot be saved into the project.
 - Materials path: The path within Assets to save generated Materials to or load from. If a material already exists at the same path, it will use it rather than generate a new one.
 - Mesh path: The path within Assets to save generated meshes to, as well as the prefab for the map.
 - Mesh Combining: Contains options for combining meshes after they are generated. This can clean up the hierarchy and will save fewer meshes into the Assets folder.
@@ -20,14 +20,14 @@ There are several settings for importing a BSP into Unity:
 	- Materials: Only materials will be saved into the project. Meshes and the map will not be saved. You cannot save materials into the project if the textures aren't in the project as well (in the Assets folder).
 	- Meshes: Only meshes will be saved into the project. Not recommended, the meshes will not keep their material references.
 	- Materials and Meshes: All generated Materials and Meshes will be saved into the project, but no prefab will be created for the BSP. The scene can be saved without issue.
-	- Prefab: Only saves a map prefab into the project. Not recommended, only the GameObject hierarchy will survive outside the scene.
+	- Prefab: Only saves a map prefab into the project. Not recommended, only the GameObject hierarchy can be saved.
 	- Materials and Prefab: Generated materials and prefab will be saved into the project. Not recommended, generated Meshes will survive only in the scene if saved.
 	- Meshes and Prefab: Genereated meshes and prefab will be saved into the project. Not recommended, generated Materials will survive only in the scene if saved.
 	- Materials Meshes and Prefab: This is the safest bet. Everything is saved into the project and can be opened, modified and saved. Materials may be reused for multiple BSP imports.
-- Curve Detail: Games based on the Quake 3 engine have a special type of surface called a Bezier patch, built from curves. This option controls the amount of detail used to tessellate these curves into triangles. Higher values give smoother curves, at the cost of exponentially more verices. Use with caution, especially if combining meshes Per Entity.
+- Curve Detail: Games based on the Quake 3 engine have a special type of surface called a Bezier patch, built from curves. This option controls the amount of detail used to tessellate these curves into triangles. Higher values give smoother curves, at the cost of exponentially more vertices. Use with caution, especially if combining meshes Per Entity. Excessively high values can create too many vertices and cause mesh corruption.
 
 ## Example usage
-Each of these options exists in a `Settings` class within the BSPLoader class. Simply create a new Settings object:
+Each of these options exist in a `Settings` class within the BSPLoader class. Simply create a new Settings object:
 ```cs
 BSPLoader.Settings settings = new BSPLoader.Settings();
 settings.path = "Path_to_BSP";
@@ -43,8 +43,8 @@ loader.LoadBSP();
 
 ## Can this be used in a game build or while the editor is playing?
 Yes! This plugin works at runtime as well as edit-time. This can give your players a way to load new levels into your game. The settings work a bit differently, though.
-- Texture Path cannot point to the Assets folder, so textures must be loaded from elsewhere in the filesystem.
-- Materials path, Mesh path and Assets to Save settings do nothing.
+- Texture Path cannot point into the Assets folder at runtime, so textures must be loaded from elsewhere in the filesystem.
+- Materials path, Mesh path and Assets to Save settings do nothing. At runtime, instances of these are created in memory and are lost when the scene is unloaded.
 
 Give your players a way to set the appropriate options and they can take control!
 
