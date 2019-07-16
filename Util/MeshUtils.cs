@@ -38,7 +38,7 @@ namespace BSPImporter {
 			}
 			if (mesh != null) {
 				TextureInfo textureInfo = bsp.GetTextureInfo(face);
-				if (textureInfo.data != null && textureInfo.data.Length > 0) {
+				if (textureInfo.Data != null && textureInfo.Data.Length > 0) {
 					mesh.CalculateUVs(textureInfo, dims);
 				}
 				mesh.NegateVs();

@@ -141,7 +141,7 @@ namespace BSPImporter {
 		/// <param name="face">The <see cref="Face"/> object to get the appropriate <see cref="TextureInfo"/> for.</param>
 		/// <returns>The appropriate <see cref="TextureInfo"/> for <paramref name="face"/>.</returns>
 		public static TextureInfo GetTextureInfo(this BSP bsp, Face face) {
-			if (face.texture >= 0 && bsp.textures[face.texture].texAxes.data != null && bsp.textures[face.texture].texAxes.data.Length > 0) {
+			if (face.texture >= 0 && bsp.textures[face.texture].texAxes.Data != null && bsp.textures[face.texture].texAxes.Data.Length > 0) {
 				return bsp.textures[face.texture].texAxes;
 			}
 
