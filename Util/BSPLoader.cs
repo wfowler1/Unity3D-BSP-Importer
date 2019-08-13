@@ -419,13 +419,13 @@ namespace BSPImporter {
 				if (textureIndex >= 0) {
 					LibBSP.Texture texture = bsp.textures[textureIndex];
 					textureName = texture.name;
-				}
 
-				if (!textureMeshMap.ContainsKey(textureName) || textureMeshMap[textureName] == null) {
-					textureMeshMap[textureName] = new List<Mesh>();
-				}
+					if (!textureMeshMap.ContainsKey(textureName) || textureMeshMap[textureName] == null) {
+						textureMeshMap[textureName] = new List<Mesh>();
+					}
 
-				textureMeshMap[textureName].Add(CreateFaceMesh(face, textureName));
+					textureMeshMap[textureName].Add(CreateFaceMesh(face, textureName));
+				}
 			}
 
 			if (modelNumber == 0) {
