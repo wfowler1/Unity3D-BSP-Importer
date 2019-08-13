@@ -278,9 +278,13 @@ namespace BSPImporter {
 				} else if ((settings.assetSavingOptions & AssetSavingOptions.Materials) > 0) {
 					Debug.LogWarning("Using a texture path outside of Assets will not work with material saving enabled.");
 				}
+#endif
 			} else {
+#if UNITY_EDITOR
 				texturePath = Path.Combine(Path.Combine("Assets", settings.texturePath), textureName).Replace('\\', '/');
 				textureIsAsset = true;
+#else
+				texturePath = Path.Combine(settings.texturePath, textureName).Replace('\\', '/');
 #endif
 			}
 
