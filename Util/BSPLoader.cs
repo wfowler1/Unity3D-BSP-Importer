@@ -160,7 +160,14 @@ namespace BSPImporter {
 				return;
 			}
 			BSP bsp = new BSP(settings.path);
-			LoadBSP(bsp);
+			try {
+				LoadBSP(bsp);
+			} catch(Exception e) {
+#if UNITY_EDITOR
+				EditorUtility.ClearProgressBar();
+#endif
+				throw e;
+			}
 		}
 
 		/// <summary>
