@@ -306,7 +306,7 @@ namespace BSPImporter {
 			}
 
 			DisplacementInfo displacementInfo = bsp.dispInfos[face.displacement];
-			int numSideTriangles = (int)Mathf.Pow(2, displacementInfo.power);
+			int numSideTriangles = displacementInfo.power * displacementInfo.power;
 			
 			DisplacementVertex[] displacementVertices = bsp.dispVerts.GetVerticesInDisplacement(displacementInfo.dispVertStart, displacementInfo.power);
 
@@ -349,9 +349,9 @@ namespace BSPImporter {
 			mesh.vertices = corners;
 			mesh.uv = uv;
 			mesh.uv2 = uv2;
+			mesh.CalculateUVs(bsp.GetTextureInfo(face), dims);
 			mesh.CalculateTerrainVertices(offsets, numSideTriangles);
 			mesh.triangles = BuildDisplacementTriangles(numSideTriangles);
-			mesh.CalculateUVs(bsp.GetTextureInfo(face), dims);
 			mesh.NegateVs();
 			mesh.RecalculateNormals();
 			mesh.RecalculateBounds();
