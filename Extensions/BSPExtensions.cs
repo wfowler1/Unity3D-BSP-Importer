@@ -128,7 +128,11 @@ namespace BSPImporter {
 				return face.texture;
 			} else {
 				if (face.textureInfo > 0) {
-					return bspObject.texDatas[bspObject.texInfo[face.textureInfo].texture].stringTableIndex;
+					if (bspObject.texDatas != null) {
+						return bspObject.texDatas[bspObject.texInfo[face.textureInfo].texture].stringTableIndex;
+					} else {
+						return bspObject.texInfo[face.textureInfo].texture;
+					}
 				}
 			}
 			return -1;
