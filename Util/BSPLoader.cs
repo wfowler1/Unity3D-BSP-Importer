@@ -203,7 +203,8 @@ namespace BSPImporter {
 				if (modelNumber >= 0) {
 					BuildMesh(instance);
 				} else {
-					instance.gameObject.transform.rotation = Quaternion.Euler(entity.angles);
+					Vector3 angles = entity.angles;
+					instance.gameObject.transform.rotation = Quaternion.Euler(-angles.x, angles.y, angles.z);
 				}
 
 				instance.gameObject.transform.position = entity.origin.SwizzleYZ().ScaleInch2Meter();
@@ -475,7 +476,7 @@ namespace BSPImporter {
 						textureMeshes[i].AddMeshToGameObject(new Material[] { materials[i] }, textureGameObject);
 #if UNITY_EDITOR
 						if (!IsRuntime && (settings.assetSavingOptions & AssetSavingOptions.Meshes) > 0) {
-							string meshPath = Path.Combine(Path.Combine("Assets", settings.meshPath), "mesh_" + textureMeshes[i].GetHashCode() + ".asset").Replace('\\', '/');
+							string meshPath = Path.Combine(Path.Combine("Assets", settings.meshPath), bsp.MapNameNoExtension, "mesh_" + textureMeshes[i].GetHashCode() + ".asset").Replace('\\', '/');
 							Directory.CreateDirectory(Path.GetDirectoryName(meshPath));
 							AssetDatabase.CreateAsset(textureMeshes[i], meshPath);
 						}
@@ -493,7 +494,7 @@ namespace BSPImporter {
 					mesh.AddMeshToGameObject(materials, gameObject);
 #if UNITY_EDITOR
 					if (!IsRuntime && (settings.assetSavingOptions & AssetSavingOptions.Meshes) > 0) {
-						string meshPath = Path.Combine(Path.Combine("Assets", settings.meshPath), "mesh_" + mesh.GetHashCode() + ".asset").Replace('\\', '/');
+						string meshPath = Path.Combine(Path.Combine("Assets", settings.meshPath), bsp.MapNameNoExtension, "mesh_" + mesh.GetHashCode() + ".asset").Replace('\\', '/');
 						Directory.CreateDirectory(Path.GetDirectoryName(meshPath));
 						AssetDatabase.CreateAsset(mesh, meshPath);
 					}
@@ -516,7 +517,7 @@ namespace BSPImporter {
 						mesh.AddMeshToGameObject(new Material[] { material }, faceGameObject);
 #if UNITY_EDITOR
 						if (!IsRuntime && (settings.assetSavingOptions & AssetSavingOptions.Meshes) > 0) {
-							string meshPath = Path.Combine(Path.Combine("Assets", settings.meshPath), "mesh_" + mesh.GetHashCode() + ".asset").Replace('\\', '/');
+							string meshPath = Path.Combine(Path.Combine("Assets", settings.meshPath), bsp.MapNameNoExtension, "mesh_" + mesh.GetHashCode() + ".asset").Replace('\\', '/');
 							Directory.CreateDirectory(Path.GetDirectoryName(meshPath));
 							AssetDatabase.CreateAsset(mesh, meshPath);
 						}

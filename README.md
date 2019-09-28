@@ -79,5 +79,6 @@ This library only imports entities and their visual surfaces as meshes into Unit
 ## Okay, so how do I use it?
 This library includes a simple editor window you can use to test it out. You can find this under BSP Importer->Import BSP in the main Unity editor window. The code for this window is in `Util\Editor\BSPImporterWindow.cs` and this file can be safely deleted without causing issues. The window's code can be used as an example of how to set up the process.
 
+## License
 <a href="http://creativecommons.org/publicdomain/zero/1.0/" rel="license"><img src="https://licensebuttons.net/p/zero/1.0/88x31.png" alt="Creative Commons 0" /></a><br>
 To the extent possible under law, <a href="https://github.com/wfowler1">wfowler1</a> has waived all copyright and related or neighboring rights to Unity3D BSP Importer. This work is published from: United States.
