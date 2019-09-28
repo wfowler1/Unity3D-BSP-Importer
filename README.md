@@ -49,20 +49,21 @@ Yes! This plugin works at runtime as well as edit-time. This can give your playe
 Give your players a way to set the appropriate options and they can take control!
 
 ## What if I want custom behavior for certain Entities?
-This is easily done. Included in the `Settings` for an Import is an `entityCreatedCallback` member. You can set this up to call a method you write to postprocess entities however you'd like.
+This is easily done. Included in the `Settings` for an Import is an `entityCreatedCallback` member. You can set this up to call a method you write to postprocess entities however you'd like. You are also given a List of EntityInstances containing all Entities with their name matching the the given Entity's target.
 ```cs
 settings.entityCreatedCallback = OnEntityCreated;
 
 //...
 
-private void OnEntityCreated(BSPLoader.EntityInstance instance) {
+private void OnEntityCreated(BSPLoader.EntityInstance instance, List<EntityInstance> targets) {
 	if (instance.entity.className == "func_door") {
 		// Attach a Door script you've written
 		Door door = instance.gameObject.AddComponent<Door>();
 		door.moveSpeed = instance.entity.GetFloat("speed");
 		// Handle other properties.
-	} else if (instance.entity.className == "func_door_rotating") {
-		RotatingDoor rotatingDoor = instance.gameObject.AddComponent<RotatingDoor>();
+	} else if (instance.entity.className == "func_button") {
+		Button button = instance.gameObject.AddComponent<Button>();
+		button.targets = targets;
 		// ...
 	}
 }

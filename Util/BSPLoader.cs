@@ -106,11 +106,13 @@ namespace BSPImporter {
 			/// </summary>
 			public int curveTessellationLevel;
 			/// <summary>
-			/// Callback that runs for each <see cref="Entity"/> after <see cref="Mesh"/>es
-			/// are generated and the hierarchy is set up. Can be used to add custom post-processing
-			/// to generated <see cref="GameObject"/>s using <see cref="Entity"/> information.
+			/// Callback that runs for each <see cref="Entity"/> after <see cref="Mesh"/>es are
+			/// generated and the hierarchy is set up. Can be used to add custom post-processing
+			/// to generated <see cref="GameObject"/>s using <see cref="Entity"/> information. Also
+			/// contains a <see cref="List{T}"/> of <see cref="EntityInstance"/>s for each
+			/// <see cref="Entity"/> the <see cref="Entity"/> targets.
 			/// </summary>
-			public Action<EntityInstance> entityCreatedCallback;
+			public Action<EntityInstance, List<EntityInstance>> entityCreatedCallback;
 		}
 
 		/// <summary>
@@ -193,7 +195,9 @@ namespace BSPImporter {
 #endif
 				EntityInstance instance = CreateEntityInstance(entity);
 				entityInstances.Add(instance);
-				namedEntities[entity.name].Add(instance);
+				if (!string.IsNullOrEmpty(entity.name)) {
+					namedEntities[entity.name].Add(instance);
+				}
 
 				int modelNumber = entity.modelNumber;
 				if (modelNumber >= 0) {
@@ -211,7 +215,12 @@ namespace BSPImporter {
 
 			if (settings.entityCreatedCallback != null) {
 				foreach (EntityInstance instance in entityInstances) {
-					settings.entityCreatedCallback(instance);
+					string target = instance.entity["target"];
+					if (namedEntities.ContainsKey(target)) {
+						settings.entityCreatedCallback(instance, namedEntities[target]);
+					} else {
+						settings.entityCreatedCallback(instance, new List<EntityInstance>(0));
+					}
 				}
 			}
 
@@ -296,15 +305,17 @@ namespace BSPImporter {
 			}
 
 			Texture2D texture = null;
-			if (File.Exists(texturePath + ".png")) {
-				texture = LoadTextureAtPath(texturePath + ".png", textureIsAsset);
-			} else if (File.Exists(texturePath + ".jpg")) {
-				texture = LoadTextureAtPath(texturePath + ".jpg", textureIsAsset);
-			} else if (File.Exists(texturePath + ".tga")) {
-				texture = LoadTextureAtPath(texturePath + ".tga", textureIsAsset);
-			}
+			try {
+				if (File.Exists(texturePath + ".png")) {
+					texture = LoadTextureAtPath(texturePath + ".png", textureIsAsset);
+				} else if (File.Exists(texturePath + ".jpg")) {
+					texture = LoadTextureAtPath(texturePath + ".jpg", textureIsAsset);
+				} else if (File.Exists(texturePath + ".tga")) {
+					texture = LoadTextureAtPath(texturePath + ".tga", textureIsAsset);
+				}
+			} catch { }
 			if (texture == null) {
-				Debug.LogWarning("Texture " + textureName + " not found!");
+				Debug.LogWarning("Texture " + textureName + " could not be loaded (does the file exist?)");
 			}
 
 			Material material = null;
