@@ -195,9 +195,7 @@ namespace BSPImporter {
 #endif
 				EntityInstance instance = CreateEntityInstance(entity);
 				entityInstances.Add(instance);
-				if (!string.IsNullOrEmpty(entity.name)) {
-					namedEntities[entity.name].Add(instance);
-				}
+				namedEntities[entity.name].Add(instance);
 
 				int modelNumber = entity.modelNumber;
 				if (modelNumber >= 0) {
@@ -217,7 +215,7 @@ namespace BSPImporter {
 			if (settings.entityCreatedCallback != null) {
 				foreach (EntityInstance instance in entityInstances) {
 					string target = instance.entity["target"];
-					if (namedEntities.ContainsKey(target)) {
+					if (namedEntities.ContainsKey(target) && !string.IsNullOrEmpty(target)) {
 						settings.entityCreatedCallback(instance, namedEntities[target]);
 					} else {
 						settings.entityCreatedCallback(instance, new List<EntityInstance>(0));
