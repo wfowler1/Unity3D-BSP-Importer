@@ -306,7 +306,7 @@ namespace BSPImporter {
 			}
 
 			DisplacementInfo displacementInfo = bsp.dispInfos[face.displacement];
-			int numSideTriangles = displacementInfo.power * displacementInfo.power;
+			int numSideTriangles = (int)Mathf.Pow(2, displacementInfo.power);
 			
 			DisplacementVertex[] displacementVertices = bsp.dispVerts.GetVerticesInDisplacement(displacementInfo.dispVertStart, displacementInfo.power);
 
