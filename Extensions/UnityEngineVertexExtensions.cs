@@ -11,7 +11,7 @@ namespace BSPImporter {
 	/// <summary>
 	/// Static class with extension methods for <see cref="Vertex"/> objects.
 	/// </summary>
-	public static class VertexExensions {
+	public static class UnityEngineVertexExensions {
 
 		/// <summary>
 		/// Negates the V component of all UVs in a <see cref="Vertex"/>.

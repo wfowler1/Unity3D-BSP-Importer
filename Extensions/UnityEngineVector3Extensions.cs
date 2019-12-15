@@ -7,7 +7,7 @@ namespace BSPImporter {
 	/// <summary>
 	/// Static class with extension methods for <see cref="Vector3"/> objects.
 	/// </summary>
-	public static class Vector3Extensions {
+	public static class UnityEngineVector3Extensions {
 
 		/// <summary>
 		/// Swaps the Y and Z coordinates of a Vector, converting between Quake's Z-Up coordinates to Unity's Y-Up.
