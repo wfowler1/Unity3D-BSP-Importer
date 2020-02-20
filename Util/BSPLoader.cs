@@ -183,8 +183,6 @@ namespace BSPImporter {
 			}
 			this.bsp = bsp;
 
-			root = new GameObject(Path.GetFileNameWithoutExtension(bsp.filePath));
-
 			for (int i = 0; i < bsp.entities.Count; ++i) {
 				Entity entity = bsp.entities[i];
 #if UNITY_EDITOR
@@ -207,7 +205,8 @@ namespace BSPImporter {
 
 				instance.gameObject.transform.position = entity.origin.SwizzleYZ().ScaleInch2Meter();
 			}
-
+			
+			root = new GameObject(Path.GetFileNameWithoutExtension(bsp.filePath));
 			foreach (KeyValuePair<string, List<EntityInstance>> pair in namedEntities) {
 				SetUpEntityHierarchy(pair.Value);
 			}
