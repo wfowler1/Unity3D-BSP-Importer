@@ -164,11 +164,11 @@ namespace BSPImporter {
 			BSP bsp = new BSP(settings.path);
 			try {
 				LoadBSP(bsp);
-			} catch(Exception e) {
+			} catch (Exception e) {
 #if UNITY_EDITOR
 				EditorUtility.ClearProgressBar();
 #endif
-				throw e;
+				Debug.LogException(e);
 			}
 		}
 
