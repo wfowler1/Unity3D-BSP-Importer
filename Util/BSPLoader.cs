@@ -428,7 +428,7 @@ namespace BSPImporter {
 				string textureName = "";
 				if (textureIndex >= 0) {
 					LibBSP.Texture texture = bsp.textures[textureIndex];
-					textureName = texture.name;
+					textureName = LibBSP.Texture.SanitizeName(texture.name, bsp.version);
 
 					if (!textureMeshMap.ContainsKey(textureName) || textureMeshMap[textureName] == null) {
 						textureMeshMap[textureName] = new List<Mesh>();
