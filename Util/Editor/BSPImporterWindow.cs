@@ -9,7 +9,7 @@ using BSPImporter;
 using LibBSP;
 
 /// <summary>
-/// Example editor window for importing BSPs. Shows a simple example of how to provide a GUI
+/// Editor window for importing BSPs, a simple example of how to provide a GUI
 /// for importing a BSP. This class can be deleted without causing any problems.
 /// </summary>
 public class BSPImporterWindow : EditorWindow {
@@ -23,7 +23,7 @@ public class BSPImporterWindow : EditorWindow {
 	public static void ShowWindow() {
 		BSPImporterWindow window = GetWindow<BSPImporterWindow>();
 #if UNITY_5 || UNITY_5_3_OR_NEWER
-		window.titleContent = new GUIContent("BSP Importer");
+		window.titleContent = new GUIContent("Example BSP Importer");
 #else
 		window.title = "BSP Importer";
 #endif
@@ -47,9 +47,11 @@ public class BSPImporterWindow : EditorWindow {
 	protected virtual void DrawImportOptions() {
 		if (settings.path == null) {
 			settings.path = "";
+			settings.meshCombineOptions = BSPLoader.MeshCombineOptions.PerEntity;
+			settings.curveTessellationLevel = 9;
 		}
 		EditorGUILayout.BeginHorizontal(); {
-			settings.path = EditorGUILayout.TextField(new GUIContent("BSP file", "The path to a BSP file on the hard drive."), settings.path);
+			settings.path = EditorGUILayout.TextField(new GUIContent("Import BSP file", "The path to a BSP file on the hard drive."), settings.path);
 			if (GUILayout.Button("Browse...", GUILayout.MaxWidth(100))) {
 				settings.path = EditorUtility.OpenFilePanel("Select BSP file", (string.IsNullOrEmpty(settings.path) ? "." : Path.GetDirectoryName(settings.path)), "BSP Files;*.BSP;*.D3DBSP");
 			}
@@ -59,7 +61,7 @@ public class BSPImporterWindow : EditorWindow {
 			settings.texturePath = "";
 		}
 		EditorGUILayout.BeginHorizontal(); {
-			settings.texturePath = EditorGUILayout.TextField(new GUIContent("Texture path", "Path to textures to use, either relative to /Assets/ or anywhere on the hard drive."), settings.texturePath);
+			settings.texturePath = EditorGUILayout.TextField(new GUIContent("Import Texture path", "Path to textures to use, either relative to /Assets/ or anywhere on the hard drive."), settings.texturePath);
 			if (GUILayout.Button("Browse...", GUILayout.MaxWidth(100))) {
 				settings.texturePath = EditorUtility.OpenFolderPanel("Find texture path", settings.texturePath, "textures");
 			}
@@ -69,7 +71,7 @@ public class BSPImporterWindow : EditorWindow {
 			settings.materialPath = "";
 		}
 		EditorGUILayout.BeginHorizontal(); {
-			settings.materialPath = EditorGUILayout.TextField(new GUIContent("Materials path", "Path to save/load materials, relative to /Assets/"), settings.materialPath);
+			settings.materialPath = EditorGUILayout.TextField(new GUIContent("Unity Material save path", "Path to save/load materials, relative to /Assets/"), settings.materialPath);
 			if (GUILayout.Button("Browse...", GUILayout.MaxWidth(100))) {
 				settings.materialPath = EditorUtility.OpenFolderPanel("Find material path", settings.materialPath, "materials");
 			}
@@ -79,7 +81,7 @@ public class BSPImporterWindow : EditorWindow {
 			settings.meshPath = "";
 		}
 		EditorGUILayout.BeginHorizontal(); {
-			settings.meshPath = EditorGUILayout.TextField(new GUIContent("Mesh path", "Path to save meshes, relative to /Assets/"), settings.meshPath);
+			settings.meshPath = EditorGUILayout.TextField(new GUIContent("Unity Mesh save path", "Path to save meshes, relative to /Assets/"), settings.meshPath);
 			if (GUILayout.Button("Browse...", GUILayout.MaxWidth(100))) {
 				settings.meshPath = EditorUtility.OpenFolderPanel("Find mesh path", settings.meshPath, "models");
 			}
