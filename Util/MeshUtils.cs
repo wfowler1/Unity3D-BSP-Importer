@@ -28,7 +28,7 @@ namespace BSPImporter {
 		public static Mesh CreateFaceMesh(BSP bsp, Face face, Vector2 dims, int curveTessellationLevel) {
 			Mesh mesh = null;
 			if (face.numVertices > 0) {
-				if (face.firstIndex == 0 && face.numIndices == 0 && face.flags == 2) {
+				if (face.numIndices == 0 && face.flags == 2) {
 					mesh = CreatePatchMesh(bsp, face, curveTessellationLevel);
 				} else {
 					mesh = LoadVerticesFromFace(bsp, face);
