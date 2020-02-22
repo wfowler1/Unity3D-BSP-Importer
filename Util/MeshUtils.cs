@@ -27,13 +27,13 @@ namespace BSPImporter {
 		/// <returns>A <see cref="Mesh"/> built from the data given by <paramref name="face"/>.</returns>
 		public static Mesh CreateFaceMesh(BSP bsp, Face face, Vector2 dims, int curveTessellationLevel) {
 			Mesh mesh = null;
-			if (face.numVertices > 0) {
-				if (face.numIndices == 0 && face.flags == 2) {
+			if (face.NumVertices > 0) {
+				if (face.NumIndices == 0 && face.Type == 2) {
 					mesh = CreatePatchMesh(bsp, face, curveTessellationLevel);
 				} else {
 					mesh = LoadVerticesFromFace(bsp, face);
 				}
-			} else if (face.numEdges > 0) {
+			} else if (face.NumEdgeIndices > 0) {
 				mesh = LoadVerticesFromEdges(bsp, face);
 			}
 			if (mesh != null) {
@@ -106,27 +106,27 @@ namespace BSPImporter {
 		/// <param name="face">The <see cref="Face"/> to build a <see cref="Mesh"/> from.</param>
 		/// <returns>The <see cref="Mesh"/> generated from the <see cref="Edge"/>s referenced by <see cref="Face"/>.</returns>
 		public static Mesh LoadVerticesFromEdges(BSP bsp, Face face) {
-			Vertex[] vertices = new Vertex[face.numEdges];
-			int[] triangles = new int[(face.numEdges - 2) * 3];
-			int firstSurfEdge = (int)bsp.surfEdges[face.firstEdge];
+			Vertex[] vertices = new Vertex[face.NumEdgeIndices];
+			int[] triangles = new int[(face.NumEdgeIndices - 2) * 3];
+			int firstSurfEdge = (int)bsp.surfEdges[face.FirstEdgeIndexIndex];
 			if (firstSurfEdge > 0) {
-				vertices[0] = bsp.vertices[bsp.edges[firstSurfEdge].firstVertex];
+				vertices[0] = bsp.vertices[bsp.edges[firstSurfEdge].FirstVertexIndex];
 			} else {
-				vertices[0] = bsp.vertices[bsp.edges[-firstSurfEdge].secondVertex];
+				vertices[0] = bsp.vertices[bsp.edges[-firstSurfEdge].SecondVertexIndex];
 			}
 
 			int currtriangle = 0;
 			int currvert = 1;
-			for (int i = 1; i < face.numEdges - 1; i++) {
-				int currSurfEdge = (int)bsp.surfEdges[face.firstEdge + i];
+			for (int i = 1; i < face.NumEdgeIndices - 1; i++) {
+				int currSurfEdge = (int)bsp.surfEdges[face.FirstEdgeIndexIndex + i];
 				Vertex first;
 				Vertex second;
 				if (currSurfEdge > 0) {
-					first = bsp.vertices[bsp.edges[currSurfEdge].firstVertex];
-					second = bsp.vertices[bsp.edges[currSurfEdge].secondVertex];
+					first = bsp.vertices[bsp.edges[currSurfEdge].FirstVertexIndex];
+					second = bsp.vertices[bsp.edges[currSurfEdge].SecondVertexIndex];
 				} else {
-					first = bsp.vertices[bsp.edges[-currSurfEdge].secondVertex];
-					second = bsp.vertices[bsp.edges[-currSurfEdge].firstVertex];
+					first = bsp.vertices[bsp.edges[-currSurfEdge].SecondVertexIndex];
+					second = bsp.vertices[bsp.edges[-currSurfEdge].FirstVertexIndex];
 				}
 				if (first.position != vertices[0].position && second.position != vertices[0].position) { // All tris involve first vertex, so disregard edges referencing it
 					triangles[currtriangle * 3] = 0;
@@ -291,7 +291,7 @@ namespace BSPImporter {
 		/// <returns>The <see cref="Mesh"/> created from the <see cref="DisplacementInfo"/>.</returns>
 		public static Mesh CreateDisplacementMesh(BSP bsp, Face face, Vector2 dims) {
 			Mesh mesh = null;
-			if (face.numEdges > 0) {
+			if (face.NumEdgeIndices > 0) {
 				mesh = LoadVerticesFromEdges(bsp, face);
 			} else {
 				Debug.LogWarning("Cannot create displacement, face contains no edges.");
@@ -305,13 +305,13 @@ namespace BSPImporter {
 				return null;
 			}
 
-			DisplacementInfo displacementInfo = bsp.dispInfos[face.displacement];
-			int numSideTriangles = (int)Mathf.Pow(2, displacementInfo.power);
-			
-			DisplacementVertex[] displacementVertices = bsp.dispVerts.GetVerticesInDisplacement(displacementInfo.dispVertStart, displacementInfo.power);
+			Displacement displacement = bsp.dispInfos[face.DisplacementIndex];
+			int numSideTriangles = (int)Mathf.Pow(2, displacement.Power);
+
+			DisplacementVertex[] displacementVertices = displacement.Vertices.ToArray();
 
 			Vector3[] corners = new Vector3[4];
-			Vector3 start = displacementInfo.startPosition.SwizzleYZ() * inch2MeterScale;
+			Vector3 start = displacement.StartPosition.SwizzleYZ() * inch2MeterScale;
 			if ((faceCorners[faceTriangles[0]] - start).sqrMagnitude < .01f) {
 				corners[0] = faceCorners[faceTriangles[0]];
 				corners[1] = faceCorners[faceTriangles[1]];
@@ -341,7 +341,7 @@ namespace BSPImporter {
 
 			Vector3[] offsets = new Vector3[displacementVertices.Length];
 			for (int i = 0; i < displacementVertices.Length; ++i) {
-				offsets[i] = displacementVertices[i].normal.SwizzleYZ() * displacementVertices[i].dist * inch2MeterScale;
+				offsets[i] = displacementVertices[i].Normal.SwizzleYZ() * displacementVertices[i].Magnitude * inch2MeterScale;
 			}
 			Vector2[] uv = new Vector2[4];
 			Vector2[] uv2 = new Vector2[4];
@@ -366,24 +366,24 @@ namespace BSPImporter {
 		/// <param name="lodTerrain">The <see cref="LODTerrain"/> to generate a <see cref="Mesh"/> from.</param>
 		/// <returns>The <see cref="Mesh"/> created from the <see cref="LODTerrain"/>.</returns>
 		public static Mesh CreateMoHAATerrainMesh(BSP bsp, LODTerrain lodTerrain) {
-			Vector3 origin = new Vector3(lodTerrain.x * 64, lodTerrain.y * 64, lodTerrain.baseZ);
-			Vector3[] corners = GetCornersForTerrain(origin, 512, (lodTerrain.flags & (1 << 6)) > 0);
+			Vector3 origin = new Vector3(lodTerrain.X * 64, lodTerrain.Y * 64, lodTerrain.BaseZ);
+			Vector3[] corners = GetCornersForTerrain(origin, 512, (lodTerrain.Flags & (1 << 6)) > 0);
 			Vector3[] offsets = new Vector3[81];
 			for (int y = 0; y < 9; ++y) {
 				for (int x = 0; x < 9; ++x) {
-					if ((lodTerrain.flags & (1 << 6)) > 0) {
-						offsets[(x * 9) + y] = (Vector3.up * lodTerrain.heightmap[y, x] * 2 * inch2MeterScale);
+					if ((lodTerrain.Flags & (1 << 6)) > 0) {
+						offsets[(x * 9) + y] = (Vector3.up * lodTerrain.Heightmap[y, x] * 2 * inch2MeterScale);
 					} else {
-						offsets[(y * 9) + x] = (Vector3.up * lodTerrain.heightmap[y, x] * 2 * inch2MeterScale);
+						offsets[(y * 9) + x] = (Vector3.up * lodTerrain.Heightmap[y, x] * 2 * inch2MeterScale);
 					}
 				}
 			}
 
 			Vector2[] uv = new Vector2[] {
-				new Vector2(lodTerrain.textureCoords[0], lodTerrain.textureCoords[1]),
-				new Vector2(lodTerrain.textureCoords[2], lodTerrain.textureCoords[3]),
-				new Vector2(lodTerrain.textureCoords[4], lodTerrain.textureCoords[5]),
-				new Vector2(lodTerrain.textureCoords[6], lodTerrain.textureCoords[7]),
+				new Vector2(lodTerrain.UVs[0], lodTerrain.UVs[1]),
+				new Vector2(lodTerrain.UVs[2], lodTerrain.UVs[3]),
+				new Vector2(lodTerrain.UVs[4], lodTerrain.UVs[5]),
+				new Vector2(lodTerrain.UVs[6], lodTerrain.UVs[7]),
 			};
 			Vector2[] uv2 = new Vector2[4];
 			
@@ -516,7 +516,7 @@ namespace BSPImporter {
 		public static Mesh CreatePatchMesh(BSP bsp, Face face, int curveTessellationLevel) {
 			List<Mesh> curveSubmeshes = new List<Mesh>();
 			List<Vertex> controls = bsp.GetReferencedObjects<Vertex>(face, "vertices");
-			Vector2 size = face.patchSize;
+			Vector2 size = face.PatchSize;
 			int xSize = (int)Mathf.Round(size[0]);
 			for (int i = 0; i < size[1] - 2; i += 2) {
 				for (int j = 0; j < size[0] - 2; j += 2) {

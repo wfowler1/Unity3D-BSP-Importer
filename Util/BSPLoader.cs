@@ -186,24 +186,24 @@ namespace BSPImporter {
 			for (int i = 0; i < bsp.entities.Count; ++i) {
 				Entity entity = bsp.entities[i];
 #if UNITY_EDITOR
-				if (EditorUtility.DisplayCancelableProgressBar("Importing BSP", entity.className + (!string.IsNullOrEmpty(entity.name) ? " " + entity.name : ""), i / (float)bsp.entities.Count)) {
+				if (EditorUtility.DisplayCancelableProgressBar("Importing BSP", entity.ClassName + (!string.IsNullOrEmpty(entity.Name) ? " " + entity.Name : ""), i / (float)bsp.entities.Count)) {
 					EditorUtility.ClearProgressBar();
 					return;
 				}
 #endif
 				EntityInstance instance = CreateEntityInstance(entity);
 				entityInstances.Add(instance);
-				namedEntities[entity.name].Add(instance);
+				namedEntities[entity.Name].Add(instance);
 
-				int modelNumber = entity.modelNumber;
+				int modelNumber = entity.ModelNumber;
 				if (modelNumber >= 0) {
 					BuildMesh(instance);
 				} else {
-					Vector3 angles = entity.angles;
+					Vector3 angles = entity.Angles;
 					instance.gameObject.transform.rotation = Quaternion.Euler(-angles.x, angles.y, angles.z);
 				}
 
-				instance.gameObject.transform.position = entity.origin.SwizzleYZ().ScaleInch2Meter();
+				instance.gameObject.transform.position = entity.Origin.SwizzleYZ().ScaleInch2Meter();
 			}
 			
 			root = new GameObject(Path.GetFileNameWithoutExtension(bsp.filePath));
@@ -357,12 +357,12 @@ namespace BSPImporter {
 		/// <returns>The generated <see cref="EntityInstance"/>.</returns>
 		protected EntityInstance CreateEntityInstance(Entity entity) {
 			// Entity.name guaranteed not to be null, empty string is a valid Dictionary key
-			if (!namedEntities.ContainsKey(entity.name) || namedEntities[entity.name] == null) {
-				namedEntities[entity.name] = new List<EntityInstance>();
+			if (!namedEntities.ContainsKey(entity.Name) || namedEntities[entity.Name] == null) {
+				namedEntities[entity.Name] = new List<EntityInstance>();
 			}
 			EntityInstance instance = new EntityInstance() {
 				entity = entity,
-				gameObject = new GameObject(entity.className + (!string.IsNullOrEmpty(entity.name) ? " " + entity.name : string.Empty))
+				gameObject = new GameObject(entity.ClassName + (!string.IsNullOrEmpty(entity.Name) ? " " + entity.Name : string.Empty))
 			};
 
 			return instance;
@@ -410,7 +410,7 @@ namespace BSPImporter {
 		/// </summary>
 		/// <param name="instance">The <see cref="EntityInstance"/> to build <see cref="Mesh"/>es for.</param>
 		protected void BuildMesh(EntityInstance instance) {
-			int modelNumber = instance.entity.modelNumber;
+			int modelNumber = instance.entity.ModelNumber;
 			Model model = bsp.models[modelNumber];
 			Dictionary<string, List<Mesh>> textureMeshMap = new Dictionary<string, List<Mesh>>();
 			GameObject gameObject = instance.gameObject;
@@ -419,7 +419,7 @@ namespace BSPImporter {
 			int i = 0;
 			for (i = 0; i < faces.Count; ++i) {
 				Face face = faces[i];
-				if (face.numEdges <= 0 && face.numVertices <= 0) {
+				if (face.NumEdgeIndices <= 0 && face.NumVertices <= 0) {
 					continue;
 				}
 				
@@ -427,7 +427,7 @@ namespace BSPImporter {
 				string textureName = "";
 				if (textureIndex >= 0) {
 					LibBSP.Texture texture = bsp.textures[textureIndex];
-					textureName = LibBSP.Texture.SanitizeName(texture.name, bsp.version);
+					textureName = LibBSP.Texture.SanitizeName(texture.Name, bsp.version);
 
 					if (!textureMeshMap.ContainsKey(textureName) || textureMeshMap[textureName] == null) {
 						textureMeshMap[textureName] = new List<Mesh>();
@@ -440,9 +440,9 @@ namespace BSPImporter {
 			if (modelNumber == 0) {
 				if (bsp.lodTerrains != null) {
 					foreach (LODTerrain lodTerrain in bsp.lodTerrains) {
-						if (lodTerrain.texture >= 0) {
-							LibBSP.Texture texture = bsp.textures[lodTerrain.texture];
-							string textureName = texture.name;
+						if (lodTerrain.TextureIndex >= 0) {
+							LibBSP.Texture texture = bsp.textures[lodTerrain.TextureIndex];
+							string textureName = texture.Name;
 
 							if (!textureMeshMap.ContainsKey(textureName) || textureMeshMap[textureName] == null) {
 								textureMeshMap[textureName] = new List<Mesh>();
@@ -544,7 +544,7 @@ namespace BSPImporter {
 			}
 
 			Mesh mesh;
-			if (face.displacement >= 0) {
+			if (face.DisplacementIndex >= 0) {
 				mesh = MeshUtils.CreateDisplacementMesh(bsp, face, dims);
 			} else {
 				mesh = MeshUtils.CreateFaceMesh(bsp, face, dims, settings.curveTessellationLevel);

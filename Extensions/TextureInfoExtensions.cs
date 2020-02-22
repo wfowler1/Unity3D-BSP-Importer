@@ -14,8 +14,8 @@ namespace BSPImporter {
 		/// <param name="textureInfo">This <see cref="TextureInfo"/>.</param>
 		/// <returns>The texture transform matrix for <paramref name="textureInfo"/>.</returns>
 		public static Matrix4x4 BuildTexMatrix(this TextureInfo textureInfo) {
-			Vector3 scaledUAxis = textureInfo.uAxis.SwizzleYZ().ScaleInch2Meter();
-			Vector3 scaledVAxis = textureInfo.vAxis.SwizzleYZ().ScaleInch2Meter();
+			Vector3 scaledUAxis = textureInfo.UAxis.SwizzleYZ().ScaleInch2Meter();
+			Vector3 scaledVAxis = textureInfo.VAxis.SwizzleYZ().ScaleInch2Meter();
 			Vector3 STNormal = Vector3.Cross(scaledUAxis, scaledVAxis);
 			Matrix4x4 texmatrix = Matrix4x4.identity;
 			texmatrix[0, 0] = scaledUAxis.x;
@@ -39,8 +39,8 @@ namespace BSPImporter {
 		/// <returns>The UV coordinates at <paramref name="transformVertex"/> projected from this <see cref="TextureInfo"/>.</returns>
 		public static Vector2 CalculateUV(this TextureInfo textureInfo, Vector3 transformVertex, Vector2 dims) {
 			return new Vector2(
-				(textureInfo.uAxis.sqrMagnitude * transformVertex.x + textureInfo.translation.x) / dims.x,
-				(textureInfo.vAxis.sqrMagnitude * transformVertex.y + textureInfo.translation.y) / dims.y
+				(textureInfo.UAxis.sqrMagnitude * transformVertex.x + textureInfo.Translation.x) / dims.x,
+				(textureInfo.VAxis.sqrMagnitude * transformVertex.y + textureInfo.Translation.y) / dims.y
 			);
 		}
 

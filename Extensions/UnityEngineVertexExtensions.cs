@@ -55,8 +55,8 @@ namespace BSPImporter {
 		public static Vertex CalcUV(this Vertex vertex, TextureInfo texInfo, Vector2 dims) {
 			Matrix4x4 matrix = texInfo.BuildTexMatrix().inverse;
 			Vector3 textureCoord = matrix.MultiplyPoint3x4(vertex.position);
-			vertex.uv0 = new Vector2((texInfo.uAxis.sqrMagnitude * textureCoord.x + texInfo.translation.x) / dims.x,
-			                         (texInfo.vAxis.sqrMagnitude * textureCoord.y + texInfo.translation.y) / dims.y);
+			vertex.uv0 = new Vector2((texInfo.UAxis.sqrMagnitude * textureCoord.x + texInfo.Translation.x) / dims.x,
+			                         (texInfo.VAxis.sqrMagnitude * textureCoord.y + texInfo.Translation.y) / dims.y);
 			return vertex;
 		}
 
