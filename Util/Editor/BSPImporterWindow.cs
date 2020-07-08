@@ -53,9 +53,15 @@ public class BSPImporterWindow : EditorWindow {
 		EditorGUILayout.BeginHorizontal(); {
 			settings.path = EditorGUILayout.TextField(new GUIContent("Import BSP file", "The path to a BSP file on the hard drive."), settings.path);
 			if (GUILayout.Button("Browse...", GUILayout.MaxWidth(100))) {
-				settings.path = EditorUtility.OpenFilePanel("Select BSP file", (string.IsNullOrEmpty(settings.path) ? "." : Path.GetDirectoryName(settings.path)), "BSP Files;*.BSP;*.D3DBSP");
-			}
-		} EditorGUILayout.EndHorizontal();
+                string dir = string.IsNullOrEmpty(settings.path) ? "." : Path.GetDirectoryName(settings.path);
+                string[] filters = {
+                    "BSP Files", "BSP",
+                    "D3DBSP Files", "D3DBSP",
+                };
+
+                settings.path = EditorUtility.OpenFilePanelWithFilters("Select BSP file", dir, filters);
+            }
+        } EditorGUILayout.EndHorizontal();
 
 		if (settings.texturePath == null) {
 			settings.texturePath = "";
