@@ -22,10 +22,10 @@ public class BSPImporterWindow : EditorWindow {
 	[MenuItem("BSP Importer/Import BSP")]
 	public static void ShowWindow() {
 		BSPImporterWindow window = GetWindow<BSPImporterWindow>();
-#if UNITY_5 || UNITY_5_3_OR_NEWER
-		window.titleContent = new GUIContent("Example BSP Importer");
+#if UNITY_5_1 || UNITY_5_2 || UNITY_5_3_OR_NEWER
+		window.titleContent = new GUIContent("Example BSP Importer GUI");
 #else
-		window.title = "BSP Importer";
+		window.title = "Example BSP Importer GUI";
 #endif
 		window.autoRepaintOnSceneChange = true;
 		DontDestroyOnLoad(window);
@@ -53,15 +53,20 @@ public class BSPImporterWindow : EditorWindow {
 		EditorGUILayout.BeginHorizontal(); {
 			settings.path = EditorGUILayout.TextField(new GUIContent("Import BSP file", "The path to a BSP file on the hard drive."), settings.path);
 			if (GUILayout.Button("Browse...", GUILayout.MaxWidth(100))) {
-                string dir = string.IsNullOrEmpty(settings.path) ? "." : Path.GetDirectoryName(settings.path);
-                string[] filters = {
-                    "BSP Files", "BSP",
-                    "D3DBSP Files", "D3DBSP",
-                };
+				string dir = string.IsNullOrEmpty(settings.path) ? "." : Path.GetDirectoryName(settings.path);
+#if UNITY_5_2 || UNITY_5_3_OR_NEWER
+				string[] filters = {
+					"BSP Files", "BSP",
+					"D3DBSP Files", "D3DBSP",
+					"All Files", "*",
+				};
 
-                settings.path = EditorUtility.OpenFilePanelWithFilters("Select BSP file", dir, filters);
-            }
-        } EditorGUILayout.EndHorizontal();
+				settings.path = EditorUtility.OpenFilePanelWithFilters("Select BSP file", dir, filters);
+#else
+				settings.path = EditorUtility.OpenFilePanel("Select BSP file", dir, "*BSP");
+#endif
+			}
+		} EditorGUILayout.EndHorizontal();
 
 		if (settings.texturePath == null) {
 			settings.texturePath = "";
