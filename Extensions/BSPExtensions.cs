@@ -127,7 +127,7 @@ namespace BSPImporter {
 			if (face.TextureIndex >= 0) {
 				return face.TextureIndex;
 			} else {
-				if (face.TextureInfoIndex > 0) {
+				if (face.TextureInfoIndex >= 0) {
 					if (bspObject.texDatas != null) {
 						return bspObject.texDatas[bspObject.texInfo[face.TextureInfoIndex].TextureIndex].TextureStringOffsetIndex;
 					} else {
