@@ -264,6 +264,8 @@ namespace BSPImporter {
 			{
 				if (texturePath.EndsWith(".tga")) {
 					return Paloma.TargaImage.LoadTargaImage(texturePath);
+				} else if (texturePath.EndsWith(".ftx")) {
+					return FTXLoader.LoadFTX(texturePath);
 				} else {
 					Texture2D texture = new Texture2D(0, 0);
 					texture.LoadImage(File.ReadAllBytes(texturePath));
@@ -314,6 +316,8 @@ namespace BSPImporter {
 					texture = LoadTextureAtPath(texturePath + ".jpg", textureIsAsset);
 				} else if (File.Exists(texturePath + ".tga")) {
 					texture = LoadTextureAtPath(texturePath + ".tga", textureIsAsset);
+				} else if (File.Exists(texturePath + ".ftx")) {
+					texture = LoadTextureAtPath(texturePath + ".ftx", textureIsAsset);
 				}
 			} catch { }
 			if (texture == null) {
