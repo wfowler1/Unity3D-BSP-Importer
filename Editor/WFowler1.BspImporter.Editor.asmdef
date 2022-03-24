@@ -1,0 +1,18 @@
+{
+    "name": "WFowler1.BspImporter.Editor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:106e4bdc3d48a5a43b7096d68a0183f7"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

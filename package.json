@@ -1,0 +1,20 @@
+{
+  "name": "com.wfowler1.unity3d-bsp-importer",
+  "displayName": "Unity3D BSP Importer",
+  "version": "1.0.0",
+  "description": "A lightweight plugin for importing BSP maps into Unity3D as meshes.",
+  "unity": "2019.4",
+  "keywords": [
+    "level design",
+    "environment",
+    "bsp",
+    "csg"
+  ],
+  "documentationUrl": "https://github.com/wfowler1/Unity3D-BSP-Importer/blob/master/README.md",
+  "licensesUrl": "https://github.com/wfowler1/Unity3D-BSP-Importer/blob/master/LICENSE",
+  "author": {
+    "name": "Will Fowler",
+    "url": "https://github.com/wfowler1"
+  },
+  "type": "tool"
+}
