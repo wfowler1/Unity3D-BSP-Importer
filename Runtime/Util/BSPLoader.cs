@@ -468,42 +468,48 @@ namespace BSPImporter {
 				i = 0;
 				foreach (KeyValuePair<string, List<Mesh>> pair in textureMeshMap) {
 					textureMeshes[i] = MeshUtils.CombineAllMeshes(pair.Value.ToArray(), true, false);
-					if (materialDirectory.ContainsKey(pair.Key)) {
-						materials[i] = materialDirectory[pair.Key];
-					}
-					if (settings.meshCombineOptions == MeshCombineOptions.PerMaterial) {
-						GameObject textureGameObject = new GameObject(pair.Key);
-						textureGameObject.transform.parent = gameObject.transform;
-						textureGameObject.transform.localPosition = Vector3.zero;
-						if (textureMeshes[i].normals.Length == 0 || textureMeshes[i].normals[0] == Vector3.zero) {
-							textureMeshes[i].RecalculateNormals();
+					if (textureMeshes[i].vertices.Length > 0) {
+						if (materialDirectory.ContainsKey(pair.Key)) {
+							materials[i] = materialDirectory[pair.Key];
 						}
-						textureMeshes[i].AddMeshToGameObject(new Material[] { materials[i] }, textureGameObject);
+						if (settings.meshCombineOptions == MeshCombineOptions.PerMaterial) {
+							GameObject textureGameObject = new GameObject(pair.Key);
+							textureGameObject.transform.parent = gameObject.transform;
+							textureGameObject.transform.localPosition = Vector3.zero;
+							if (textureMeshes[i].normals.Length == 0 || textureMeshes[i].normals[0] == Vector3.zero) {
+								textureMeshes[i].RecalculateNormals();
+							}
+
+							textureMeshes[i].AddMeshToGameObject(new Material[] { materials[i] }, textureGameObject);
 #if UNITY_EDITOR
-						if (!IsRuntime && (settings.assetSavingOptions & AssetSavingOptions.Meshes) > 0) {
-							string meshPath = Path.Combine(Path.Combine(Path.Combine("Assets", settings.meshPath), bsp.MapName), "mesh_" + textureMeshes[i].GetHashCode() + ".asset").Replace('\\', '/');
-							Directory.CreateDirectory(Path.GetDirectoryName(meshPath));
-							AssetDatabase.CreateAsset(textureMeshes[i], meshPath);
-						}
+							if (!IsRuntime && (settings.assetSavingOptions & AssetSavingOptions.Meshes) > 0) {
+								string meshPath = Path.Combine(Path.Combine(Path.Combine("Assets", settings.meshPath), bsp.MapName), "mesh_" + textureMeshes[i].GetHashCode() + ".asset").Replace('\\', '/');
+								Directory.CreateDirectory(Path.GetDirectoryName(meshPath));
+								AssetDatabase.CreateAsset(textureMeshes[i], meshPath);
+							}
 #endif
+						}
+						++i;
 					}
-					++i;
 				}
 
 				if (settings.meshCombineOptions != MeshCombineOptions.PerMaterial) {
 					Mesh mesh = MeshUtils.CombineAllMeshes(textureMeshes, false, false);
-					mesh.TransformVertices(gameObject.transform.localToWorldMatrix);
-					if (mesh.normals.Length == 0 || mesh.normals[0] == Vector3.zero) {
-						mesh.RecalculateNormals();
-					}
-					mesh.AddMeshToGameObject(materials, gameObject);
+					if (mesh.vertices.Length > 0) {
+						mesh.TransformVertices(gameObject.transform.localToWorldMatrix);
+						if (mesh.normals.Length == 0 || mesh.normals[0] == Vector3.zero) {
+							mesh.RecalculateNormals();
+						}
+
+						mesh.AddMeshToGameObject(materials, gameObject);
 #if UNITY_EDITOR
-					if (!IsRuntime && (settings.assetSavingOptions & AssetSavingOptions.Meshes) > 0) {
-						string meshPath = Path.Combine(Path.Combine(Path.Combine("Assets", settings.meshPath), bsp.MapName), "mesh_" + mesh.GetHashCode() + ".asset").Replace('\\', '/');
-						Directory.CreateDirectory(Path.GetDirectoryName(meshPath));
-						AssetDatabase.CreateAsset(mesh, meshPath);
-					}
+						if (!IsRuntime && (settings.assetSavingOptions & AssetSavingOptions.Meshes) > 0) {
+							string meshPath = Path.Combine(Path.Combine(Path.Combine("Assets", settings.meshPath), bsp.MapName), "mesh_" + mesh.GetHashCode() + ".asset").Replace('\\', '/');
+							Directory.CreateDirectory(Path.GetDirectoryName(meshPath));
+							AssetDatabase.CreateAsset(mesh, meshPath);
+						}
 #endif
+					}
 				}
 			} else {
 				i = 0;
@@ -513,20 +519,23 @@ namespace BSPImporter {
 					textureGameObject.transform.localPosition = Vector3.zero;
 					Material material = materialDirectory[pair.Key];
 					foreach (Mesh mesh in pair.Value) {
-						GameObject faceGameObject = new GameObject("Face");
-						faceGameObject.transform.parent = textureGameObject.transform;
-						faceGameObject.transform.localPosition = Vector3.zero;
-						if (mesh.normals.Length == 0 || mesh.normals[0] == Vector3.zero) {
-							mesh.RecalculateNormals();
-						}
-						mesh.AddMeshToGameObject(new Material[] { material }, faceGameObject);
+						if (mesh.vertices.Length > 0) {
+							GameObject faceGameObject = new GameObject("Face");
+							faceGameObject.transform.parent = textureGameObject.transform;
+							faceGameObject.transform.localPosition = Vector3.zero;
+							if (mesh.normals.Length == 0 || mesh.normals[0] == Vector3.zero) {
+								mesh.RecalculateNormals();
+							}
+
+							mesh.AddMeshToGameObject(new Material[] { material }, faceGameObject);
 #if UNITY_EDITOR
-						if (!IsRuntime && (settings.assetSavingOptions & AssetSavingOptions.Meshes) > 0) {
-							string meshPath = Path.Combine(Path.Combine(Path.Combine("Assets", settings.meshPath), bsp.MapName), "mesh_" + mesh.GetHashCode() + ".asset").Replace('\\', '/');
-							Directory.CreateDirectory(Path.GetDirectoryName(meshPath));
-							AssetDatabase.CreateAsset(mesh, meshPath);
-						}
+							if (!IsRuntime && (settings.assetSavingOptions & AssetSavingOptions.Meshes) > 0) {
+								string meshPath = Path.Combine(Path.Combine(Path.Combine("Assets", settings.meshPath), bsp.MapName), "mesh_" + mesh.GetHashCode() + ".asset").Replace('\\', '/');
+								Directory.CreateDirectory(Path.GetDirectoryName(meshPath));
+								AssetDatabase.CreateAsset(mesh, meshPath);
+							}
 #endif
+						}
 					}
 					++i;
 				}
