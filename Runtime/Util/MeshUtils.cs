@@ -238,17 +238,18 @@ namespace BSPImporter {
 		/// </param>
 		/// <returns>A <see cref="Mesh"/> built from all objects in <paramref name="meshes"/> combined.</returns>
 		public static Mesh CombineAllMeshes(Mesh[] meshes, bool mergeSubMeshes, bool useMatrices) {
-			CombineInstance[] combine = new CombineInstance[meshes.Length];
-			Mesh combinedMesh = null;
+			List<CombineInstance> combine = new List<CombineInstance>(meshes.Length);
 
 			for (int i = 0; i < meshes.Length; ++i) {
-				combine[i] = new CombineInstance() {
-					mesh = meshes[i],
-					transform = Matrix4x4.identity,
-				};
+				if (meshes[i] != null) {
+					combine.Add(new CombineInstance() {
+						mesh = meshes[i],
+						transform = Matrix4x4.identity,
+					});
+				}
 			}
 			
-			combinedMesh = new Mesh();
+			Mesh combinedMesh = new Mesh();
 			combinedMesh.Clear();
 			combinedMesh.CombineMeshes(combine.ToArray(), mergeSubMeshes, useMatrices);
 			return combinedMesh;
