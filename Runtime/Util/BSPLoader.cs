@@ -482,6 +482,8 @@ namespace BSPImporter {
 
 							textureMeshes[i].AddMeshToGameObject(new Material[] { materials[i] }, textureGameObject);
 #if UNITY_EDITOR
+							Unwrapping.GenerateSecondaryUVSet(textureMeshes[i]);
+
 							if (!IsRuntime && (settings.assetSavingOptions & AssetSavingOptions.Meshes) > 0) {
 								string meshPath = Path.Combine(Path.Combine(Path.Combine("Assets", settings.meshPath), bsp.MapName), "mesh_" + textureMeshes[i].GetHashCode() + ".asset").Replace('\\', '/');
 								Directory.CreateDirectory(Path.GetDirectoryName(meshPath));
@@ -503,6 +505,8 @@ namespace BSPImporter {
 
 						mesh.AddMeshToGameObject(materials, gameObject);
 #if UNITY_EDITOR
+						Unwrapping.GenerateSecondaryUVSet(mesh);
+
 						if (!IsRuntime && (settings.assetSavingOptions & AssetSavingOptions.Meshes) > 0) {
 							string meshPath = Path.Combine(Path.Combine(Path.Combine("Assets", settings.meshPath), bsp.MapName), "mesh_" + mesh.GetHashCode() + ".asset").Replace('\\', '/');
 							Directory.CreateDirectory(Path.GetDirectoryName(meshPath));
@@ -529,6 +533,8 @@ namespace BSPImporter {
 
 							mesh.AddMeshToGameObject(new Material[] { material }, faceGameObject);
 #if UNITY_EDITOR
+							Unwrapping.GenerateSecondaryUVSet(mesh);
+
 							if (!IsRuntime && (settings.assetSavingOptions & AssetSavingOptions.Meshes) > 0) {
 								string meshPath = Path.Combine(Path.Combine(Path.Combine("Assets", settings.meshPath), bsp.MapName), "mesh_" + mesh.GetHashCode() + ".asset").Replace('\\', '/');
 								Directory.CreateDirectory(Path.GetDirectoryName(meshPath));
