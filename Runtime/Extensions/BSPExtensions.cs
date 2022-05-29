@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using LibBSP;
@@ -23,12 +22,12 @@ namespace BSPImporter {
 			List<Leaf> result = null;
 			if (model.FirstLeafIndex < 0) {
 				if (model.HeadNodeIndex >= 0) {
-					result = bsp.GetLeavesInNode(bsp.nodes[model.HeadNodeIndex]);
+					result = bsp.GetLeavesInNode(bsp.Nodes[model.HeadNodeIndex]);
 				}
 			} else {
 				result = new List<Leaf>(model.NumLeaves);
 				for (int i = 0; i < model.NumLeaves; i++) {
-					result.Add(bsp.leaves[model.FirstLeafIndex + i]);
+					result.Add(bsp.Leaves[model.FirstLeafIndex + i]);
 				}
 			}
 			return result;
@@ -51,15 +50,15 @@ namespace BSPImporter {
 				currentNode = nodestack.Pop();
 				int right = currentNode.Child2Index;
 				if (right >= 0) {
-					nodestack.Push(bsp.nodes[right]);
+					nodestack.Push(bsp.Nodes[right]);
 				} else {
-					nodeLeaves.Add(bsp.leaves[(right * (-1)) - 1]);
+					nodeLeaves.Add(bsp.Leaves[(right * (-1)) - 1]);
 				}
 				int left = currentNode.Child1Index;
 				if (left >= 0) {
-					nodestack.Push(bsp.nodes[left]);
+					nodestack.Push(bsp.Nodes[left]);
 				} else {
-					nodeLeaves.Add(bsp.leaves[(left * (-1)) - 1]);
+					nodeLeaves.Add(bsp.Leaves[(left * (-1)) - 1]);
 				}
 			}
 			return nodeLeaves;
@@ -78,10 +77,10 @@ namespace BSPImporter {
 					result = new List<Face>();
 				}
 				for (int i = 0; i < model.NumFaces; i++) {
-					result.Add(bsp.faces[model.FirstFaceIndex + i]);
+					result.Add(bsp.Faces[model.FirstFaceIndex + i]);
 				}
 			} else {
-				bool[] faceUsed = new bool[bsp.faces.Count];
+				bool[] faceUsed = new bool[bsp.Faces.Count];
 				List<Leaf> leaves = bsp.GetLeavesInModel(model);
 				foreach (Leaf leaf in leaves) {
 					if (leaf.FirstMarkFaceIndex >= 0) {
@@ -89,10 +88,10 @@ namespace BSPImporter {
 							result = new List<Face>();
 						}
 						for (int i = 0; i < leaf.NumMarkFaceIndices; i++) {
-							int currentFace = (int)bsp.markSurfaces[leaf.FirstMarkFaceIndex + i];
+							int currentFace = (int)bsp.LeafFaces[leaf.FirstMarkFaceIndex + i];
 							if (!faceUsed[currentFace]) {
 								faceUsed[currentFace] = true;
-								result.Add(bsp.faces[currentFace]);
+								result.Add(bsp.Faces[currentFace]);
 							}
 						}
 					}
@@ -108,8 +107,8 @@ namespace BSPImporter {
 		/// <param name="texture">Name of the texture to get the <see cref="TextureData"/> index for.</param>
 		/// <returns>Index of the <see cref="TextureData"/> used for <paramref name="texture"/>, or <c>-1</c> if it was not found.</returns>
 		public static int FindTexDataWithTexture(this BSP bsp, string texture) {
-			for (int i = 0; i < bsp.texDatas.Count; i++) {
-				string temp = bsp.textures.GetTextureAtOffset((uint)bsp.texTable[bsp.texDatas[i].TextureStringOffsetIndex]);
+			for (int i = 0; i < bsp.TextureData.Count; i++) {
+				string temp = bsp.Textures.GetTextureAtOffset((uint)bsp.TextureTable[bsp.TextureData[i].TextureStringOffsetIndex]);
 				if (temp.Equals(texture)) {
 					return i;
 				}
@@ -128,10 +127,10 @@ namespace BSPImporter {
 				return face.TextureIndex;
 			} else {
 				if (face.TextureInfoIndex >= 0) {
-					if (bspObject.texDatas != null) {
-						return bspObject.texDatas[bspObject.texInfo[face.TextureInfoIndex].TextureIndex].TextureStringOffsetIndex;
+					if (bspObject.TextureData != null) {
+						return bspObject.TextureData[bspObject.TextureInfo[face.TextureInfoIndex].TextureIndex].TextureStringOffsetIndex;
 					} else {
-						return bspObject.texInfo[face.TextureInfoIndex].TextureIndex;
+						return bspObject.TextureInfo[face.TextureInfoIndex].TextureIndex;
 					}
 				}
 			}
@@ -145,12 +144,12 @@ namespace BSPImporter {
 		/// <param name="face">The <see cref="Face"/> object to get the appropriate <see cref="TextureInfo"/> for.</param>
 		/// <returns>The appropriate <see cref="TextureInfo"/> for <paramref name="face"/>.</returns>
 		public static TextureInfo GetTextureInfo(this BSP bsp, Face face) {
-			if (face.TextureIndex >= 0 && bsp.textures[face.TextureIndex].TextureInfo.Data != null && bsp.textures[face.TextureIndex].TextureInfo.Data.Length > 0) {
-				return bsp.textures[face.TextureIndex].TextureInfo;
+			if (face.TextureIndex >= 0 && bsp.Textures[face.TextureIndex].TextureInfo.Data != null && bsp.Textures[face.TextureIndex].TextureInfo.Data.Length > 0) {
+				return bsp.Textures[face.TextureIndex].TextureInfo;
 			}
 
 			if (face.TextureInfoIndex >= 0) {
-				return bsp.texInfo[face.TextureInfoIndex];
+				return bsp.TextureInfo[face.TextureInfoIndex];
 			}
 
 			return new TextureInfo();

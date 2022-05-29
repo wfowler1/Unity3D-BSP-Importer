@@ -86,8 +86,8 @@ namespace BSPImporter {
 		/// <param name="face">The <see cref="Face"/> to build a <see cref="Mesh"/> from.</param>
 		/// <returns>The <see cref="Mesh"/> generated from the vertices and triangles in <see cref="Face"/>.</returns>
 		public static Mesh LoadVerticesFromFace(BSP bsp, Face face) {
-			Mesh mesh = LoadVertices(bsp.GetReferencedObjects<Vertex>(face, "vertices"));
-			List<long> indices = bsp.GetReferencedObjects<long>(face, "indices");
+			Mesh mesh = LoadVertices(bsp.GetReferencedObjects<Vertex>(face, "Vertices"));
+			List<long> indices = bsp.GetReferencedObjects<long>(face, "Indices");
 			int[] triangles = new int[indices.Count];
 			for (int i = 0; i < indices.Count; ++i) {
 				triangles[i] = (int)indices[i];
@@ -108,25 +108,25 @@ namespace BSPImporter {
 		public static Mesh LoadVerticesFromEdges(BSP bsp, Face face) {
 			Vertex[] vertices = new Vertex[face.NumEdgeIndices];
 			int[] triangles = new int[(face.NumEdgeIndices - 2) * 3];
-			int firstSurfEdge = (int)bsp.surfEdges[face.FirstEdgeIndexIndex];
+			int firstSurfEdge = (int)bsp.FaceEdges[face.FirstEdgeIndexIndex];
 			if (firstSurfEdge > 0) {
-				vertices[0] = bsp.vertices[bsp.edges[firstSurfEdge].FirstVertexIndex];
+				vertices[0] = bsp.Vertices[bsp.Edges[firstSurfEdge].FirstVertexIndex];
 			} else {
-				vertices[0] = bsp.vertices[bsp.edges[-firstSurfEdge].SecondVertexIndex];
+				vertices[0] = bsp.Vertices[bsp.Edges[-firstSurfEdge].SecondVertexIndex];
 			}
 
 			int currtriangle = 0;
 			int currvert = 1;
 			for (int i = 1; i < face.NumEdgeIndices - 1; i++) {
-				int currSurfEdge = (int)bsp.surfEdges[face.FirstEdgeIndexIndex + i];
+				int currSurfEdge = (int)bsp.FaceEdges[face.FirstEdgeIndexIndex + i];
 				Vertex first;
 				Vertex second;
 				if (currSurfEdge > 0) {
-					first = bsp.vertices[bsp.edges[currSurfEdge].FirstVertexIndex];
-					second = bsp.vertices[bsp.edges[currSurfEdge].SecondVertexIndex];
+					first = bsp.Vertices[bsp.Edges[currSurfEdge].FirstVertexIndex];
+					second = bsp.Vertices[bsp.Edges[currSurfEdge].SecondVertexIndex];
 				} else {
-					first = bsp.vertices[bsp.edges[-currSurfEdge].SecondVertexIndex];
-					second = bsp.vertices[bsp.edges[-currSurfEdge].FirstVertexIndex];
+					first = bsp.Vertices[bsp.Edges[-currSurfEdge].SecondVertexIndex];
+					second = bsp.Vertices[bsp.Edges[-currSurfEdge].FirstVertexIndex];
 				}
 				if (first.position != vertices[0].position && second.position != vertices[0].position) { // All tris involve first vertex, so disregard edges referencing it
 					triangles[currtriangle * 3] = 0;
@@ -305,7 +305,7 @@ namespace BSPImporter {
 				return null;
 			}
 
-			Displacement displacement = bsp.dispInfos[face.DisplacementIndex];
+			Displacement displacement = bsp.Displacements[face.DisplacementIndex];
 			int numSideTriangles = (int)Mathf.Pow(2, displacement.Power);
 
 			DisplacementVertex[] displacementVertices = displacement.Vertices.ToArray();
@@ -515,7 +515,7 @@ namespace BSPImporter {
 		/// <returns>A <see cref="Mesh"/> built using the curve data in <paramref name="face"/>.</returns>
 		public static Mesh CreatePatchMesh(BSP bsp, Face face, int curveTessellationLevel) {
 			List<Mesh> curveSubmeshes = new List<Mesh>();
-			List<Vertex> controls = bsp.GetReferencedObjects<Vertex>(face, "vertices");
+			List<Vertex> controls = bsp.GetReferencedObjects<Vertex>(face, "Vertices");
 			Vector2 size = face.PatchSize;
 			int xSize = (int)Mathf.Round(size[0]);
 			for (int i = 0; i < size[1] - 2; i += 2) {
