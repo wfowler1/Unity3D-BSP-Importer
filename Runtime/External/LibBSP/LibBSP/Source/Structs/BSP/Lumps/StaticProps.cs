@@ -90,7 +90,7 @@ namespace LibBSP {
 					LeafIndices[i] = BitConverter.ToInt16(data, offset);
 					offset += 2;
 				}
-				if (Bsp.MapType == MapType.Vindictus && lumpInfo.version == 6) {
+				if (Bsp.MapType == MapType.Vindictus && lumpInfo.version >= 6) {
 					int numPropScales = BitConverter.ToInt32(data, offset);
 					offset += 4 + (numPropScales * 16);
 				}

@@ -90,7 +90,7 @@ namespace LibBSP {
 				if (Child1Index >= 0) {
 					return Parent.Bsp.Nodes[Child1Index];
 				}
-				return Parent.Bsp.Leaves[-Child1Index];
+				return Parent.Bsp.Leaves[~Child1Index];
 			}
 		}
 
@@ -134,7 +134,7 @@ namespace LibBSP {
 				if (Child2Index >= 0) {
 					return Parent.Bsp.Nodes[Child2Index];
 				}
-				return Parent.Bsp.Leaves[-Child2Index];
+				return Parent.Bsp.Leaves[~Child2Index];
 			}
 		}
 

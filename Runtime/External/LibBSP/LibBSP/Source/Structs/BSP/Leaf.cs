@@ -383,7 +383,7 @@ namespace LibBSP {
 					return BitConverter.ToUInt16(Data, 22);
 				} else if (MapType == MapType.Vindictus) {
 					return BitConverter.ToInt32(Data, 36);
-				} else if (MapType.IsSubtypeOf(MapType.Quake3) && MapType.IsSubtypeOf(MapType.CoD)
+				} else if (MapType.IsSubtypeOf(MapType.Quake3) && !MapType.IsSubtypeOf(MapType.CoD)
 					|| MapType == MapType.Nightfire) {
 					return BitConverter.ToInt32(Data, 32);
 				} else if (MapType.IsSubtypeOf(MapType.Quake)
@@ -402,7 +402,7 @@ namespace LibBSP {
 					Data[23] = bytes[1];
 				} else if (MapType == MapType.Vindictus) {
 					bytes.CopyTo(Data, 36);
-				} else if (MapType.IsSubtypeOf(MapType.Quake3) && MapType.IsSubtypeOf(MapType.CoD)
+				} else if (MapType.IsSubtypeOf(MapType.Quake3) && !MapType.IsSubtypeOf(MapType.CoD)
 					|| MapType == MapType.Nightfire) {
 					bytes.CopyTo(Data, 32);
 				} else if (MapType.IsSubtypeOf(MapType.Quake)
@@ -423,7 +423,7 @@ namespace LibBSP {
 					return BitConverter.ToUInt16(Data, 24);
 				} else if (MapType == MapType.Vindictus) {
 					return BitConverter.ToInt32(Data, 40);
-				} else if (MapType.IsSubtypeOf(MapType.Quake3) && MapType.IsSubtypeOf(MapType.CoD)
+				} else if (MapType.IsSubtypeOf(MapType.Quake3) && !MapType.IsSubtypeOf(MapType.CoD)
 					|| MapType == MapType.Nightfire) {
 					return BitConverter.ToInt32(Data, 36);
 				} else if (MapType.IsSubtypeOf(MapType.Quake)
@@ -442,7 +442,7 @@ namespace LibBSP {
 					Data[25] = bytes[1];
 				} else if (MapType == MapType.Vindictus) {
 					bytes.CopyTo(Data, 40);
-				} else if (MapType.IsSubtypeOf(MapType.Quake3) && MapType.IsSubtypeOf(MapType.CoD)
+				} else if (MapType.IsSubtypeOf(MapType.Quake3) && !MapType.IsSubtypeOf(MapType.CoD)
 					|| MapType == MapType.Nightfire) {
 					bytes.CopyTo(Data, 36);
 				} else if (MapType.IsSubtypeOf(MapType.Quake)

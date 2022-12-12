@@ -21,7 +21,7 @@ namespace LibBSP {
 #elif GODOT
 	using Vector2 = Godot.Vector2;
 	using Vector3 = Godot.Vector3;
-	using Vector4 = Godot.Vector4;
+	using Vector4 = Godot.Quat;
 	using Color = Godot.Color;
 #elif NEOAXIS
 	using Vector2 = NeoAxis.Vector2F;
@@ -43,7 +43,7 @@ namespace LibBSP {
 
 		private static IFormatProvider _format = CultureInfo.CreateSpecificCulture("en-US");
 
-		public Vertex[] points;
+		public Vector3[] points;
 		public Vector2 dims;
 		public string texture;
 

@@ -74,6 +74,7 @@
     <Compile Include="Source\Structs\BSP\Node.cs" />
     <Compile Include="Source\Structs\BSP\Cubemap.cs" />
     <Compile Include="Source\Structs\BSP\DisplacementVertex.cs" />
+    <Compile Include="Source\Structs\BSP\Overlay.cs" />
     <Compile Include="Source\Structs\BSP\Patch.cs" />
     <Compile Include="Source\Structs\BSP\StaticModel.cs" />
     <Compile Include="Source\Structs\BSP\StaticProp.cs" />

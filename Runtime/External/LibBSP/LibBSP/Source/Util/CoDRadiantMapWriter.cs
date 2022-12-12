@@ -11,10 +11,14 @@ using System.Text;
 using System.Globalization;
 
 namespace LibBSP {
-#if UNITY && !OLDUNITY
-	using Vertex = UnityEngine.UIVertex;
+#if UNITY
+	using Vector3 = UnityEngine.Vector3;
+#elif GODOT
+	using Vector3 = Godot.Vector3;
 #elif NEOAXIS
-	using Vertex = NeoAxis.StandardVertex;
+	using Vector3 = NeoAxis.Vector3F;
+#else
+	using Vector3 = System.Numerics.Vector3;
 #endif
 
 	/// <summary>
@@ -159,26 +163,14 @@ namespace LibBSP {
 			for (int i = 0; i < patch.dims.X(); ++i) {
 				sb.Append("( ");
 				for (int j = 0; j < patch.dims.Y(); ++j) {
-					Vertex vertex = patch.points[((int)Math.Round(patch.dims.X()) * j) + i];
+					Vector3 vertex = patch.points[((int)Math.Round(patch.dims.X()) * j) + i];
 					sb.Append("( ")
-					.Append(vertex.Position().X().ToString("###0.#####", _format))
+					.Append(vertex.X().ToString("###0.#####", _format))
 					.Append(" ")
-					.Append(vertex.Position().Y().ToString("###0.#####", _format))
+					.Append(vertex.Y().ToString("###0.#####", _format))
 					.Append(" ")
-					.Append(vertex.Position().Z().ToString("###0.#####", _format))
-					.Append(" ")
-					.Append(vertex.Uv0().X().ToString("###0.#####", _format))
-					.Append(" ")
-					.Append(vertex.Uv0().Y().ToString("###0.#####", _format))
-					.Append(" ")
-					.Append(vertex.Color().R().ToString(_format))
-					.Append(" ")
-					.Append(vertex.Color().G().ToString(_format))
-					.Append(" ")
-					.Append(vertex.Color().B().ToString(_format))
-					.Append(" ")
-					.Append(vertex.Color().A().ToString(_format))
-					.Append(" 0 ) ");
+					.Append(vertex.Z().ToString("###0.#####", _format))
+					.Append(" 0 0 255 255 255 255 0 ) ");
 				}
 				sb.Append(")\r\n");
 			}

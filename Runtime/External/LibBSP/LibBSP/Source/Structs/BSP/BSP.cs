@@ -1047,6 +1047,42 @@ namespace LibBSP {
 		}
 
 		/// <summary>
+		/// A <see cref="Lump{LibBSP.Overlay}"/> of <see cref="Overlay"/> objects in the BSP file, if available.
+		/// </summary>
+		public Lump<Overlay> Overlays {
+			get {
+				int index = Overlay.GetIndexForLump(MapType);
+
+				if (index >= 0) {
+					if (!_lumps.ContainsKey(index)) {
+						_lumps.Add(index, Overlay.LumpFactory(Reader.ReadLump(this[index]), this, this[index]));
+					}
+
+					return (Lump<Overlay>)_lumps[index];
+				}
+
+				return null;
+			}
+			set {
+				int index = Overlay.GetIndexForLump(MapType);
+				if (index >= 0) {
+					_lumps[index] = value;
+					value.Bsp = this;
+				}
+			}
+		}
+
+		/// <summary>
+		/// Has the <see cref="Overlay"/> lump been loaded yet?
+		/// </summary>
+		public bool OverlaysLoaded {
+			get {
+				int index = Overlay.GetIndexForLump(MapType);
+				return LumpLoaded(index);
+			}
+		}
+
+		/// <summary>
 		/// A <see cref="NumList"/> object containing the Leaf Faces lump, if available.
 		/// </summary>
 		public NumList LeafFaces {
@@ -1640,9 +1676,9 @@ namespace LibBSP {
 		public BSP(string name, MapType mapType = MapType.Undefined) : base(GetNumLumps(mapType)) {
 			MapName = name;
 			MapType = mapType;
+			Header = new BSPHeader(this, new byte[0]);
 
 			_lumps = new Dictionary<int, ILump>(GetNumLumps(MapType));
-			Header = new BSPHeader(this, new byte[0]);
 		}
 
 		/// <summary>
@@ -1655,9 +1691,9 @@ namespace LibBSP {
 			Reader = new BSPReader(file);
 			MapName = Path.GetFileNameWithoutExtension(file.FullName);
 			MapType = mapType;
+			Header = new BSPHeader(this, Reader.GetHeader(MapType));
 
 			_lumps = new Dictionary<int, ILump>(GetNumLumps(MapType));
-			Header = new BSPHeader(this, Reader.GetHeader(MapType));
 		}
 
 		/// <summary>

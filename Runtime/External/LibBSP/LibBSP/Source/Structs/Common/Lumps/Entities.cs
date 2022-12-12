@@ -147,6 +147,15 @@ namespace LibBSP {
 		}
 
 		/// <summary>
+		/// Deletes all <see cref="Entity"/> objects with the specified classname.
+		/// </summary>
+		/// <param name="classname">Classname attribute to find.</param>
+		/// <returns>The number of entities removed from the lump.</returns>
+		public int RemoveAllOfType(string classname) {
+			return RemoveAll(entity => { return entity.ClassName.Equals(classname, StringComparison.InvariantCultureIgnoreCase); });
+		}
+
+		/// <summary>
 		/// Gets a <c>List</c> of all <see cref="Entity"/> objects with "<paramref name="key"/>" set to "<paramref name="value"/>".
 		/// </summary>
 		/// <param name="key">Name of the attribute to search for.</param>
@@ -154,6 +163,15 @@ namespace LibBSP {
 		/// <returns><c>List</c>&lt;<see cref="Entity"/>&gt; that have the specified key/value pair.</returns>
 		public List<Entity> GetAllWithAttribute(string key, string value) {
 			return FindAll(entity => { return entity[key].Equals(value, StringComparison.InvariantCultureIgnoreCase); });
+		}
+
+		/// <summary>
+		/// Gets a <c>List</c> of <see cref="Entity"/>s objects with the specified classname.
+		/// </summary>
+		/// <param name="classname">Classname attribute to find.</param>
+		/// <returns><c>List</c>&lt;<see cref="Entity"/>&gt; with the specified classname.</returns>
+		public List<Entity> GetAllOfType(string classname) {
+			return FindAll(entity => { return entity.ClassName.Equals(classname, StringComparison.InvariantCultureIgnoreCase); });
 		}
 
 		/// <summary>
@@ -173,6 +191,15 @@ namespace LibBSP {
 		/// <returns><see cref="Entity"/> with the specified key/value pair, or null if none exists.</returns>
 		public Entity GetWithAttribute(string key, string value) {
 			return Find(entity => { return entity[key].Equals(value, StringComparison.InvariantCultureIgnoreCase); });
+		}
+
+		/// <summary>
+		/// Gets the first <see cref="Entity"/> with the specified classname.
+		/// </summary>
+		/// <param name="classname">Classname attribute to find.</param>
+		/// <returns><see cref="Entity"/> object with the specified classname.</returns>
+		public Entity GetOfType(string classname) {
+			return Find(entity => { return entity.ClassName.Equals(classname, StringComparison.InvariantCultureIgnoreCase); });
 		}
 
 		/// <summary>

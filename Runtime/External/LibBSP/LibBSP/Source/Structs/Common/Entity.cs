@@ -490,7 +490,7 @@ namespace LibBSP {
 		/// <param name="bits">The bits to compare spawnflags to.</param>
 		/// <returns><c>true</c> if all bits that were set in <paramref name="bits"/> were set in spawnflags.</returns>
 		public bool SpawnflagsSet(uint bits) {
-			return ((Spawnflags & bits) == bits);
+			return (Spawnflags & bits) == bits;
 		}
 
 		/// <summary>
@@ -498,16 +498,15 @@ namespace LibBSP {
 		/// </summary>
 		/// <param name="bits">Bitmask of bits to toggle.</param>
 		public void ToggleSpawnflags(uint bits) {
-			this["spawnflags"] = (Spawnflags ^ bits).ToString();
+			Spawnflags ^= bits;
 		}
 
 		/// <summary>
 		/// Clears the bits in "spawnflags" which are set in <paramref name="bits"/>.
-		/// Equivalent to spawnflags = (<paramref name="bits"/> ^ 0xFFFFFFFF) &amp; spawnflags.
 		/// </summary>
 		/// <param name="bits">Bitmask of bits to clear.</param>
 		public void ClearSpawnflags(uint bits) {
-			ToggleSpawnflags(Spawnflags & bits);
+			Spawnflags &= ~bits;
 		}
 
 		/// <summary>
@@ -515,7 +514,7 @@ namespace LibBSP {
 		/// </summary>
 		/// <param name="bits">Bitmask of bits to set.</param>
 		public void SetSpawnflags(uint bits) {
-			this["spawnflags"] = (Spawnflags | bits).ToString();
+			Spawnflags |= bits;
 		}
 
 		/// <summary>

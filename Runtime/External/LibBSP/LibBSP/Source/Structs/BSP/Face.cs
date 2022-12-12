@@ -1030,18 +1030,24 @@ namespace LibBSP {
 			set {
 				if (MapType == MapType.Vindictus) {
 					if (LumpVersion == 2) {
-						value.GetBytes().CopyTo(Data, 44);
+						BitConverter.GetBytes((int)value.X()).CopyTo(Data, 44);
+						BitConverter.GetBytes((int)value.Y()).CopyTo(Data, 48);
 					} else {
-						value.GetBytes().CopyTo(Data, 40);
+						BitConverter.GetBytes((int)value.X()).CopyTo(Data, 40);
+						BitConverter.GetBytes((int)value.Y()).CopyTo(Data, 44);
 					}
 				} else if (MapType == MapType.Raven) {
-					value.GetBytes().CopyTo(Data, 52);
+					BitConverter.GetBytes((int)value.X()).CopyTo(Data, 52);
+					BitConverter.GetBytes((int)value.Y()).CopyTo(Data, 56);
 				} else if (MapType == MapType.Source17) {
-					value.GetBytes().CopyTo(Data, 80);
+					BitConverter.GetBytes((int)value.X()).CopyTo(Data, 80);
+					BitConverter.GetBytes((int)value.Y()).CopyTo(Data, 84);
 				} else if (MapType.IsSubtypeOf(MapType.Quake3) && !MapType.IsSubtypeOf(MapType.CoD)) {
-					value.GetBytes().CopyTo(Data, 32);
+					BitConverter.GetBytes((int)value.X()).CopyTo(Data, 32);
+					BitConverter.GetBytes((int)value.Y()).CopyTo(Data, 36);
 				} else if (MapType.IsSubtypeOf(MapType.Source)) {
-					value.GetBytes().CopyTo(Data, 28);
+					BitConverter.GetBytes((int)value.X()).CopyTo(Data, 28);
+					BitConverter.GetBytes((int)value.Y()).CopyTo(Data, 32);
 				}
 			}
 		}
@@ -1126,18 +1132,24 @@ namespace LibBSP {
 			set {
 				if (MapType == MapType.Vindictus) {
 					if (LumpVersion == 2) {
-						value.GetBytes().CopyTo(Data, 52);
+						BitConverter.GetBytes((int)value.X()).CopyTo(Data, 52);
+						BitConverter.GetBytes((int)value.Y()).CopyTo(Data, 56);
 					} else {
-						value.GetBytes().CopyTo(Data, 48);
+						BitConverter.GetBytes((int)value.X()).CopyTo(Data, 48);
+						BitConverter.GetBytes((int)value.Y()).CopyTo(Data, 52);
 					}
 				} else if (MapType == MapType.Raven) {
-					value.GetBytes().CopyTo(Data, 84);
+					BitConverter.GetBytes((int)value.X()).CopyTo(Data, 84);
+					BitConverter.GetBytes((int)value.Y()).CopyTo(Data, 88);
 				} else if (MapType == MapType.Source17) {
-					value.GetBytes().CopyTo(Data, 88);
+					BitConverter.GetBytes((int)value.X()).CopyTo(Data, 88);
+					BitConverter.GetBytes((int)value.Y()).CopyTo(Data, 92);
 				} else if (MapType.IsSubtypeOf(MapType.Quake3) && !MapType.IsSubtypeOf(MapType.CoD)) {
-					value.GetBytes().CopyTo(Data, 40);
+					BitConverter.GetBytes((int)value.X()).CopyTo(Data, 40);
+					BitConverter.GetBytes((int)value.Y()).CopyTo(Data, 44);
 				} else if (MapType.IsSubtypeOf(MapType.Source)) {
-					value.GetBytes().CopyTo(Data, 36);
+					BitConverter.GetBytes((int)value.X()).CopyTo(Data, 36);
+					BitConverter.GetBytes((int)value.Y()).CopyTo(Data, 40);
 				}
 			}
 		}
@@ -1245,9 +1257,11 @@ namespace LibBSP {
 			}
 			set {
 				if (MapType == MapType.Raven) {
-					value.GetBytes().CopyTo(Data, 140);
+					BitConverter.GetBytes((int)value.X()).CopyTo(Data, 140);
+					BitConverter.GetBytes((int)value.Y()).CopyTo(Data, 144);
 				} else if (MapType.IsSubtypeOf(MapType.Quake3) && !MapType.IsSubtypeOf(MapType.CoD)) {
-					value.GetBytes().CopyTo(Data, 96);
+					BitConverter.GetBytes((int)value.X()).CopyTo(Data, 96);
+					BitConverter.GetBytes((int)value.Y()).CopyTo(Data, 100);
 				}
 			}
 		}
