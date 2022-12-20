@@ -82,7 +82,7 @@ public class BSPImporterWindow : EditorWindow {
 			settings.materialPath = "";
 		}
 		EditorGUILayout.BeginHorizontal(); {
-			settings.materialPath = EditorGUILayout.TextField(new GUIContent("Unity Material save path", "Path to save/load materials, relative to /Assets/"), settings.materialPath);
+			settings.materialPath = EditorGUILayout.TextField(new GUIContent("Materials Asset Folder ", "Path to save/load materials, relative to /Assets/"), settings.materialPath);
 			if (GUILayout.Button("Browse...", GUILayout.MaxWidth(100))) {
 				settings.materialPath = EditorUtility.OpenFolderPanel("Find material path", settings.materialPath, "materials");
 			}
@@ -92,7 +92,7 @@ public class BSPImporterWindow : EditorWindow {
 			settings.meshPath = "";
 		}
 		EditorGUILayout.BeginHorizontal(); {
-			settings.meshPath = EditorGUILayout.TextField(new GUIContent("Unity Mesh save path", "Path to save meshes, relative to /Assets/"), settings.meshPath);
+			settings.meshPath = EditorGUILayout.TextField(new GUIContent("Meshes Asset Folder", "Path to save meshes, relative to /Assets/"), settings.meshPath);
 			if (GUILayout.Button("Browse...", GUILayout.MaxWidth(100))) {
 				settings.meshPath = EditorUtility.OpenFolderPanel("Find mesh path", settings.meshPath, "models");
 			}
