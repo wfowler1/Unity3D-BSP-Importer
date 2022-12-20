@@ -14,10 +14,12 @@ namespace BSPImporter {
 	/// </summary>
 	public class BSPLoader {
 
-		/// <summary>
-		/// Enum with options for combining <see cref="Mesh"/>es in the BSP import process.
-		/// </summary>
-		public enum MeshCombineOptions {
+        public const string FALLBACK_SHADER = "VR/SpatialMapping/Wireframe";
+
+        /// <summary>
+        /// Enum with options for combining <see cref="Mesh"/>es in the BSP import process.
+        /// </summary>
+        public enum MeshCombineOptions {
 			/// <summary>
 			/// Do not combine <see cref="Mesh"/>es.
 			/// </summary>
@@ -75,11 +77,11 @@ namespace BSPImporter {
 		/// Struct containing various settings for the BSP Import process.
 		/// </summary>
 		[Serializable]
-		public struct Settings {
-			/// <summary>
-			/// The path to the BSP file.
-			/// </summary>
-			public string path;
+		public class Settings {
+            /// <summary>
+            /// The path to the BSP file.
+            /// </summary>
+            public string path;
 			/// <summary>
 			/// The path to the textures for the BSP file. At edit-time, if the path is within the Assets folder, links textures with generated <see cref="Material"/>s.
 			/// </summary>
@@ -113,7 +115,15 @@ namespace BSPImporter {
 			/// <see cref="Entity"/> the <see cref="Entity"/> targets.
 			/// </summary>
 			public Action<EntityInstance, List<EntityInstance>> entityCreatedCallback;
-		}
+			/// <summary>
+			/// Set the default Layer for the imported Game Objects;
+			/// </summary>
+			public int importedLayer;
+			/// <summary>
+			/// Shader used when the proper Material couldn't be found
+			/// </summary>
+			public string fallbackShader = FALLBACK_SHADER;
+        }
 
 		/// <summary>
 		/// Struct linking a generated <see cref="GameObject"/> with the <see cref="Entity"/> used to create it.
@@ -208,7 +218,8 @@ namespace BSPImporter {
 				}
 
 				instance.gameObject.transform.position = entity.Origin.SwizzleYZ().ScaleInch2Meter();
-			}
+				instance.gameObject.layer = settings.importedLayer;
+            }
 			
 			root = new GameObject(bsp.MapName);
 			foreach (KeyValuePair<string, List<EntityInstance>> pair in namedEntities) {
@@ -285,7 +296,7 @@ namespace BSPImporter {
 #else
 			Shader def = Shader.Find("Diffuse");
 #endif
-			Shader fallbackShader = Shader.Find("VR/SpatialMapping/Wireframe");
+			Shader fallbackShader = Shader.Find(settings.fallbackShader);
 
 			string texturePath;
 			bool textureIsAsset = false;

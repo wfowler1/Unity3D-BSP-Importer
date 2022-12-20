@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using BSPImporter;
 using LibBSP;
+using UnityEditor.UIElements;
 
 /// <summary>
 /// Editor window for importing BSPs, a simple example of how to provide a GUI
@@ -16,10 +17,10 @@ public class BSPImporterWindow : EditorWindow {
 
 	protected BSPLoader.Settings settings;
 
-	/// <summary>
-	/// Shows this window.
-	/// </summary>
-	[MenuItem("BSP Importer/Import BSP")]
+    /// <summary>
+    /// Shows this window.
+    /// </summary>
+    [MenuItem("BSP Importer/Import BSP")]
 	public static void ShowWindow() {
 		BSPImporterWindow window = GetWindow<BSPImporterWindow>();
 #if UNITY_5_1 || UNITY_5_2 || UNITY_5_3_OR_NEWER
@@ -97,11 +98,22 @@ public class BSPImporterWindow : EditorWindow {
 				settings.meshPath = EditorUtility.OpenFolderPanel("Find mesh path", settings.meshPath, "models");
 			}
 		} EditorGUILayout.EndHorizontal();
-			
-		settings.meshCombineOptions = (BSPLoader.MeshCombineOptions)EditorGUILayout.EnumPopup(new GUIContent("Mesh combining", "Options for combining meshes. Per entity gives the cleanest hierarchy but may corrupt meshes with too many vertices."), settings.meshCombineOptions);
+
+        EditorGUILayout.BeginHorizontal();
+        {
+            settings.fallbackShader = EditorGUILayout.TextField(new GUIContent("Fallback Shader", "When the proper Material can't be found"), settings.fallbackShader);
+            if (GUILayout.Button("Reset", GUILayout.MaxWidth(100)))
+            {
+				settings.fallbackShader = BSPLoader.FALLBACK_SHADER;
+            }
+        }
+        EditorGUILayout.EndHorizontal();
+
+        settings.meshCombineOptions = (BSPLoader.MeshCombineOptions)EditorGUILayout.EnumPopup(new GUIContent("Mesh combining", "Options for combining meshes. Per entity gives the cleanest hierarchy but may corrupt meshes with too many vertices."), settings.meshCombineOptions);
 		settings.assetSavingOptions = (BSPLoader.AssetSavingOptions)EditorGUILayout.EnumPopup(new GUIContent("Assets to save", "Which assets to save into the project, at edit-time only."), settings.assetSavingOptions);
 		settings.curveTessellationLevel = EditorGUILayout.IntSlider(new GUIContent("Curve detail", "Number of triangles used to tessellate curves. Higher values give smoother curves with exponentially more vertices."), settings.curveTessellationLevel, 1, 50);
-	}
+        settings.importedLayer = EditorGUILayout.LayerField("Imported Layer", settings.importedLayer);
+    }
 
 	/// <summary>
 	/// Draws a button to start the import process.
