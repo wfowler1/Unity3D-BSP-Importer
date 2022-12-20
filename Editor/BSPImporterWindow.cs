@@ -36,6 +36,9 @@ public class BSPImporterWindow : EditorWindow {
 	/// GUI for this window.
 	/// </summary>
 	protected virtual void OnGUI() {
+		if(settings == null)
+			settings = new BSPLoader.Settings();
+
 		EditorGUILayout.BeginVertical(); {
 			DrawImportOptions();
 			DrawImportButton();
