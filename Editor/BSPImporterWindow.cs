@@ -8,6 +8,7 @@ using System.Linq;
 using BSPImporter;
 using LibBSP;
 using UnityEditor.UIElements;
+using UnityEngine.WSA;
 
 /// <summary>
 /// Editor window for importing BSPs, a simple example of how to provide a GUI
@@ -37,7 +38,18 @@ public class BSPImporterWindow : EditorWindow {
 	/// </summary>
 	protected virtual void OnGUI() {
 		if(settings == null)
-			settings = new BSPLoader.Settings();
+		{
+			settings = Resources.Load<BSPLoader.Settings>("BSPLoaderSettings");
+			if(settings == null)
+			{
+				settings = CreateInstance<BSPLoader.Settings>();
+                if(!AssetDatabase.IsValidFolder("Assets/Resources"))
+                    AssetDatabase.CreateFolder("Assets", "Resources");
+
+                AssetDatabase.CreateAsset(settings, "Assets/Resources/BSPLoaderSettings.asset");
+            }
+
+        }
 
 		EditorGUILayout.BeginVertical(); {
 			DrawImportOptions();
