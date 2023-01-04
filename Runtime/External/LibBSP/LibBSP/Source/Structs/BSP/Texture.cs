@@ -568,6 +568,7 @@ namespace LibBSP {
 		/// <returns>A sanitized version of the passed <paramref name="name"/>.</returns>
 		public static string SanitizeName(string name, MapType mapType) {
 			string sanitized = name.Replace('\\', '/');
+			sanitized = sanitized.Replace('*', '#');
 
 			if (mapType.IsSubtypeOf(MapType.Source)
 				|| mapType == MapType.Titanfall) {

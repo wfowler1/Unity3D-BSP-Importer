@@ -15,6 +15,7 @@ namespace LibBSP {
 
 		public bool isDetail = false;
 		public bool isWater = false;
+		public bool isLava = false;
 		public bool isManVis = false;
 
 		/// <summary>

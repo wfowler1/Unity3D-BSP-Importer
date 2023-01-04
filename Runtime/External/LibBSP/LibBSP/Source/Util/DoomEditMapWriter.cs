@@ -123,8 +123,11 @@ namespace LibBSP {
 			.Append(brushside.textureInfo.Translation.X().ToString("###0.##########", _format))
 			.Append(" ) ( 0 1 ")
 			.Append(brushside.textureInfo.Translation.Y().ToString("###0.##########", _format))
-			.Append(" ) ) \"")
-			.Append(brushside.texture)
+			.Append(" ) ) \"");
+			if (!brushside.texture.StartsWith("textures/") && !brushside.texture.StartsWith("models/")) {
+				sb.Append("textures/");
+			}
+			sb.Append(brushside.texture)
 			.Append("\" 0 0 0\r\n");
 		}
 
@@ -134,8 +137,11 @@ namespace LibBSP {
 		/// <param name="patch">The <see cref="MAPPatch"/> to process.</param>
 		/// <param name="sb">A <see cref="StringBuilder"/> object to append processed data from <paramref name="patch"/> to.</param>
 		private void ParsePatch(MAPPatch patch, StringBuilder sb) {
-			sb.Append(" patchDef2\r\n {\r\n  ")
-			.Append(patch.texture)
+			sb.Append(" patchDef2\r\n {\r\n  ");
+			if (!patch.texture.StartsWith("textures/") && !patch.texture.StartsWith("models/")) {
+				sb.Append("textures/");
+			}
+			sb.Append(patch.texture)
 			.Append("\r\n  ( ")
 			.Append((int)Math.Round(patch.dims.X()))
 			.Append(" ")
