@@ -328,7 +328,7 @@ namespace BSPImporter {
 			bool materialIsAsset = false;
 #if UNITY_EDITOR
 			string materialPath = Path.Combine(Path.Combine("Assets", settings.materialPath), textureName + ".mat").Replace('\\', '/');
-			if (!IsRuntime && (settings.assetSavingOptions & AssetSavingOptions.Materials) > 0) {
+			if (!IsRuntime) {
 				material = AssetDatabase.LoadAssetAtPath(materialPath, typeof(Material)) as Material;
 			}
 			if (material != null) {
