@@ -403,9 +403,11 @@ namespace BSPImporter
                 if (texture != null)
                 {
                     material.mainTexture = texture;
+#if UNITY_5 || UNITY_5_3_OR_NEWER
                     material.SetFloat("_Glossiness", 0);
                     material.SetFloat("_SpecularHighlights", 0f);
                     material.EnableKeyword("_SPECULARHIGHLIGHTS_OFF");
+#endif
                 }
                 else if (fallbackShader != null)
                 {
