@@ -118,6 +118,10 @@ namespace BSPImporter
             /// <see cref="Entity"/> the <see cref="Entity"/> targets.
             /// </summary>
             public Action<EntityInstance, List<EntityInstance>> entityCreatedCallback;
+            /// <summary>
+            /// Amount to scale the BSP by.
+            /// </summary>
+            public float scaleFactor;
         }
 
         /// <summary>
@@ -227,7 +231,7 @@ namespace BSPImporter
                     instance.gameObject.transform.rotation = Quaternion.Euler(-angles.x, angles.y, angles.z);
                 }
 
-                instance.gameObject.transform.position = entity.Origin.SwizzleYZ().ScaleInch2Meter();
+                instance.gameObject.transform.position = entity.Origin.SwizzleYZ() * settings.scaleFactor;
             }
 
             root = new GameObject(bsp.MapName);
@@ -575,12 +579,13 @@ namespace BSPImporter
                             GameObject textureGameObject = new GameObject(pair.Key);
                             textureGameObject.transform.parent = gameObject.transform;
                             textureGameObject.transform.localPosition = Vector3.zero;
+                            textureMeshes[i].Scale(settings.scaleFactor);
                             if (textureMeshes[i].normals.Length == 0 || textureMeshes[i].normals[0] == Vector3.zero)
                             {
                                 textureMeshes[i].RecalculateNormals();
                             }
 
-                            textureMeshes[i].AddMeshToGameObject(new Material[] { materials[i] }, textureGameObject);
+                            textureMeshes[i].AddToGameObject(new Material[] { materials[i] }, textureGameObject);
 #if UNITY_EDITOR
                             Unwrapping.GenerateSecondaryUVSet(textureMeshes[i]);
 
@@ -602,12 +607,13 @@ namespace BSPImporter
                     if (mesh.vertices.Length > 0)
                     {
                         mesh.TransformVertices(gameObject.transform.localToWorldMatrix);
+                        mesh.Scale(settings.scaleFactor);
                         if (mesh.normals.Length == 0 || mesh.normals[0] == Vector3.zero)
                         {
                             mesh.RecalculateNormals();
                         }
 
-                        mesh.AddMeshToGameObject(materials, gameObject);
+                        mesh.AddToGameObject(materials, gameObject);
 #if UNITY_EDITOR
                         Unwrapping.GenerateSecondaryUVSet(mesh);
 
@@ -637,12 +643,13 @@ namespace BSPImporter
                             GameObject faceGameObject = new GameObject("Face");
                             faceGameObject.transform.parent = textureGameObject.transform;
                             faceGameObject.transform.localPosition = Vector3.zero;
+                            mesh.Scale(settings.scaleFactor);
                             if (mesh.normals.Length == 0 || mesh.normals[0] == Vector3.zero)
                             {
                                 mesh.RecalculateNormals();
                             }
 
-                            mesh.AddMeshToGameObject(new Material[] { material }, faceGameObject);
+                            mesh.AddToGameObject(new Material[] { material }, faceGameObject);
 #if UNITY_EDITOR
                             Unwrapping.GenerateSecondaryUVSet(mesh);
 

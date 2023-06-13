@@ -51,7 +51,8 @@ public class BSPImporterWindow : EditorWindow
         {
             settings.path = "";
             settings.meshCombineOptions = BSPLoader.MeshCombineOptions.PerEntity;
-            settings.curveTessellationLevel = 9;
+            settings.curveTessellationLevel = 3;
+            settings.scaleFactor = MeshUtils.inch2MeterScale;
         }
 
         EditorGUILayout.BeginHorizontal();
@@ -123,6 +124,7 @@ public class BSPImporterWindow : EditorWindow
         settings.meshCombineOptions = (BSPLoader.MeshCombineOptions)EditorGUILayout.EnumPopup(new GUIContent("Mesh combining", "Options for combining meshes. Per entity gives the cleanest hierarchy but may corrupt meshes with too many vertices."), settings.meshCombineOptions);
         settings.assetSavingOptions = (BSPLoader.AssetSavingOptions)EditorGUILayout.EnumPopup(new GUIContent("Assets to save", "Which assets to save into the project, at edit-time only."), settings.assetSavingOptions);
         settings.curveTessellationLevel = EditorGUILayout.IntSlider(new GUIContent("Curve detail", "Number of triangles used to tessellate curves. Higher values give smoother curves with exponentially more vertices."), settings.curveTessellationLevel, 1, 50);
+        settings.scaleFactor = EditorGUILayout.FloatField(new GUIContent("Scale", "Amount to scale coordinates by. 0.0254 converts inches to meters."), settings.scaleFactor);
     }
 
     /// <summary>

@@ -39,10 +39,11 @@ namespace BSPImporter
         /// Scales this <see cref="Vertex"/> from inches to meters.
         /// </summary>
         /// <param name="v">This <see cref="Vertex"/>.</param>
+        /// <param name="scaleFactor">Amount to multiply <see cref="Vertex.position"/> by.</param>
         /// <returns>This <see cref="Vertex"/> scaled from inches to meters.</returns>
-        public static Vertex ScaleInch2Meter(this Vertex v)
+        public static Vertex Scale(this Vertex v, float scaleFactor)
         {
-            v.position = v.position.ScaleInch2Meter();
+            v.position *= scaleFactor;
             return v;
         }
 

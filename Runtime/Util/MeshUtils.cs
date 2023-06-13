@@ -74,7 +74,7 @@ namespace BSPImporter
             Color[] colors = new Color[vertices.Count];
             for (int i = 0; i < vertices.Count; ++i)
             {
-                Vertex current = vertices[i].SwizzleYZ().ScaleInch2Meter();
+                Vertex current = vertices[i].SwizzleYZ();
                 positions[i] = current.position;
                 normals[i] = current.normal;
                 uv[i] = current.uv0;
@@ -242,6 +242,22 @@ namespace BSPImporter
         }
 
         /// <summary>
+        /// Scales all vertices of this <see cref="Mesh"/> using the given <paramref name="scaleFactor"/>.
+        /// </summary>
+        /// <param name="mesh">This <see cref="Mesh"/>.</param>
+        /// <param name="scaleFactor">Amount to scale the <see cref="Mesh"/> by.</param>
+        public static void Scale(this Mesh mesh, float scaleFactor)
+        {
+            Vector3[] vertices = mesh.vertices;
+            for (int i = 0; i < vertices.Length; ++i)
+            {
+                vertices[i] *= scaleFactor;
+            }
+            mesh.vertices = vertices;
+            mesh.RecalculateBounds();
+        }
+
+        /// <summary>
         /// On each UV in this <see cref="Mesh"/>, replace each V coordinate with -V.
         /// </summary>
         /// <remarks>
@@ -304,7 +320,7 @@ namespace BSPImporter
         /// <param name="mesh">This <see cref="Mesh"/>.</param>
         /// <param name="materials">An array of <see cref="Material"/>s used to render this <see cref="Mesh"/>.</param>
         /// <param name="gameObject">The <see cref="GameObject"/> to use for this <see cref="Mesh"/>.</param>
-        public static void AddMeshToGameObject(this Mesh mesh, Material[] materials, GameObject gameObject)
+        public static void AddToGameObject(this Mesh mesh, Material[] materials, GameObject gameObject)
         {
             MeshFilter filter = gameObject.GetComponent<MeshFilter>();
             if (filter == null)
@@ -364,7 +380,7 @@ namespace BSPImporter
 
             Vector3[] corners = new Vector3[4];
             // TODO: Is there a way to determine the order of corners without using the start position this way?
-            Vector3 start = displacement.StartPosition.SwizzleYZ() * inch2MeterScale;
+            Vector3 start = displacement.StartPosition.SwizzleYZ();
             if ((faceCorners[faceTriangles[0]] - start).sqrMagnitude < .01f)
             {
                 corners[0] = faceCorners[faceTriangles[0]];
@@ -404,7 +420,7 @@ namespace BSPImporter
             Vector3[] offsets = new Vector3[displacementVertices.Length];
             for (int i = 0; i < displacementVertices.Length; ++i)
             {
-                offsets[i] = displacementVertices[i].Normal.SwizzleYZ() * displacementVertices[i].Magnitude * inch2MeterScale;
+                offsets[i] = displacementVertices[i].Normal.SwizzleYZ() * displacementVertices[i].Magnitude;
             }
             Vector2[] uv = new Vector2[4];
             Vector2[] uv2 = new Vector2[4];
@@ -439,11 +455,11 @@ namespace BSPImporter
                 {
                     if ((lodTerrain.Flags & (1 << 6)) > 0)
                     {
-                        offsets[(x * 9) + y] = (Vector3.up * lodTerrain.Heightmap[y, x] * 2 * inch2MeterScale);
+                        offsets[(x * 9) + y] = (Vector3.up * lodTerrain.Heightmap[y, x] * 2);
                     }
                     else
                     {
-                        offsets[(y * 9) + x] = (Vector3.up * lodTerrain.Heightmap[y, x] * 2 * inch2MeterScale);
+                        offsets[(y * 9) + x] = (Vector3.up * lodTerrain.Heightmap[y, x] * 2);
                     }
                 }
             }
@@ -484,10 +500,10 @@ namespace BSPImporter
         public static Vector3[] GetCornersForTerrain(Vector3 origin, float side, bool inverted)
         {
             Vector3[] corners = new Vector3[] {
-                origin.SwizzleYZ().ScaleInch2Meter(),
-                new Vector3(origin.x, origin.y + side, origin.z).SwizzleYZ().ScaleInch2Meter(),
-                new Vector3(origin.x + side, origin.y, origin.z).SwizzleYZ().ScaleInch2Meter(),
-                new Vector3(origin.x + side, origin.y + side, origin.z).SwizzleYZ().ScaleInch2Meter(),
+                origin.SwizzleYZ(),
+                new Vector3(origin.x, origin.y + side, origin.z).SwizzleYZ(),
+                new Vector3(origin.x + side, origin.y, origin.z).SwizzleYZ(),
+                new Vector3(origin.x + side, origin.y + side, origin.z).SwizzleYZ(),
             };
 
             if (inverted)

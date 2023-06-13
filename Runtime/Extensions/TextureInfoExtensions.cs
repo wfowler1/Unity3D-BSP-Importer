@@ -17,8 +17,8 @@ namespace BSPImporter
         /// <returns>The texture transform matrix for <paramref name="textureInfo"/>.</returns>
         public static Matrix4x4 BuildTexMatrix(this TextureInfo textureInfo)
         {
-            Vector3 scaledUAxis = textureInfo.UAxis.SwizzleYZ().ScaleInch2Meter();
-            Vector3 scaledVAxis = textureInfo.VAxis.SwizzleYZ().ScaleInch2Meter();
+            Vector3 scaledUAxis = textureInfo.UAxis.SwizzleYZ();
+            Vector3 scaledVAxis = textureInfo.VAxis.SwizzleYZ();
             Vector3 STNormal = Vector3.Cross(scaledUAxis, scaledVAxis);
             Matrix4x4 texmatrix = Matrix4x4.identity;
             texmatrix[0, 0] = scaledUAxis.x;
